@@ -26,15 +26,22 @@ jobs:
 
       - name: Cek isi direktori setelah build
         run: |
+          echo "Isi root folder:"
           ls -lah
+          echo "Isi folder build:"
           ls -lah build
 
       - name: Copy build to server via SCP
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: 145.223.108.130
-          username: u446959717
-          port: 65002
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: 'build/*'
+          # host: 145.223.108.130
+          # username: u446959717
+          # port: 65002
+          # key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # source: 'build/*'
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          source: 'public/build/*'
           target: '/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/build' # <- ganti dengan folder tujuan kamu
