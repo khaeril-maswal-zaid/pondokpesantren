@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20 # sesuaikan dengan versi node kamu
+          node-version: 22 # sesuaikan dengan versi node kamu
 
       - name: Install dependencies
         run: npm install
@@ -31,7 +31,7 @@ jobs:
 
           rsync -avz -e "ssh -i private_key.pem -o StrictHostKeyChecking=no -p 65002" \
             public/build/ \
-            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/
+            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/build/
 
         shell: bash
 
