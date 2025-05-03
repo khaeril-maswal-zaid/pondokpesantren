@@ -24,6 +24,11 @@ jobs:
       - name: Build React project
         run: npm run build
 
+      - name: Cek isi direktori setelah build
+        run: |
+          ls -lah
+          ls -lah build
+
       - name: Copy build to server via SCP
         uses: appleboy/scp-action@v0.1.4
         with:
