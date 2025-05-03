@@ -24,7 +24,7 @@ jobs:
       - name: Build React project
         run: npm run build
 
-      - name: Copy build to server via SCP
+      - name: Copy build to hosting via SCP
         uses: appleboy/scp-action@v0.1.4
         with:
           host: 145.223.108.130
