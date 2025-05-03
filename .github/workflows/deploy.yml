@@ -31,5 +31,5 @@ jobs:
           username: u446959717
           port: 65002
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: 'public/build/*'
-          target: '/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/build' # <- ganti dengan folder tujuan kamu
+          source: 'public/build'
+          target: '/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/' # <- ganti dengan folder tujuan kamu
