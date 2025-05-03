@@ -1,0 +1,35 @@
+name: Deploy React Build to Shared Hosting
+
+on:
+  push:
+    branches:
+      - main # atau 'master', tergantung branch utama kamu
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20 # sesuaikan dengan versi node kamu
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React project
+        run: npm run build
+
+      - name: Copy build to server via SCP
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: 145.223.108.130
+          username: u446959717
+          port: 65002
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: 'build/*'
+          target: '/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/build' # <- ganti dengan folder tujuan kamu
