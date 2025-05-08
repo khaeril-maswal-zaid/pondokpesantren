@@ -6,6 +6,7 @@ use App\Models\SantriBaru;
 use App\Http\Requests\StoreSantriBaruRequest;
 use App\Http\Requests\UpdateSantriBaruRequest;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class SantriBaruController extends Controller
 {
@@ -22,7 +23,7 @@ class SantriBaruController extends Controller
      */
     public function create()
     {
-        return Inertia::render('ponpes/pendaftaran/page');
+        return Inertia::render('ponpes/pendaftaran/form');
     }
 
     /**
@@ -30,8 +31,30 @@ class SantriBaruController extends Controller
      */
     public function store(StoreSantriBaruRequest $request)
     {
-        //
+        SantriBaru::create([
+            'nik' => $request->nik,
+            'nama_lengkap' => $request->namaLengkap,
+            'tempat_lahir' => $request->tempatLahir,
+            'tanggal_lahir' => $request->tanggalLahir,
+            'jenis_kelamin' => $request->jenisKelamin,
+            'provinsi' => $request->provinsi,
+            'kabupaten' => $request->kabupaten,
+            'kecamatan' => $request->kecamatan,
+            'desa' => $request->desa,
+
+            'nama_ayah' => $request->namaAyah,
+            'nama_ibu' => $request->namaIbu,
+            'pekerjaan_ayah' => $request->pekerjaanAyah,
+            'pekerjaan_ibu' => $request->pekerjaanIbu,
+            'kontak_ayah' => $request->kontakAyah,
+            'kontak_ibu' => $request->kontakIbu,
+
+            'nama_sekolah' => $request->namaSekolah,
+            'nisn' => $request->nisn,
+            'tahun_tamat' => $request->tahunTamat,
+        ]);
     }
+
 
     /**
      * Display the specified resource.

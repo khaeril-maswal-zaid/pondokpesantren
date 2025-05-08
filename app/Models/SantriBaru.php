@@ -9,4 +9,26 @@ class SantriBaru extends Model
 {
     /** @use HasFactory<\Database\Factories\SantriBaruFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'nik',
+        'nama_lengkap',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'provinsi',
+        'kabupaten',
+        'kecamatan',
+        'desa',
+        'nama_ayah',
+        'nama_ibu',
+        'pekerjaan_ayah',
+        'pekerjaan_ibu',
+        'kontak_ayah',
+        'kontak_ibu',
+        'nama_sekolah',
+        'nisn',
+        'tahun_tamat',
+        'foto',
+    ];
 }

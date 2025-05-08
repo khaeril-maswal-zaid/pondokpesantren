@@ -13,6 +13,33 @@ return new class extends Migration
     {
         Schema::create('santri_barus', function (Blueprint $table) {
             $table->id();
+            // Data Diri Santri
+            $table->string('nik')->unique();
+            $table->string('nama_lengkap');
+            $table->string('tempat_lahir');
+            $table->date('tanggal_lahir');
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('provinsi');
+            $table->string('kabupaten');
+            $table->string('kecamatan');
+            $table->string('desa');
+
+            // Data Orang Tua
+            $table->string('nama_ayah');
+            $table->string('nama_ibu');
+            $table->string('pekerjaan_ayah');
+            $table->string('pekerjaan_ibu');
+            $table->string('kontak_ayah');
+            $table->string('kontak_ibu');
+
+            // Asal Sekolah
+            $table->string('nama_sekolah');
+            $table->string('nisn')->nullable();
+            $table->string('tahun_tamat');
+
+            // Foto
+            $table->string('foto')->nullable();
+
             $table->timestamps();
         });
     }
