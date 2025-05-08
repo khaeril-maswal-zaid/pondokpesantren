@@ -3,7 +3,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/ponpes-layout';
-
+import { Link } from '@inertiajs/react';
 import { ArrowRight, Calendar, CheckCircle, Download, FileText, HelpCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -58,7 +58,7 @@ export default function PendaftaranPage() {
     return (
         <>
             <Layout>
-                <main className="pt-24 pb-16">
+                <main className="pb-16">
                     <div className="container mx-auto px-4">
                         {/* Header with Parallax */}
                         <div ref={headerRef} className="relative h-[400px] overflow-hidden">
@@ -72,7 +72,7 @@ export default function PendaftaranPage() {
                             <div className="bg-primary/70 absolute inset-0"></div>
                             <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
                                 <div className="text-primary mb-4 inline-block rounded bg-white px-3 py-1 text-sm font-semibold">Informasi</div>
-                                <h1 className="mb-4 text-center text-3xl font-bold text-white md:text-4xl lg:text-5xl">Pendaftaran Santri Baru</h1>
+                                <h1 className="mb-4 text-center text-4xl font-bold text-white md:text-5xl">Pendaftaran Santri Baru</h1>
                                 <p className="mx-auto max-w-3xl text-center text-xl text-white/90">
                                     Pondok Pesantren Al-Zaid membuka pendaftaran santri baru untuk tahun ajaran 2023/2024. Silakan ikuti petunjuk
                                     pendaftaran di bawah ini.
@@ -645,20 +645,25 @@ export default function PendaftaranPage() {
                             <div className="relative z-30">
                                 <h2
                                     className="mb-4 text-2xl font-bold text-white md:text-3xl"
-                                    style={{ transform: `translateY(${scrollY * 0.03}px)` }}
+                                    // style={{ transform: `translateY(${scrollY * 0.03}px)` }}
                                 >
                                     Siap Bergabung dengan Kami?
                                 </h2>
-                                <p className="mx-auto mb-8 max-w-2xl text-white/90" style={{ transform: `translateY(${scrollY * 0.02}px)` }}>
+                                <p
+                                    className="mx-auto mb-8 max-w-2xl text-white/90"
+                                    //  style={{ transform: `translateY(${scrollY * 0.02}px)` }}
+                                >
                                     Jadilah bagian dari keluarga besar Pondok Pesantren Al-Zaid dan raih masa depan cemerlang dengan pendidikan Islam
                                     yang berkualitas.
                                 </p>
-                                <Button
-                                    className="text-primary rounded-lg bg-white px-8 py-6 text-lg hover:bg-white/90"
-                                    style={{ transform: `translateY(${scrollY * 0.01}px)` }}
-                                >
-                                    Daftar Sekarang
-                                </Button>
+                                <Link href={route('santri-baru.create')}>
+                                    <Button
+                                        className="text-primary rounded-lg bg-white px-8 py-6 text-lg hover:bg-white/90"
+                                        style={{ transform: `translateY(${scrollY * 0.01}px)` }}
+                                    >
+                                        Daftar Sekarang
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </div>
