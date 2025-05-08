@@ -31,6 +31,6 @@ jobs:
 
           rsync -avz -e "ssh -i private_key.pem -o StrictHostKeyChecking=no -p 65002" \
             public/build/ \
-            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/build/
+            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u446959717/domains/ubaybinkaab.ponpes.id/public_html/build/
 
         shell: bash
