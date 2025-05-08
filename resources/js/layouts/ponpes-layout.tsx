@@ -1,19 +1,23 @@
 import Footer from '@/components/ponpes/footer';
 import Navbar from '@/components/ponpes/navbar';
-import { ThemeProvider } from '@/components/ponpes/theme-provider';
-
+import ScrollProgress from '@/components/ponpes/scroll-progress';
+// import { Amiri, Poppins } from 'next/font/google';
 import type React from 'react';
 
-export default function PonpesLayout({
+const poppins = 'Poppins';
+const amiri = 'Amiri';
+
+export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+        <>
+            <ScrollProgress />
             <Navbar />
             {children}
             <Footer />
-        </ThemeProvider>
+        </>
     );
 }

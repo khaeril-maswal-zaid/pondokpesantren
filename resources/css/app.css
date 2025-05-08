@@ -79,24 +79,25 @@
 
 :root {
     --background: oklch(1 0 0);
-    --foreground: oklch(0.191 0.137 276.6);
+    --foreground: oklch(0.2126 0.1228 287.1);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.191 0.137 276.6);
+    --card-foreground: oklch(0.2126 0.1228 287.1);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.191 0.137 276.6);
-    --primary: oklch(0.617 0.205 145.5);
-    --primary-foreground: oklch(0.982 0.009 249);
-    --secondary: oklch(0.933 0.031 145.8);
-    --secondary-foreground: oklch(0.247 0.072 277);
-    --muted: oklch(0.965 0.015 249.2);
-    --muted-foreground: oklch(0.542 0.045 261.5);
-    --accent: oklch(0.962 0.064 145.5);
-    --accent-foreground: oklch(0.247 0.072 277);
-    --destructive: oklch(0.618 0.233 27);
-    --destructive-foreground: oklch(0.982 0.009 249);
-    --border: oklch(0.92 0.017 247.5);
-    --input: oklch(0.92 0.017 247.5);
-    --ring: oklch(0.617 0.205 145.5);
+    --popover-foreground: oklch(0.2126 0.1228 287.1);
+    --primary: oklch(0.6094 0.2154 262.7);
+    --primary-foreground: oklch(0.9646 0.0103 259.1);
+    --secondary: oklch(0.9531 0.0077 259.1);
+    --secondary-foreground: oklch(0.3033 0.0583 290.5);
+    --muted: oklch(0.9531 0.0077 259.1);
+    --muted-foreground: oklch(0.5377 0.0591 261.4);
+    --accent: oklch(0.9497 0.0761 260.1);
+    --accent-foreground: oklch(0.3033 0.0583 290.5);
+    --destructive: oklch(0.6274 0.2479 28.2);
+    --destructive-foreground: oklch(0.9646 0.0103 259.1);
+    --border: oklch(0.9303 0.0309 260.4);
+    --input: oklch(0.9303 0.0309 260.4);
+    --ring: oklch(0.6094 0.2154 262.7);
+    --radius: 0.5rem;
 
     /* --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -117,12 +118,12 @@
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.87 0 0); */
+    /* --radius: 0.625rem; */
     --chart-1: oklch(0.646 0.222 41.116);
     --chart-2: oklch(0.6 0.118 184.704);
     --chart-3: oklch(0.398 0.07 227.392);
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.205 0 0);
@@ -179,11 +180,12 @@
 }
 
 .islamic-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23128a42' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4H6zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 .fade-in {
-    animation: fadeIn 0.8s ease-in-out;
+    animation: fadeIn 0.8s ease-in-out forwards;
+    opacity: 0;
 }
 
 @keyframes fadeIn {
@@ -208,4 +210,40 @@
 .slide-up.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Parallax utilities */
+.parallax-bg {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.parallax-slow {
+    transition: transform 0.1s ease-out;
+}
+
+.parallax-medium {
+    transition: transform 0.05s ease-out;
+}
+
+.parallax-fast {
+    transition: transform 0.025s ease-out;
+}
+
+.wave-pattern {
+    background-color: #f8fafc;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='50px' viewBox='0 0 1280 140' preserveAspectRatio='none'%3E%3Cg fill='%233b82f6' fill-opacity='0.1'%3E%3Cpath d='M0 140L1280 60L1280 0L0 0Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100% 50px;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+.wave-pattern-top {
+    background-color: #f8fafc;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='50px' viewBox='0 0 1280 140' preserveAspectRatio='none'%3E%3Cg fill='%233b82f6' fill-opacity='0.1'%3E%3Cpath d='M0 0L1280 80L1280 140L0 140Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100% 50px;
+    background-repeat: no-repeat;
+    background-position: top;
 }

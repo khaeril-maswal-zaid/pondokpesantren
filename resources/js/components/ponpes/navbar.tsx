@@ -1,160 +1,160 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Switch } from '@/components/ui/switch';
-import { Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
-import { ChevronDown, Menu, Search } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Link, usePage } from '@inertiajs/react';
+import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const sections = ['beranda', 'tentang', 'layanan', 'kontak'];
+export default function Navbar() {
+    const { name } = usePage().props;
 
-const Navbar = () => {
-    const [scrolled, setScrolled] = useState(false);
-    const [searchOpen, setSearchOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('beranda');
-    const [progress, setProgress] = useState(0);
-    const [open, setOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
-            const scrollY = window.scrollY;
-            setScrolled(scrollY > 10);
-
-            const scrollTop = window.scrollY;
-            const docHeight = document.body.scrollHeight - window.innerHeight;
-            const scrolledPercent = (scrollTop / docHeight) * 100;
-            setProgress(scrolledPercent);
-
-            for (const id of sections) {
-                const el = document.getElementById(id);
-                if (el) {
-                    const rect = el.getBoundingClientRect();
-                    if (rect.top <= 100 && rect.bottom >= 100) {
-                        setActiveSection(id);
-                        break;
-                    }
-                }
+            if (window.scrollY > 10) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
             }
         };
+
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     return (
-        <>
-            <motion.div className="fixed top-0 right-0 left-0 z-[60] h-1 bg-green-900" style={{ width: `${progress}%` }} />
+        <header
+            className={cn(
+                'fixed top-0 right-0 left-0 z-50 transition-all duration-300',
+                isScrolled ? 'bg-white py-2 shadow-md' : 'bg-transparent py-4',
+            )}
+        >
+            <div className="container mx-auto flex items-center justify-between px-8">
+                <Link href="/" className="flex items-center">
+                    <div className="bg-primary mr-3 flex h-10 w-10 items-center justify-center rounded-full">
+                        <span className="font-arabic text-xl text-white">ع</span>
+                    </div>
+                    <span className={cn('text-xl font-bold transition-colors', isScrolled ? 'text-primary' : 'text-gray-50')}>Pesantren {name}</span>
+                </Link>
 
-            <header
-                className={`sticky top-0 z-50 backdrop-blur-md transition-all ${
-                    scrolled ? 'bg-green-600 shadow-md' : 'bg-white/60 dark:bg-black/40'
-                }`}
-            >
-                <div className="flex items-center justify-between px-4 py-3 md:px-8">
-                    {/* Logo */}
-                    <Link href="/" className={`text-xl font-bold ${scrolled ? 'text-gray-50' : 'text-green-700 dark:text-green-300'}`}>
-                        Pesantren Al-Zaid
+                {/* Desktop Navigation */}
+                <nav className="hidden items-center space-x-8 md:flex">
+                    <Link
+                        href="/"
+                        className={cn(
+                            'font-medium transition-colors',
+                            isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',
+                        )}
+                    >
+                        Beranda
                     </Link>
+                    <Link
+                        href="/#program"
+                        className={cn(
+                            'font-medium transition-colors',
+                            isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',
+                        )}
+                    >
+                        Program
+                    </Link>
+                    <Link
+                        href="/#tokoh"
+                        className={cn(
+                            'font-medium transition-colors',
+                            isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',
+                        )}
+                    >
+                        Struktur
+                    </Link>
+                    <Link
+                        href="/#blog"
+                        className={cn(
+                            'font-medium transition-colors',
+                            isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',
+                        )}
+                    >
+                        Blog
+                    </Link>
+                    <Link
+                        href="/#kontak"
+                        className={cn(
+                            'font-medium transition-colors',
+                            isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',
+                        )}
+                    >
+                        Kontak
+                    </Link>
+                    <Link href={route('santri-baru.info')}>
+                        <Button
+                            className={cn(
+                                'transition-colors',
+                                isScrolled ? 'bg-primary hover:bg-primary/90 text-white' : 'text-primary bg-white hover:bg-gray-100',
+                            )}
+                        >
+                            Daftar
+                        </Button>
+                    </Link>
+                </nav>
 
-                    {/* Desktop nav */}
-                    <nav className="hidden items-center space-x-6 md:flex">
+                {/* Mobile Menu Button */}
+                <button
+                    className={cn('transition-colors md:hidden', isScrolled ? 'text-gray-800' : 'text-gray-50')}
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                    {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </div>
+
+            {/* Mobile Navigation */}
+            {isMenuOpen && (
+                <div className="bg-white shadow-lg md:hidden">
+                    <div className="container mx-auto flex flex-col space-y-4 px-8 py-4">
                         <Link
-                            href="#beranda"
-                            className={`${activeSection === 'beranda' ? 'font-semibold' : ''} ${scrolled ? 'text-gray-50' : 'text-green-700 dark:text-green-300'}`}
+                            href="/"
+                            className="hover:text-primary py-2 font-medium text-gray-800 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
                         >
                             Beranda
                         </Link>
-
                         <Link
-                            href="#tentang"
-                            className={`${activeSection === 'beranda' ? 'font-semibold' : ''} ${scrolled ? 'text-gray-50' : 'text-green-700 dark:text-green-300'}`}
+                            href="/#program"
+                            className="hover:text-primary py-2 font-medium text-gray-800 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
                         >
-                            Tentang
+                            Program
                         </Link>
-
-                        <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-                                <div className="flex cursor-pointer items-center gap-1">
-                                    <span className={`hover:font-semibold ${scrolled ? 'text-gray-50' : 'text-green-700 dark:text-green-300'}`}>
-                                        Program Utama
-                                    </span>
-                                    <ChevronDown size={16} className={`${scrolled ? 'text-gray-50' : ''}`} />
-                                </div>
-                            </PopoverTrigger>
-
-                            <PopoverContent
-                                onMouseEnter={() => setOpen(true)}
-                                onMouseLeave={() => setOpen(false)}
-                                className="w-40 space-y-2 bg-green-50"
-                                sideOffset={4} // jarak dari trigger
-                            >
-                                <a href="#konsultasi" className="block hover:underline">
-                                    Tahfidz Al-Qur'an
-                                </a>
-                                <a href="#pelatihan" className="block hover:underline">
-                                    Bahasa Arab & Inggris
-                                </a>
-                                <a href="#pelatihan" className="block hover:underline">
-                                    Kitab Kuning
-                                </a>
-                                <a href="#pelatihan" className="block hover:underline">
-                                    Ekstrakurikuler
-                                </a>
-                            </PopoverContent>
-                        </Popover>
-
                         <Link
-                            href="#kontak"
-                            className={`${activeSection === 'beranda' ? 'font-semibold' : ''} ${scrolled ? 'text-gray-50' : 'text-green-700 dark:text-green-300'}`}
+                            href="/#tokoh"
+                            className="hover:text-primary py-2 font-medium text-gray-800 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Struktur
+                        </Link>
+                        <Link
+                            href="/#blog"
+                            className="hover:text-primary py-2 font-medium text-gray-800 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Blog
+                        </Link>
+                        <Link
+                            href="/#kontak"
+                            className="hover:text-primary py-2 font-medium text-gray-800 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
                         >
                             Kontak
                         </Link>
-                    </nav>
-
-                    <div className="flex items-center gap-2">
-                        {searchOpen && (
-                            <Input
-                                type="text"
-                                placeholder="Cari..."
-                                className={`w-48 ${scrolled ? 'border-gray-50 text-gray-50 placeholder:text-gray-50 focus-visible:border-gray-700 focus-visible:ring-[3px] focus-visible:ring-gray-50' : 'border-green-700'} border-2`}
-                            />
-                        )}
-                        <Button variant="ghost" size="icon" onClick={() => setSearchOpen(!searchOpen)} aria-label="Toggle Search">
-                            <Search size={18} />
-                        </Button>
-                        <Switch className={`${scrolled ? 'data-[state=checked]:bg-amber-300' : ''} hidden md:flex`} />
-
-                        <Link href={route('santri-baru.create')} as="button">
-                            <Button
-                                className={`${scrolled ? 'bg-gray-800 hover:bg-gray-950 focus:ring-4 focus:ring-gray-500 focus:outline-none' : 'focus:ring-4 focus:ring-green-300 focus:outline-none'} hidden md:flex`}
-                                variant="default"
-                            >
-                                Daftar
-                            </Button>
+                        <Link href={route('santri-baru.info')} onClick={() => setIsMenuOpen(false)}>
+                            <Button className="bg-primary hover:bg-primary/90 w-full text-white">Daftar</Button>
                         </Link>
-
-                        {/* Mobile Nav */}
-                        <Sheet>
-                            <SheetTrigger className="md:hidden">
-                                <Menu />
-                            </SheetTrigger>
-                            <SheetContent side="right">
-                                <nav className="m-4 flex flex-col space-y-4">
-                                    <Link href="#beranda">Beranda</Link>
-                                    <Link href="#tentang">Tentang</Link>
-                                    <Link href="#layanan">Layanan</Link>
-                                    <Link href="#kontak">Kontak</Link>
-                                    <Switch />
-                                    <Button variant="default">Daftar</Button>
-                                </nav>
-                            </SheetContent>
-                        </Sheet>
                     </div>
                 </div>
-            </header>
-        </>
+            )}
+        </header>
     );
-};
-
-export default Navbar;
+}

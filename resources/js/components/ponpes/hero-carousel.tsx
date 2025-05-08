@@ -1,34 +1,27 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Image } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
-const slides = [
-    {
-        image: '/placeholder.svg?height=800&width=1920',
-        quote: 'اطلبوا العلم من المهد إلى اللحد',
-        translation: 'Carilah ilmu sejak dari buaian hingga ke liang lahat',
-    },
-    {
-        image: '/placeholder.svg?height=800&width=1920',
-        quote: 'إنما الأعمال بالنيات',
-        translation: 'Sesungguhnya setiap amalan tergantung pada niatnya',
-    },
-    {
-        image: '/placeholder.svg?height=800&width=1920',
-        quote: 'خير الناس أنفعهم للناس',
-        translation: 'Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya',
-    },
-];
-
-export default function HeroCarousel() {
+export default function HeroCarousel({ slides }) {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [scrollY, setScrollY] = useState(0);
+    const heroRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
         }, 5000);
         return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrollY(window.scrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const nextSlide = () => {
@@ -40,14 +33,18 @@ export default function HeroCarousel() {
     };
 
     return (
-        <div className="relative h-[600px] w-full overflow-hidden">
+        <div ref={heroRef} className="relative h-[600px] w-full overflow-hidden">
             {slides.map((slide, index) => (
                 <div
                     key={index}
                     className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+                    style={{ transform: `translateY(${scrollY * 0.5}px)` }}
                 >
-                    <Image src={slide.image || '/placeholder.svg'} alt={`Slide ${index + 1}`} className="object-cover" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-white">
+                    <img src={`/storage/${slide.image}` || '/placeholder.svg'} alt={`Slide ${index + 1}`} className="h-full w-full object-cover" />
+                    <div
+                        className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-white"
+                        style={{ transform: `translateY(${scrollY * -0.2}px)` }}
+                    >
                         <h2 className="font-arabic mb-4 text-center text-4xl md:text-5xl">{slide.quote}</h2>
                         <p className="max-w-3xl text-center text-xl md:text-2xl">{slide.translation}</p>
                     </div>
@@ -56,20 +53,20 @@ export default function HeroCarousel() {
 
             <button
                 onClick={prevSlide}
-                className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50"
+                className="absolute top-1/2 left-4 z-10 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50"
                 aria-label="Previous slide"
             >
                 <ChevronLeft size={24} />
             </button>
             <button
                 onClick={nextSlide}
-                className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50"
+                className="absolute top-1/2 right-4 z-10 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50"
                 aria-label="Next slide"
             >
                 <ChevronRight size={24} />
             </button>
 
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 space-x-2">
+            <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 space-x-2">
                 {slides.map((_, index) => (
                     <button
                         key={index}

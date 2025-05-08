@@ -34,13 +34,3 @@ jobs:
             ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/build/
 
         shell: bash
-
-      # - name: Copy build to hosting via SCP
-      #   uses: appleboy/scp-action@v0.1.4
-      #   with:
-      #     host: 145.223.108.130
-      #     username: u446959717
-      #     port: 65002
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     source: 'public/build/**'
-      #     target: '/home/u446959717/domains/pintuperadaban.com/public_html/Webcrafters_pondokpesantren/' # <- ganti dengan folder tujuan kamu

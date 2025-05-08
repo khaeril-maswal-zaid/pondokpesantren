@@ -22,7 +22,7 @@ class SantriBaruController extends Controller
      */
     public function create()
     {
-        return Inertia::render('ponpes/FormPendaftaran');
+        return Inertia::render('ponpes/pendaftaran/page');
     }
 
     /**
@@ -63,5 +63,10 @@ class SantriBaruController extends Controller
     public function destroy(SantriBaru $santriBaru)
     {
         //
+    }
+
+    public function informasi()
+    {
+        return Inertia::render('ponpes/pendaftaran/page');
     }
 }
