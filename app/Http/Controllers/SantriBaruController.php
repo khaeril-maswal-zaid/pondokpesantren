@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSantriBaruRequest;
 use App\Http\Requests\UpdateSantriBaruRequest;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SantriBaruController extends Controller
 {
@@ -31,6 +32,17 @@ class SantriBaruController extends Controller
      */
     public function store(StoreSantriBaruRequest $request)
     {
+        $base64Image = $request->foto;
+        [$type, $data] = explode(';', $base64Image);
+        [, $extension] = explode('/', $type); // jpeg, png
+        [, $base64Data] = explode(',', $data);
+
+        $filename = uniqid() . '-' . $request->namaLengkap . '.' . $extension;
+
+        Storage::disk('public')->put("image/santribaru/{$filename}", base64_decode($base64Data));
+
+        $imagePath = "image/{$filename}";
+
         SantriBaru::create([
             'nik' => $request->nik,
             'nama_lengkap' => $request->namaLengkap,
@@ -52,6 +64,7 @@ class SantriBaruController extends Controller
             'nama_sekolah' => $request->namaSekolah,
             'nisn' => $request->nisn,
             'tahun_tamat' => $request->tahunTamat,
+            'foto' => $imagePath,
         ]);
     }
 

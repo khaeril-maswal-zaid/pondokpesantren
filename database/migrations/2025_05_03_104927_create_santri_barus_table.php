@@ -33,9 +33,10 @@ return new class extends Migration
             $table->string('kontak_ibu');
 
             // Asal Sekolah
-            $table->string('nama_sekolah');
+            $table->enum('jenjang', ['MI', 'MTs', 'MA']);
+            $table->string('nama_sekolah')->nullable();
             $table->string('nisn')->nullable();
-            $table->string('tahun_tamat');
+            $table->string('tahun_tamat')->nullable();
 
             // Foto
             $table->string('foto')->nullable();

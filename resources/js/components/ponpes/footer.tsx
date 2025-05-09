@@ -1,13 +1,14 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 
 export default function Footer() {
+    const { name } = usePage().props;
     return (
         <footer className="bg-blue-800 text-white">
             <div className="container mx-auto px-8 py-12">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     <div>
-                        <h3 className="mb-4 text-xl font-bold">Pondok Pesantren Al-Zaid</h3>
+                        <h3 className="mb-4 text-xl font-bold">Pondok Pesantren {name}</h3>
                         <p className="mb-4">
                             Lembaga pendidikan Islam yang mengintegrasikan nilai-nilai tradisional dengan pendidikan modern untuk mencetak generasi
                             berakhlak mulia.
@@ -102,12 +103,14 @@ export default function Footer() {
                         <address className="not-italic">
                             <p className="mb-2">Jl. Pesantren No. 123, Kelurahan Contoh, Kecamatan Contoh, Kota Contoh, Provinsi Contoh, 12345</p>
                             <p className="mb-2">Telepon: (021) 1234-5678</p>
-                            <p className="mb-2">Email: info@pesantrenalzaid.ac.id</p>
+                            <p className="mb-2">Email: info@ubaybinkaab.ponpes.id</p>
                         </address>
                     </div>
                 </div>
                 <div className="mt-8 border-t border-blue-700 pt-8 text-center">
-                    <p>&copy; {new Date().getFullYear()} Pondok Pesantren Al-Zaid. Hak Cipta Dilindungi.</p>
+                    <p>
+                        &copy; {new Date().getFullYear()} Pondok Pesantren {name}. Hak Cipta Dilindungi.
+                    </p>
                 </div>
             </div>
         </footer>

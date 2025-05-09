@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SantriBaruController;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/penerimaan-santri-baru', [SantriBaruController::class, 'informasi'])->name('santri-baru.info');
 Route::get('/penerimaan-santri-baru/pendaftaran', [SantriBaruController::class, 'create'])->name('santri-baru.create');
 Route::post('/penerimaan-santri-baru/store', [SantriBaruController::class, 'store'])->name('santri-baru.store');
+
+Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('/cripto-ts-analisis', [HomeController::class, 'cripto'])->name('home.cripto');
 

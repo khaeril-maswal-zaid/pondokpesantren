@@ -1,7 +1,8 @@
 'use client';
 
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+import { Button } from '../ui/button';
 
 export default function AboutSection({ about }) {
     const { name } = usePage().props;
@@ -64,20 +65,11 @@ export default function AboutSection({ about }) {
                     </div>
 
                     <div className="col-span-1 rounded-lg bg-white p-6 shadow-md md:col-span-7">
-                        <h3 className="mb-4 text-xl font-bold">Sejarah Singkat</h3>
-                        <p className="mb-4 text-gray-700">
-                            Pondok Pesantren Al-Zaid didirikan pada tahun 1985 oleh KH. Ahmad Zaid dengan visi mencetak generasi yang berilmu,
-                            berakhlak mulia, dan bermanfaat bagi umat. Pesantren kami menggabungkan pendidikan Islam tradisional dengan pendidikan
-                            modern untuk mempersiapkan santri menghadapi tantangan zaman.
-                        </p>
-                        <p className="mb-4 text-gray-700">
-                            Nilai-nilai yang kami pegang teguh adalah keikhlasan, kesederhanaan, kemandirian, ukhuwah Islamiyah, dan kebebasan yang
-                            bertanggung jawab. Kami percaya bahwa pendidikan yang baik harus menyeimbangkan aspek intelektual, spiritual, dan sosial.
-                        </p>
-                        <p className="text-gray-700">
-                            Selama lebih dari tiga dekade, Pondok Pesantren Al-Zaid telah melahirkan ribuan alumni yang tersebar di berbagai bidang
-                            dan profesi, memberikan kontribusi positif bagi masyarakat dan bangsa.
-                        </p>
+                        <h3 className="mb-4 text-xl font-bold">{about?.title}</h3>
+                        <div dangerouslySetInnerHTML={{ __html: about?.body1 }} className="mb-3 line-clamp-9" />
+                        <Link href={route('blog.show', { slug: 'tentang-kami' })} className="col-span-1">
+                            <Button variant={'default'}>Lihat selengkapnya</Button>
+                        </Link>
                     </div>
                 </div>
             </div>

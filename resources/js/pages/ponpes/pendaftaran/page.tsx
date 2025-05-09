@@ -1,10 +1,11 @@
 'use client';
 
+import HeroPage from '@/components/ponpes/hero-page';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/ponpes-layout';
-import { Link } from '@inertiajs/react';
-import { ArrowRight, Calendar, CheckCircle, Download, FileText, HelpCircle } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { ArrowRight, Calendar, CheckCircle, FileText, HelpCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function PendaftaranPage() {
@@ -55,31 +56,16 @@ export default function PendaftaranPage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const { name } = usePage().props;
+
     return (
         <>
+            <Head title="Pendaftaran Santri Baru" />
             <Layout>
                 <main className="pb-16">
-                    <div className="container mx-auto px-4">
-                        {/* Header with Parallax */}
-                        <div ref={headerRef} className="relative h-[400px] overflow-hidden">
-                            <div
-                                className="absolute inset-0 bg-cover bg-center"
-                                style={{
-                                    backgroundImage: "url('/placeholder.svg?height=800&width=1920')",
-                                    transform: `translateY(${scrollY * 0.1}px)`,
-                                }}
-                            ></div>
-                            <div className="bg-primary/70 absolute inset-0"></div>
-                            <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
-                                <div className="text-primary mb-4 inline-block rounded bg-white px-3 py-1 text-sm font-semibold">Informasi</div>
-                                <h1 className="mb-4 text-center text-4xl font-bold text-white md:text-5xl">Pendaftaran Santri Baru</h1>
-                                <p className="mx-auto max-w-3xl text-center text-xl text-white/90">
-                                    Pondok Pesantren Al-Zaid membuka pendaftaran santri baru untuk tahun ajaran 2023/2024. Silakan ikuti petunjuk
-                                    pendaftaran di bawah ini.
-                                </p>
-                            </div>
-                        </div>
+                    <HeroPage />
 
+                    <div className="container mx-auto mt-16 px-5">
                         {/* Syarat Pendaftaran */}
                         <section ref={sectionRefs.syarat} id="syarat" className="mb-16 opacity-0">
                             <div className="rounded-lg bg-white p-8 shadow-md">
@@ -98,7 +84,7 @@ export default function PendaftaranPage() {
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     1
                                                 </span>
-                                                <span>Muslim/Muslimah yang beriman dan bertaqwa kepada Allah SWT</span>
+                                                <span>Beragama Islam</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
@@ -116,7 +102,7 @@ export default function PendaftaranPage() {
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     4
                                                 </span>
-                                                <span>Sehat jasmani dan rohani (dibuktikan dengan surat keterangan dokter)</span>
+                                                <span>Sehat jasmani dan rohani</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
@@ -134,7 +120,7 @@ export default function PendaftaranPage() {
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     1
                                                 </span>
-                                                <span>Mampu membaca Al-Qur'an dengan baik</span>
+                                                <span>Mampu membaca Al-Qur'an</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
@@ -160,6 +146,12 @@ export default function PendaftaranPage() {
                                                 </span>
                                                 <span>Bersedia tinggal di asrama pesantren</span>
                                             </li>
+                                            <li className="flex items-start">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                    6
+                                                </span>
+                                                <span>Bersedia untuk tidak pindah sekolah selama minimal 3 tahun</span>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -184,29 +176,23 @@ export default function PendaftaranPage() {
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     1
                                                 </span>
-                                                <span>Formulir pendaftaran yang telah diisi lengkap (dapat diunduh di website)</span>
+                                                <span>Fotokopi ijazah dan SKHUN terakhir yang dilegalisir (3 lembar)</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     2
                                                 </span>
-                                                <span>Fotokopi ijazah dan SKHUN terakhir yang dilegalisir (3 lembar)</span>
+                                                <span>Fotokopi rapor 2 semester terakhir yang dilegalisir (2 lembar)</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     3
                                                 </span>
-                                                <span>Fotokopi rapor 2 semester terakhir yang dilegalisir (2 lembar)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
-                                                    4
-                                                </span>
                                                 <span>Fotokopi akta kelahiran (3 lembar)</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
-                                                    5
+                                                    4
                                                 </span>
                                                 <span>Fotokopi Kartu Keluarga (3 lembar)</span>
                                             </li>
@@ -220,40 +206,22 @@ export default function PendaftaranPage() {
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     1
                                                 </span>
-                                                <span>Surat keterangan sehat dari dokter (asli)</span>
+                                                <span>Surat pernyataan kesanggupan mematuhi peraturan (bermaterai)</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     2
                                                 </span>
-                                                <span>Pas foto berwarna ukuran 3x4 (6 lembar) dan 2x3 (4 lembar)</span>
+                                                <span>Fotokopi piagam prestasi (jika ada)</span>
                                             </li>
                                             <li className="flex items-start">
                                                 <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
                                                     3
                                                 </span>
-                                                <span>Surat pernyataan kesanggupan mematuhi peraturan (bermaterai)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
-                                                    4
-                                                </span>
-                                                <span>Fotokopi piagam prestasi (jika ada)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
-                                                    5
-                                                </span>
                                                 <span>Surat rekomendasi dari sekolah/madrasah asal (jika ada)</span>
                                             </li>
                                         </ul>
                                     </div>
-                                </div>
-
-                                <div className="mt-8 flex justify-center">
-                                    <Button className="bg-primary hover:bg-primary/90">
-                                        <Download className="mr-2 h-4 w-4" /> Unduh Formulir Pendaftaran
-                                    </Button>
                                 </div>
                             </div>
                         </section>
@@ -274,12 +242,12 @@ export default function PendaftaranPage() {
                                         <div className="bg-primary absolute left-1/2 -ml-0.5 h-full w-1"></div>
                                         <div className="grid grid-cols-2 gap-8">
                                             {/* Step 1 */}
-                                            <div className="relative pb-12">
+                                            <div className="relative">
                                                 <div className="flex justify-end">
                                                     <div className="w-5/6 pr-8">
                                                         <h3 className="mb-2 text-right text-xl font-bold">Pendaftaran Online</h3>
                                                         <p className="text-right text-gray-600">
-                                                            Calon santri melakukan pendaftaran online melalui website resmi Pondok Pesantren Al-Zaid
+                                                            Calon santri melakukan pendaftaran online melalui website resmi Pondok Pesantren {name}
                                                             dan mengisi formulir dengan lengkap.
                                                         </p>
                                                     </div>
@@ -288,11 +256,11 @@ export default function PendaftaranPage() {
                                                     1
                                                 </div>
                                             </div>
-                                            <div className="pb-12"></div>
+                                            <div className=""></div>
 
                                             {/* Step 2 */}
-                                            <div className="pb-12"></div>
-                                            <div className="relative pb-12">
+                                            <div className=""></div>
+                                            <div className="relative">
                                                 <div className="flex">
                                                     <div className="w-5/6 pl-8">
                                                         <h3 className="mb-2 text-xl font-bold">Pembayaran Biaya Pendaftaran</h3>
@@ -308,7 +276,7 @@ export default function PendaftaranPage() {
                                             </div>
 
                                             {/* Step 3 */}
-                                            <div className="relative pb-12">
+                                            <div className="relative">
                                                 <div className="flex justify-end">
                                                     <div className="w-5/6 pr-8">
                                                         <h3 className="mb-2 text-right text-xl font-bold">Verifikasi Dokumen</h3>
@@ -322,11 +290,11 @@ export default function PendaftaranPage() {
                                                     3
                                                 </div>
                                             </div>
-                                            <div className="pb-12"></div>
+                                            <div className=""></div>
 
                                             {/* Step 4 */}
-                                            <div className="pb-12"></div>
-                                            <div className="relative pb-12">
+                                            <div className=""></div>
+                                            <div className="relative">
                                                 <div className="flex">
                                                     <div className="w-5/6 pl-8">
                                                         <h3 className="mb-2 text-xl font-bold">Tes Seleksi</h3>
@@ -342,7 +310,7 @@ export default function PendaftaranPage() {
                                             </div>
 
                                             {/* Step 5 */}
-                                            <div className="relative pb-12">
+                                            <div className="relative">
                                                 <div className="flex justify-end">
                                                     <div className="w-5/6 pr-8">
                                                         <h3 className="mb-2 text-right text-xl font-bold">Pengumuman Hasil Seleksi</h3>
@@ -356,10 +324,10 @@ export default function PendaftaranPage() {
                                                     5
                                                 </div>
                                             </div>
-                                            <div className="pb-12"></div>
+                                            <div className=""></div>
 
                                             {/* Step 6 */}
-                                            <div className="pb-12"></div>
+                                            <div className=""></div>
                                             <div className="relative">
                                                 <div className="flex">
                                                     <div className="w-5/6 pl-8">
@@ -386,7 +354,7 @@ export default function PendaftaranPage() {
                                             </div>
                                             <h3 className="mb-2 text-xl font-bold">Pendaftaran Online</h3>
                                             <p className="text-gray-600">
-                                                Calon santri melakukan pendaftaran online melalui website resmi Pondok Pesantren Al-Zaid dan mengisi
+                                                Calon santri melakukan pendaftaran online melalui website resmi Pondok Pesantren {name} dan mengisi
                                                 formulir dengan lengkap.
                                             </p>
                                         </div>
@@ -398,8 +366,7 @@ export default function PendaftaranPage() {
                                             </div>
                                             <h3 className="mb-2 text-xl font-bold">Pembayaran Biaya Pendaftaran</h3>
                                             <p className="text-gray-600">
-                                                Melakukan pembayaran biaya pendaftaran sebesar Rp 300.000 melalui transfer bank ke rekening resmi
-                                                pesantren.
+                                                Pendaftaran Gratis. Tidak ada biaya apapun yang dikenakan untuk proses pendaftaran santri baru.
                                             </p>
                                         </div>
 
@@ -445,8 +412,8 @@ export default function PendaftaranPage() {
                                             </div>
                                             <h3 className="mb-2 text-xl font-bold">Registrasi Ulang & Masuk Pesantren</h3>
                                             <p className="text-gray-600">
-                                                Bagi yang diterima, melakukan registrasi ulang dengan melunasi biaya pendidikan dan masuk pesantren
-                                                sesuai jadwal yang ditentukan.
+                                                Bagi yang diterima, melakukan registrasi ulang dengan melunasi biaya pendidikan (Biaya daftar ulang)
+                                                dan masuk pesantren sesuai jadwal yang ditentukan.
                                             </p>
                                         </div>
                                     </div>
@@ -476,33 +443,33 @@ export default function PendaftaranPage() {
                                         <tbody>
                                             <tr>
                                                 <td className="border p-3 font-medium">Pendaftaran Online</td>
-                                                <td className="border p-3">1 Januari - 28 Februari 2023</td>
-                                                <td className="border p-3">1 Maret - 30 April 2023</td>
+                                                <td className="border p-3">1 Februari - 30 April 2025</td>
+                                                <td className="border p-3">1 Juni - 31 Juli 2025</td>
                                             </tr>
                                             <tr>
                                                 <td className="border p-3 font-medium">Verifikasi Berkas</td>
-                                                <td className="border p-3">1 - 5 Maret 2023</td>
-                                                <td className="border p-3">1 - 5 Mei 2023</td>
+                                                <td className="border p-3">1 - 5 Mei 2025</td>
+                                                <td className="border p-3">1 - 5 Agustus 2025</td>
                                             </tr>
                                             <tr>
                                                 <td className="border p-3 font-medium">Tes Seleksi</td>
-                                                <td className="border p-3">11 - 12 Maret 2023</td>
-                                                <td className="border p-3">13 - 14 Mei 2023</td>
+                                                <td className="border p-3">10 - 11 Mei 2025</td>
+                                                <td className="border p-3">10 - 11 Agustus 2025</td>
                                             </tr>
                                             <tr>
                                                 <td className="border p-3 font-medium">Pengumuman Hasil</td>
-                                                <td className="border p-3">20 Maret 2023</td>
-                                                <td className="border p-3">20 Mei 2023</td>
+                                                <td className="border p-3">15 Mei 2025</td>
+                                                <td className="border p-3">15 Agustus 2025</td>
                                             </tr>
                                             <tr>
                                                 <td className="border p-3 font-medium">Registrasi Ulang</td>
-                                                <td className="border p-3">21 - 31 Maret 2023</td>
-                                                <td className="border p-3">21 - 31 Mei 2023</td>
+                                                <td className="border p-3">16 - 25 Mei 2025</td>
+                                                <td className="border p-3">16 - 25 Agustus 2025</td>
                                             </tr>
                                             <tr>
                                                 <td className="border p-3 font-medium">Masuk Pesantren</td>
                                                 <td className="border p-3" colSpan={2}>
-                                                    15 Juli 2023
+                                                    1 September 2025
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -535,17 +502,32 @@ export default function PendaftaranPage() {
 
                                 <Accordion type="single" collapsible className="w-full">
                                     <AccordionItem value="item-1">
-                                        <AccordionTrigger>Berapa biaya pendidikan di Pondok Pesantren Al-Zaid?</AccordionTrigger>
+                                        <AccordionTrigger>Berapa biaya pendidikan di Pondok Pesantren {name}?</AccordionTrigger>
                                         <AccordionContent>
-                                            <p>Biaya pendidikan di Pondok Pesantren Al-Zaid terdiri dari beberapa komponen:</p>
-                                            <ul className="mt-2 list-disc space-y-1 pl-5">
-                                                <li>Biaya pendaftaran: Rp 300.000</li>
-                                                <li>Biaya masuk (sekali bayar): Rp 5.000.000</li>
-                                                <li>SPP bulanan: Rp 1.200.000</li>
-                                                <li>Biaya makan dan asrama: Rp 800.000 per bulan</li>
-                                            </ul>
+                                            <p>Biaya pendidikan di Pondok Pesantren {name} terdiri dari beberapa komponen:</p>
+
+                                            <ol className="mt-2 list-decimal space-y-1 pl-5">
+                                                <li>Biaya pendaftaran: Gratis</li>
+                                                <li>
+                                                    Biaya daftar ulang: Rp 1.000.000
+                                                    <ol className="mt-1 list-disc space-y-1 pl-6">
+                                                        <li>Biaya bulanan (Juli 2025) : Rp.600.000 *</li>
+                                                        <li>Kegiatan Organisasi (Tahun 2025) : Rp.250.000 **</li>
+                                                        <li>Pemeliharaan sarana & prasarana (Tahun 2025) : Rp.600.000 **</li>
+                                                        <li>Uang pangkal: Rp. 1.000.000 ***</li>
+                                                        <li>Raport, Papan Nama & ID Card: Rp.300.000 ***</li>
+                                                    </ol>
+                                                </li>
+                                            </ol>
+
+                                            <div className="mt-2 space-y-1 text-sm">
+                                                <p>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dibayar per bulan</p>
+                                                <p>**&nbsp;&nbsp;&nbsp; : Dibayar per tahun</p>
+                                                <p>***&nbsp; : Dibayar sekali</p>
+                                            </div>
+
                                             <p className="mt-2">
-                                                Pondok Pesantren Al-Zaid juga menyediakan beasiswa bagi santri berprestasi dan santri dari keluarga
+                                                Pondok Pesantren {name} juga menyediakan beasiswa bagi santri berprestasi dan santri dari keluarga
                                                 kurang mampu.
                                             </p>
                                         </AccordionContent>
@@ -554,7 +536,7 @@ export default function PendaftaranPage() {
                                     <AccordionItem value="item-2">
                                         <AccordionTrigger>Apakah ada program beasiswa yang tersedia?</AccordionTrigger>
                                         <AccordionContent>
-                                            Ya, Pondok Pesantren Al-Zaid menyediakan beberapa program beasiswa:
+                                            Ya, Pondok Pesantren {name} menyediakan beberapa program beasiswa:
                                             <ul className="mt-2 list-disc space-y-1 pl-5">
                                                 <li>Beasiswa Tahfidz bagi penghafal Al-Qur'an minimal 5 juz</li>
                                                 <li>Beasiswa Prestasi bagi siswa berprestasi akademik dan non-akademik</li>
@@ -569,7 +551,7 @@ export default function PendaftaranPage() {
                                     <AccordionItem value="item-3">
                                         <AccordionTrigger>Apa saja fasilitas yang tersedia di pesantren?</AccordionTrigger>
                                         <AccordionContent>
-                                            Pondok Pesantren Al-Zaid dilengkapi dengan berbagai fasilitas untuk menunjang kegiatan belajar dan
+                                            Pondok Pesantren {name} dilengkapi dengan berbagai fasilitas untuk menunjang kegiatan belajar dan
                                             kehidupan santri, antara lain:
                                             <ul className="mt-2 list-disc space-y-1 pl-5">
                                                 <li>Asrama putra dan putri terpisah</li>
@@ -589,7 +571,7 @@ export default function PendaftaranPage() {
                                     <AccordionItem value="item-4">
                                         <AccordionTrigger>Bagaimana jadwal kegiatan santri sehari-hari?</AccordionTrigger>
                                         <AccordionContent>
-                                            Jadwal kegiatan santri di Pondok Pesantren Al-Zaid dirancang untuk menyeimbangkan pendidikan formal,
+                                            Jadwal kegiatan santri di Pondok Pesantren {name} dirancang untuk menyeimbangkan pendidikan formal,
                                             pendidikan agama, dan pengembangan diri. Secara umum, jadwal harian santri adalah sebagai berikut:
                                             <ul className="mt-2 list-disc space-y-1 pl-5">
                                                 <li>03.30 - 04.30: Bangun tidur, shalat tahajud</li>
@@ -635,13 +617,13 @@ export default function PendaftaranPage() {
                             <div
                                 className="from-primary/80 absolute inset-0 z-10 bg-gradient-to-r to-green-600/80"
                                 style={{
-                                    backgroundImage: "url('/placeholder.svg?height=400&width=1200')",
+                                    backgroundImage: "url('/storage/image/assets/hero-3.jpg')",
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     backgroundAttachment: 'fixed',
                                 }}
                             ></div>
-                            <div className="bg-primary/70 absolute inset-0 z-20"></div>
+                            <div className="absolute inset-0 z-20 bg-black/70"></div>
                             <div className="relative z-30">
                                 <h2
                                     className="mb-4 text-2xl font-bold text-white md:text-3xl"
@@ -653,7 +635,7 @@ export default function PendaftaranPage() {
                                     className="mx-auto mb-8 max-w-2xl text-white/90"
                                     //  style={{ transform: `translateY(${scrollY * 0.02}px)` }}
                                 >
-                                    Jadilah bagian dari keluarga besar Pondok Pesantren Al-Zaid dan raih masa depan cemerlang dengan pendidikan Islam
+                                    Jadilah bagian dari keluarga besar Pondok Pesantren {name} dan raih masa depan cemerlang dengan pendidikan Islam
                                     yang berkualitas.
                                 </p>
                                 <Link href={route('santri-baru.create')}>

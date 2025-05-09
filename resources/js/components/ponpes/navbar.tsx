@@ -36,9 +36,7 @@ export default function Navbar() {
         >
             <div className="container mx-auto flex items-center justify-between px-8">
                 <Link href="/" className="flex items-center">
-                    <div className="bg-primary mr-3 flex h-10 w-10 items-center justify-center rounded-full">
-                        <span className="font-arabic text-xl text-white">ع</span>
-                    </div>
+                    <img src={`storage/image/assets/logo.png`} alt="" className="mr-3 h-15" />
                     <span className={cn('text-xl font-bold transition-colors', isScrolled ? 'text-primary' : 'text-gray-50')}>Pesantren {name}</span>
                 </Link>
 

@@ -33,9 +33,9 @@ class HomeController extends Controller
             ],
 
             'about' => [
-                'title' => 'Sejarah Singkat',
+                'title' => 'Sejarah Pendirian Pondok Pesantren Ubay Bin Ka’ab Bulukumba',
                 'image' => 'image/assets/about.jpg',
-                'body1' => '<p class="mb-4 text-gray-700">Pondok Pesantren Al-Zaid didirikan pada tahun 1985 oleh KH. Ahmad Zaid dengan visi mencetak generasi yang berilmu, berakhlak mulia, dan bermanfaat bagi umat. Pesantren kami menggabungkan pendidikan Islam tradisional dengan pendidikan modern untuk mempersiapkan santri menghadapi tantangan zaman.</p><p class="mb-4 text-gray-700">Nilai-nilai yang kami pegang teguh adalah keikhlasan, kesederhanaan, kemandirian, ukhuwah Islamiyah, dan kebebasan yang bertanggung jawab. Kami percaya bahwa pendidikan yang baik harus menyeimbangkan aspek intelektual, spiritual, dan sosial.</p><p class="text-gray-700">Selama lebih dari tiga dekade, Pondok Pesantren Al-Zaid telah melahirkan ribuan alumni yang tersebar di berbagai bidang dan profesi, memberikan kontribusi positif bagi masyarakat dan bangsa.</p>',
+                'body1' => '<p class="mb-2 text-gray-800">Pondok Pesantren Ubay Bin Ka’ab Bulukumba dirintis pada bulan Juli tahun 2020 dan berlokasi di Lajae, Jawi-Jawi, Kabupaten Bulukumba. Lahan tempat berdirinya pesantren ini merupakan wakaf dari almarhumah Ibu Hj. Darniati, istri dari Bapak H. Rais Sanusi, seluas 50 x 50 meter persegi.</p><p class="mb-2 text-gray-800">Awalnya, tanah wakaf ini diamanahkan kepada Pondok Pesantren Darul Istiqamah Ponci. Namun, kemudian dialihkan dan dipindahwakafkan secara resmi kepada Yayasan Ubay Bin Ka’ab. Proses serah terima ini dilangsungkan langsung oleh Bapak H. Rais Sanusi kepada pihak yayasan, dengan disaksikan oleh Dr. Muzakkir Arif, Lc., M.A., Bapak Muh. Nasir, S.Pd., M.Pd., serta seluruh ahli waris.</p><p class="mb-2 text-gray-800">Untuk memenuhi kebutuhan pendidikan dan tempat belajar para santri, dibangun ruang kelas dan asrama dua lantai berukuran 7 x 21 meter di samping masjid. Alhamdulillah, pada tahun 2021 pembangunan tersebut telah rampung dan mulai dimanfaatkan oleh para santri.</p><p class="mb-2 text-gray-800">Seiring dengan perkembangan, Pondok Pesantren Ubay Bin Ka’ab Bulukumba kini telah membuka beberapa cabang:</p><ul class="list-disc list-inside ml-4 text-gray-700"><li><strong>Kampus 2</strong> di Desa Manyampa, Kecamatan Ujung Loe, di atas lahan hibah seluas 1 hektar dari Bapak Amiruddin, seorang pengusaha dan warga Manyampa.</li><li><strong>Kampus khusus santri putri</strong> di Ujung Bulu, Kota Bulukumba, tepatnya di Jalan Jati, yang merupakan wakaf dari Bapak H. Hendra, juga seorang pengusaha.</li></ul><p class="mb-2 text-gray-800">Pada tahun 2023, Yayasan Ubay Bin Ka’ab Bulukumba telah mengelola berbagai jenjang pendidikan formal, mulai dari Sekolah Dasar (SD), Madrasah Tsanawiyah/Sekolah Menengah Pertama (MTs/SMP), hingga Madrasah Aliyah/Sekolah Menengah Atas (MA/SMA). Selain itu, tersedia pula program pendidikan non-formal seperti <em>Tahfidz Day</em> dan <em>Tahfidz Weekend</em> untuk tingkat SD dan SMP.</p><p class="mb-2 text-gray-800">Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip <strong>menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah</strong>, berlandaskan dalil yang sahih. Pesantren ini juga secara tegas menolak segala bentuk kesyirikan, khurafat, tahayul, tathayyur, bid’ah, serta praktik-praktik yang bertentangan dengan syariat Islam.</p><p>Dengan semangat keikhlasan dan dakwah yang berlandaskan ilmu, Pondok Pesantren Ubay Bin Ka’ab Bulukumba berkomitmen menjadi pelita ilmu dan keimanan bagi generasi Muslim masa depan.</p>',
             ],
 
 
@@ -127,10 +127,5 @@ class HomeController extends Controller
         ];
 
         return Inertia::render('ponpes/Home', $data);
-    }
-
-    public function cripto()
-    {
-        return Inertia::render('ponpes/cripto/page');
     }
 }

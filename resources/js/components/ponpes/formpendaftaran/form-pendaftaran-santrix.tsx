@@ -1,12 +1,16 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from '@inertiajs/react';
+import { useForm as useFormInertia } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Send } from 'lucide-react';
 import { useState } from 'react';
-import { useForm as useFormHook } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form } from '@/components/ui/form';
 
 import { AsalSekolahForm } from '@/components/ponpes/formpendaftaran/asal-sekolah-form';
 import { DataDiriForm } from '@/components/ponpes/formpendaftaran/data-diri-form';
@@ -14,10 +18,6 @@ import { DataOrangTuaForm } from '@/components/ponpes/formpendaftaran/data-orang
 import { RingkasanData } from '@/components/ponpes/formpendaftaran/ringkasan-data';
 import { Steps } from '@/components/ponpes/formpendaftaran/steps';
 import { UploadFotoForm } from '@/components/ponpes/formpendaftaran/upload-foto-form';
-
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form } from '@/components/ui/form';
 
 // Definisi skema validasi dengan Zod
 const formSchema = z.object({
@@ -40,10 +40,13 @@ const formSchema = z.object({
     kontakAyah: z.string().min(10, { message: 'Nomor kontak minimal 10 digit' }).regex(/^\d+$/, { message: 'Nomor kontak hanya boleh berisi angka' }),
     kontakIbu: z.string().min(10, { message: 'Nomor kontak minimal 10 digit' }).regex(/^\d+$/, { message: 'Nomor kontak hanya boleh berisi angka' }),
 
-    // Asal Sekolah
-    namaSekolah: z.string().min(3, { message: 'Nama sekolah wajib diisi' }),
-    nisn: z.string().length(10, { message: 'NISN harus 10 digit' }).regex(/^\d+$/, { message: 'NISN hanya boleh berisi angka' }),
-    tahunTamat: z.string().min(4, { message: 'Tahun tamat wajib diisi' }),
+    // Jenjang Pendidikan
+    jenjang: z.enum(['MI', 'MTs', 'MA'], { message: 'Pilih jenjang pendidikan' }),
+
+    // Asal Sekolah (kondisional berdasarkan jenjang)
+    namaSekolah: z.string().min(3, { message: 'Nama sekolah wajib diisi' }).optional(),
+    nisn: z.string().length(10, { message: 'NISN harus 10 digit' }).regex(/^\d+$/, { message: 'NISN hanya boleh berisi angka' }).optional(),
+    tahunTamat: z.string().min(4, { message: 'Tahun tamat wajib diisi' }).optional(),
 
     // Foto
     foto: z
@@ -65,7 +68,7 @@ export default function FormPendaftaranSantri() {
     const [registrationNumber, setRegistrationNumber] = useState('');
 
     // Inisialisasi form dengan React Hook Form dan Zod resolver
-    const form = useFormHook<FormValues>({
+    const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             nik: '',
@@ -83,15 +86,16 @@ export default function FormPendaftaranSantri() {
             pekerjaanIbu: '',
             kontakAyah: '',
             kontakIbu: '',
+            jenjang: undefined,
             namaSekolah: '',
             nisn: '',
             tahunTamat: '',
-            foto: null,
+            foto: '',
         },
         mode: 'onChange',
     });
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useFormInertia({
         nik: '',
         namaLengkap: '',
         tempatLahir: '',
@@ -112,6 +116,9 @@ export default function FormPendaftaranSantri() {
         tahunTamat: '',
         foto: '',
     });
+
+    // Watch jenjang untuk validasi kondisional
+    const jenjang = form.watch('jenjang');
 
     const totalSteps = 5;
 
@@ -134,7 +141,19 @@ export default function FormPendaftaranSantri() {
         } else if (step === 2) {
             isValid = await form.trigger(['namaAyah', 'namaIbu', 'pekerjaanAyah', 'pekerjaanIbu', 'kontakAyah', 'kontakIbu']);
         } else if (step === 3) {
-            isValid = await form.trigger(['namaSekolah', 'nisn', 'tahunTamat']);
+            // Validasi jenjang
+            isValid = await form.trigger(['jenjang']);
+
+            // Validasi kondisional berdasarkan jenjang
+            if (isValid && jenjang) {
+                if (jenjang === 'MI') {
+                    // Untuk MI, tidak perlu validasi asal sekolah
+                    isValid = true;
+                } else {
+                    // Untuk MTs dan MA, validasi asal sekolah
+                    isValid = await form.trigger(['namaSekolah', 'nisn', 'tahunTamat']);
+                }
+            }
         } else if (step === 4) {
             // Foto is optional, but we need to validate its size if it exists
             isValid = await form.trigger(['foto']);
@@ -181,14 +200,17 @@ export default function FormPendaftaranSantri() {
             pekerjaanIbu: form.getValues().pekerjaanIbu,
             kontakAyah: form.getValues().kontakAyah,
             kontakIbu: form.getValues().kontakIbu,
+            jenjang: form.getValues().jenjang,
             namaSekolah: form.getValues().namaSekolah,
             nisn: form.getValues().nisn,
             tahunTamat: form.getValues().tahunTamat,
+            foto: form.getValues().foto,
         });
 
         // Validasi pernyataan
         if (!isChecked) {
-            alert('Ingat, Anda harus menyetujui pernyataan kebenaran data');
+            console.log('Checkbox belum dicentang');
+            alert('Anda harus menyetujui pernyataan kebenaran data');
             return;
         }
 
@@ -218,10 +240,11 @@ export default function FormPendaftaranSantri() {
     };
 
     return (
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto mt-20 max-w-3xl">
             <Steps currentStep={step} totalSteps={totalSteps} />
+
             {Object.keys(errors).length > 0 && (
-                <div variant={'default'} className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+                <div className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
                     <p className="font-bold">Terjadi kesalahan:</p>
                     <ul className="mt-2 list-inside list-disc">
                         {Object.values(errors).map((error, index) => (
@@ -289,7 +312,7 @@ export default function FormPendaftaranSantri() {
                             ) : (
                                 <Button
                                     type="submit"
-                                    // disabled={isSubmitting || isSubmitted}
+                                    //  disabled={isSubmitting || isSubmitted}
                                 >
                                     {isSubmitting ? (
                                         <>

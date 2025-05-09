@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { FileDown } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 interface RingkasanDataProps {
     data: {
@@ -29,10 +29,13 @@ interface RingkasanDataProps {
         kontakAyah: string;
         kontakIbu: string;
 
+        // Jenjang Pendidikan
+        jenjang: string;
+
         // Asal Sekolah
-        namaSekolah: string;
-        nisn: string;
-        tahunTamat: string;
+        namaSekolah?: string;
+        nisn?: string;
+        tahunTamat?: string;
 
         // Foto
         foto: string;
@@ -45,8 +48,6 @@ interface RingkasanDataProps {
 export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, registrationNumber = '' }: RingkasanDataProps) {
     const pdfRef = useRef<HTMLDivElement>(null);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
     // Fungsi untuk generate dan download PDF
     const generatePDF = () => {
         const doc = new jsPDF();
@@ -56,14 +57,18 @@ export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, reg
         doc.setFont('helvetica', 'bold');
         doc.text('FORMULIR PENDAFTARAN SANTRI', 105, 15, { align: 'center' });
 
+        // Tambahkan jenjang pendidikan
+        doc.setFontSize(14);
+        doc.text(`Jenjang: ${data.jenjang}`, 105, 23, { align: 'center' });
+
         // Tambahkan No. Registrasi di bagian atas
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
-        doc.text(`No. Registrasi: ${registrationNumber}`, 105, 25, { align: 'center' });
+        doc.text(`No. Registrasi: ${registrationNumber}`, 105, 30, { align: 'center' });
 
         // Tambahkan garis pemisah
         doc.setLineWidth(0.5);
-        doc.line(14, 30, 196, 30);
+        doc.line(14, 35, 196, 35);
 
         // Tambahkan tanggal
         const today = new Date().toLocaleDateString('id-ID', {
@@ -74,15 +79,15 @@ export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, reg
         });
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Tanggal Pendaftaran: ${today}`, 14, 38);
+        doc.text(`Tanggal Pendaftaran: ${today}`, 14, 43);
 
         // Tambahkan Data Diri Santri
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
-        doc.text('Data Diri Santri', 14, 48);
+        doc.text('Data Diri Santri', 14, 53);
 
         autoTable(doc, {
-            startY: 52,
+            startY: 57,
             head: [],
             body: [
                 ['NIK', ': ' + data.nik],
@@ -118,24 +123,26 @@ export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, reg
             columnStyles: { 0: { cellWidth: 50 } },
         });
 
-        // Tambahkan Data Asal Sekolah
-        const lastY2 = (doc as any).lastAutoTable.finalY + 10;
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Asal Sekolah', 14, lastY2);
+        // Tambahkan Data Asal Sekolah jika bukan MI
+        if (data.jenjang !== 'MI' && data.namaSekolah) {
+            const lastY2 = (doc as any).lastAutoTable.finalY + 10;
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text(data.jenjang === 'MTs' ? 'Asal Sekolah Dasar (SD/MI)' : 'Asal Sekolah Menengah Pertama (SMP/MTs)', 14, lastY2);
 
-        autoTable(doc, {
-            startY: lastY2 + 4,
-            head: [],
-            body: [
-                ['Nama Sekolah Dasar', ': ' + data.namaSekolah],
-                ['NISN', ': ' + data.nisn],
-                ['Tahun Tamat', ': ' + data.tahunTamat],
-            ],
-            theme: 'plain',
-            styles: { fontSize: 10, cellPadding: 2 },
-            columnStyles: { 0: { cellWidth: 50 } },
-        });
+            autoTable(doc, {
+                startY: lastY2 + 4,
+                head: [],
+                body: [
+                    [data.jenjang === 'MTs' ? 'Nama Sekolah Dasar' : 'Nama Sekolah Menengah Pertama', ': ' + data.namaSekolah],
+                    ['NISN', ': ' + (data.nisn || '-')],
+                    [data.jenjang === 'MTs' ? 'Tahun Tamat SD/MI' : 'Tahun Tamat SMP/MTs', ': ' + (data.tahunTamat || '-')],
+                ],
+                theme: 'plain',
+                styles: { fontSize: 10, cellPadding: 2 },
+                columnStyles: { 0: { cellWidth: 80 } },
+            });
+        }
 
         // Tambahkan foto jika ada
         if (data.foto) {
@@ -242,24 +249,50 @@ export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, reg
                     </div>
 
                     <div>
-                        <h3 className="mb-2 text-lg font-medium">Asal Sekolah</h3>
+                        <h3 className="mb-2 text-lg font-medium">Jenjang Pendidikan</h3>
                         <Table>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell className="font-medium">Nama Sekolah Dasar</TableCell>
-                                    <TableCell>{data.namaSekolah}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-medium">NISN</TableCell>
-                                    <TableCell>{data.nisn}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-medium">Tahun Tamat</TableCell>
-                                    <TableCell>{data.tahunTamat}</TableCell>
+                                    <TableCell className="font-medium">Jenjang</TableCell>
+                                    <TableCell>
+                                        {data.jenjang === 'MI'
+                                            ? 'MI (Madrasah Ibtidaiyah)'
+                                            : data.jenjang === 'MTs'
+                                              ? 'MTs (Madrasah Tsanawiyah)'
+                                              : 'MA (Madrasah Aliyah)'}
+                                    </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
                     </div>
+
+                    {data.jenjang !== 'MI' && data.namaSekolah && (
+                        <div>
+                            <h3 className="mb-2 text-lg font-medium">
+                                {data.jenjang === 'MTs' ? 'Asal Sekolah Dasar' : 'Asal Sekolah Menengah Pertama'}
+                            </h3>
+                            <Table>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell className="font-medium">
+                                            {data.jenjang === 'MTs' ? 'Nama Sekolah Dasar' : 'Nama Sekolah Menengah Pertama'}
+                                        </TableCell>
+                                        <TableCell>{data.namaSekolah}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">NISN</TableCell>
+                                        <TableCell>{data.nisn}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">
+                                            {data.jenjang === 'MTs' ? 'Tahun Tamat SD/MI' : 'Tahun Tamat SMP/MTs'}
+                                        </TableCell>
+                                        <TableCell>{data.tahunTamat}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </div>
+                    )}
                 </div>
 
                 <div className="md:w-1/3">

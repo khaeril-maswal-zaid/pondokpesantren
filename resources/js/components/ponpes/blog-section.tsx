@@ -4,34 +4,6 @@ import { Link } from '@inertiajs/react';
 import { ArrowRight, Calendar } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
-const blogPosts = [
-    {
-        title: 'Peringatan Maulid Nabi Muhammad SAW 1445 H',
-        excerpt:
-            'Laporan kegiatan peringatan Maulid Nabi Muhammad SAW yang diselenggarakan di Pondok Pesantren Al-Zaid dengan berbagai rangkaian acara dan ceramah.',
-        image: '/placeholder.svg?height=400&width=600',
-        category: 'Kegiatan',
-    },
-    {
-        title: 'Keutamaan Menuntut Ilmu dalam Islam',
-        excerpt: "Pembahasan tentang keutamaan menuntut ilmu dalam Islam berdasarkan Al-Qur'an dan Hadits serta pandangan para ulama.",
-        image: '/placeholder.svg?height=400&width=600',
-        category: 'Artikel',
-    },
-    {
-        title: "Prestasi Santri dalam Musabaqah Tilawatil Qur'an",
-        excerpt: "Berita tentang prestasi membanggakan yang diraih oleh santri Al-Zaid dalam ajang Musabaqah Tilawatil Qur'an tingkat provinsi.",
-        image: '/placeholder.svg?height=400&width=600',
-        category: 'Prestasi',
-    },
-    {
-        title: 'Tips Menjaga Kesehatan Selama Bulan Ramadhan',
-        excerpt: 'Artikel kesehatan tentang cara menjaga kondisi tubuh tetap prima selama menjalankan ibadah puasa di bulan Ramadhan.',
-        image: '/placeholder.svg?height=400&width=600',
-        category: 'Kesehatan',
-    },
-];
-
 export default function BlogSection({ blogPosts }) {
     const sectionRef = useRef<HTMLElement>(null);
 
