@@ -128,4 +128,9 @@ class HomeController extends Controller
 
         return Inertia::render('ponpes/Home', $data);
     }
+
+    public function cripto()
+    {
+        return Inertia::render('ponpes/cripto/page');
+    }
 }
