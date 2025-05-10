@@ -38,8 +38,9 @@ return new class extends Migration
             $table->string('nisn')->nullable();
             $table->string('tahun_tamat')->nullable();
 
-            // Foto
+            // more
             $table->string('foto')->nullable();
+            $table->string('no_registrasi');
 
             $table->timestamps();
         });

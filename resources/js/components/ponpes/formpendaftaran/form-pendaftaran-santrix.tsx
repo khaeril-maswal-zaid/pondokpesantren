@@ -177,7 +177,7 @@ export default function FormPendaftaranSantri() {
     const generateRegistrationNumber = () => {
         const year = new Date().getFullYear();
         const randomNum = Math.floor(10000 + Math.random() * 90000); // 5-digit random number
-        return `REG/${year}/${randomNum}`;
+        return `REG-UBK/${year}/${randomNum}`;
     };
 
     // Handler submit form yang disederhanakan
@@ -205,6 +205,7 @@ export default function FormPendaftaranSantri() {
             nisn: form.getValues().nisn,
             tahunTamat: form.getValues().tahunTamat,
             foto: form.getValues().foto,
+            noRegistrasi: generateRegistrationNumber(),
         });
 
         // Validasi pernyataan

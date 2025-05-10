@@ -73,8 +73,6 @@ export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, reg
         fetchWilayah();
     }, [data]);
 
-    console.log(provinsiName, kabupatenName, kecamatanName, desaName);
-
     // Fungsi untuk generate dan download PDF
     const generatePDF = () => {
         const doc = new jsPDF();

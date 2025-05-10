@@ -61,10 +61,12 @@ class SantriBaruController extends Controller
             'kontak_ayah' => $request->kontakAyah,
             'kontak_ibu' => $request->kontakIbu,
 
+            'jenjang' => $request->jenjang,
             'nama_sekolah' => $request->namaSekolah,
             'nisn' => $request->nisn,
             'tahun_tamat' => $request->tahunTamat,
             'foto' => $imagePath,
+            'no_registrasi' => $request->noRegistrasi,
         ]);
     }
 

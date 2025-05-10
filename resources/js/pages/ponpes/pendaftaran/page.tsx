@@ -509,7 +509,7 @@ export default function PendaftaranPage() {
                                             <ol className="mt-2 list-decimal space-y-1 pl-5">
                                                 <li>Biaya pendaftaran: Gratis</li>
                                                 <li>
-                                                    Biaya daftar ulang: Rp 1.000.000
+                                                    Biaya daftar ulang: Rp 2.750.000
                                                     <ol className="mt-1 list-disc space-y-1 pl-6">
                                                         <li>Biaya bulanan (Juli 2025) : Rp.600.000 *</li>
                                                         <li>Kegiatan Organisasi (Tahun 2025) : Rp.250.000 **</li>

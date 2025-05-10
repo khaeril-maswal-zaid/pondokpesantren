@@ -39,10 +39,11 @@ class StoreSantriBaruRequest extends FormRequest
             'kontakAyah' => 'required|string|max:255',
             'kontakIbu' => 'required|string|max:255',
             'jenjang' => 'required|string|max:255',
-            'namaSekolah' => 'nullable',
-            'nisn' => 'nullable',
-            'tahunTamat' => 'nullable',
+            'namaSekolah' => 'nullable|string|max:255',
+            'nisn' => 'nullable|string|max:255',
+            'tahunTamat' => 'nullable|string|max:255',
             'foto' => ['required', 'string', new ValidBase64Image],
+            'noRegistrasi' => 'required|string|max:255',
         ];
     }
 }

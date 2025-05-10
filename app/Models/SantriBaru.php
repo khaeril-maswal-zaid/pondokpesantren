@@ -26,9 +26,11 @@ class SantriBaru extends Model
         'pekerjaan_ibu',
         'kontak_ayah',
         'kontak_ibu',
+        'jenjang',
         'nama_sekolah',
         'nisn',
         'tahun_tamat',
         'foto',
+        'no_registrasi',
     ];
 }
