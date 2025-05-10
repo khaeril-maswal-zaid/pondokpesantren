@@ -2,16 +2,16 @@ import { Link, usePage } from '@inertiajs/react';
 import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 
 export default function Footer() {
-    const { name } = usePage().props;
+    const { name, contact, programUtams } = usePage().props;
     return (
         <footer className="bg-blue-800 text-white">
             <div className="container mx-auto px-8 py-12">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     <div>
-                        <h3 className="mb-4 text-xl font-bold">Pondok Pesantren {name}</h3>
+                        <h3 className="mb-4 text-xl font-bold">Pesantren {name}</h3>
                         <p className="mb-4">
-                            Lembaga pendidikan Islam yang mengintegrasikan nilai-nilai tradisional dengan pendidikan modern untuk mencetak generasi
-                            berakhlak mulia.
+                            Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsipmenjalankan amal ibadah sesuai dengan tuntunan Ahlus
+                            Sunnah wal Jamaah, berlandaskan dalil yang sahih
                         </p>
                         <div className="flex space-x-4">
                             <Link href="#" className="transition-colors hover:text-blue-300" aria-label="Facebook">
@@ -66,44 +66,21 @@ export default function Footer() {
                     <div>
                         <h3 className="mb-4 text-xl font-bold">Program</h3>
                         <ul className="space-y-2">
-                            <li>
-                                <Link href="#" className="transition-colors hover:text-blue-300">
-                                    Tahfidz Al-Qur'an
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="transition-colors hover:text-blue-300">
-                                    Kitab Kuning
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="transition-colors hover:text-blue-300">
-                                    Bahasa Arab & Inggris
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="transition-colors hover:text-blue-300">
-                                    Ekstrakurikuler
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="transition-colors hover:text-blue-300">
-                                    Madrasah Diniyah
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="transition-colors hover:text-blue-300">
-                                    Pendidikan Formal
-                                </Link>
-                            </li>
+                            {programUtams.map((program) => (
+                                <li key={program.id}>
+                                    <Link href="#" className="transition-colors hover:text-blue-300">
+                                        {program.name}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div>
                         <h3 className="mb-4 text-xl font-bold">Kontak</h3>
                         <address className="not-italic">
-                            <p className="mb-2">Jl. Pesantren No. 123, Kelurahan Contoh, Kecamatan Contoh, Kota Contoh, Provinsi Contoh, 12345</p>
-                            <p className="mb-2">Telepon: (021) 1234-5678</p>
-                            <p className="mb-2">Email: info@ubaybinkaab.ponpes.id</p>
+                            <p className="mb-2">{contact.alamat}</p>
+                            <p className="mb-2">Telepon: {contact.phone}</p>
+                            <p className="mb-2">Email: {contact.email}</p>
                         </address>
                     </div>
                 </div>

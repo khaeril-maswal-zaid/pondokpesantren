@@ -37,7 +37,7 @@ export function AsalSekolahForm({ form }: AsalSekolahFormProps) {
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Pilih jenjang pendidikan" />
+                                    <SelectValue placeholder="Pilih jenjang yang didaftari" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>

@@ -69,7 +69,7 @@ export default function LocationSection() {
                         style={{ transform: `translateY(${parallaxOffset * -0.1}px)` }}
                     >
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2904349099224!2d106.8269113!3d-6.2297817!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3f3a3a35c01%3A0x8fcf5f3a4a0e7c9c!2sMonumen%20Nasional!5e0!3m2!1sid!2sid4v1651234567890!5m2!1sid!2sid"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1326.67951652233!2d120.29554077929251!3d-5.47866863896147!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbc079964c7e369%3A0x8470e7622335bf39!2sPondok%20Pesantren%20Ubay%20Bin%20Ka&#39;ab!5e1!3m2!1sid!2sid!4v1746855818626!5m2!1sid!2sid"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}

@@ -42,11 +42,35 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'contact' => [
+                'email' => 'info@ubaybinkaab.ponpes.id',
+                'phone' => '+62 813-8125-0081',
+                'alamat' => "Jln. Poros Manyampa - Palangisan Kalikia, Desa Manyampa Kec. Ujung Loe Kab. Bulukumba",
+            ],
+            'programUtams' => [
+                [
+                    'name' => 'Akademi Tahsin dan Tajwid',
+                    'description' => 'Meningkatkan kemampuan membaca Al-Qur’an dengan tajwid yang benar dan pelafalan yang fasih.',
+                ],
+                [
+                    'name' => 'Akademi Tahfidz 30 Juz Mutqin',
+                    'description' => 'Program intensif menghafal 30 juz Al-Qur’an dengan metode mutqin dan bimbingan bersanad.',
+                ],
+                [
+                    'name' => 'Akademi Lughoh Arabiyah',
+                    'description' => 'Belajar bahasa Arab dari dasar hingga mahir untuk memahami Al-Qur’an dan literatur Islam.',
+                ],
+                [
+                    'name' => 'Dakwah dan Keterampilan',
+                    'description' => 'Membina santri berdakwah efektif dengan keterampilan komunikasi, teknologi, dan kewirausahaan islami.',
+                ],
+            ],
+
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
             ],
-            'ziggy' => fn (): array => [
+            'ziggy' => fn(): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],

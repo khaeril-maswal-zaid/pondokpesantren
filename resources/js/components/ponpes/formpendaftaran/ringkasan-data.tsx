@@ -3,10 +3,12 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { getDesaName, getKabupatenName, getKecamatanName, getProvinsiName } from '@/lib/wilayah';
+import { usePage } from '@inertiajs/react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { FileDown } from 'lucide-react';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface RingkasanDataProps {
     data: {
@@ -48,53 +50,91 @@ interface RingkasanDataProps {
 export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, registrationNumber = '' }: RingkasanDataProps) {
     const pdfRef = useRef<HTMLDivElement>(null);
 
+    const { alamat, name } = usePage().props;
+
+    const [provinsiName, setProvinsiName] = useState('');
+    const [kabupatenName, setKabupatenName] = useState('');
+    const [kecamatanName, setKecamatanName] = useState('');
+    const [desaName, setDesaName] = useState('');
+
+    useEffect(() => {
+        const fetchWilayah = async () => {
+            const prov = await getProvinsiName(data.provinsi);
+            const kab = await getKabupatenName(data.kabupaten, data.provinsi);
+            const kec = await getKecamatanName(data.kecamatan, data.kabupaten);
+            const desa = await getDesaName(data.desa, data.kecamatan);
+
+            setProvinsiName(prov);
+            setKabupatenName(kab);
+            setKecamatanName(kec);
+            setDesaName(desa);
+        };
+
+        fetchWilayah();
+    }, [data]);
+
+    console.log(provinsiName, kabupatenName, kecamatanName, desaName);
+
     // Fungsi untuk generate dan download PDF
     const generatePDF = () => {
         const doc = new jsPDF();
 
-        // Tambahkan header
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.text('FORMULIR PENDAFTARAN SANTRI', 105, 15, { align: 'center' });
-
-        // Tambahkan jenjang pendidikan
-        doc.setFontSize(14);
-        doc.text(`Jenjang: ${data.jenjang}`, 105, 23, { align: 'center' });
-
-        // Tambahkan No. Registrasi di bagian atas
+        // KOP SURAT
+        doc.setFont('Helvetica', 'bold');
         doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`No. Registrasi: ${registrationNumber}`, 105, 30, { align: 'center' });
+        doc.text('FORMULIR PENDAFTARAN CALON SANTRI/ SANTRIWATI', 105, 20, { align: 'center' });
+        doc.text(`PONDOK PESANTREN ${name.toUpperCase()}`, 105, 27, { align: 'center' });
+        doc.setFontSize(10.5);
+        doc.setFont('Helvetica', 'normal');
+        doc.text(`${alamat}`, 105, 34, { align: 'center' });
 
-        // Tambahkan garis pemisah
+        // Garis horizontal
         doc.setLineWidth(0.5);
-        doc.line(14, 35, 196, 35);
+        doc.line(10, 38, 200, 38);
 
-        // Tambahkan tanggal
+        // TABEL FORMULIR (bagian identitas awal)
         const today = new Date().toLocaleDateString('id-ID', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric',
         });
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Tanggal Pendaftaran: ${today}`, 14, 43);
+
+        autoTable(doc, {
+            startY: 45,
+            head: [],
+            body: [
+                ['No. Registrasi', ': ' + registrationNumber],
+                ['Jenjang yang Didaftari', ': ' + data.jenjang],
+                ['Tanggal Pendaftaran', ': ' + today],
+            ],
+            theme: 'plain',
+            styles: { fontSize: 10, cellPadding: 2 },
+            columnStyles: { 0: { cellWidth: 50 } },
+        });
 
         // Tambahkan Data Diri Santri
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
-        doc.text('Data Diri Santri', 14, 53);
+        doc.text('Data Diri Santri', 14, 53 + 25);
+
+        function capitalizeFirstLetter(text: string) {
+            return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+        }
 
         autoTable(doc, {
-            startY: 57,
+            startY: 83,
             head: [],
             body: [
                 ['NIK', ': ' + data.nik],
                 ['Nama Lengkap', ': ' + data.namaLengkap],
                 ['Tempat, Tanggal Lahir', ': ' + `${data.tempatLahir}, ${new Date(data.tanggalLahir).toLocaleDateString('id-ID')}`],
                 ['Jenis Kelamin', ': ' + data.jenisKelamin],
-                ['Alamat', ': ' + `${data.desa}, ${data.kecamatan}, ${data.kabupaten}, ${data.provinsi}`],
+                [
+                    'Alamat',
+                    ': ' +
+                        `${capitalizeFirstLetter(desaName)}, ${capitalizeFirstLetter(kecamatanName)}, ${capitalizeFirstLetter(kabupatenName)}, ${capitalizeFirstLetter(provinsiName)}`,
+                ],
             ],
             theme: 'plain',
             styles: { fontSize: 10, cellPadding: 2 },
@@ -150,10 +190,10 @@ export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, reg
                 const lastY3 = (doc as any).lastAutoTable.finalY + 10;
                 doc.setFontSize(12);
                 doc.setFont('helvetica', 'bold');
-                doc.text('Foto Santri', 14, lastY3);
+                doc.text('Foto Santri', 150, 48);
 
                 // Tambahkan foto
-                doc.addImage(data.foto, 'JPEG', 14, lastY3 + 5, 40, 53.33); // 3:4 ratio
+                doc.addImage(data.foto, 'JPEG', 150, 48 + 5, 40, 53.33); // 3:4 ratio
             } catch (error) {
                 console.error('Error adding image to PDF:', error);
             }
@@ -324,6 +364,7 @@ export function RingkasanData({ data, onCheckboxChange, isSubmitted = false, reg
                     <div className="mb-4 flex items-start space-x-2">
                         <Checkbox
                             id="pernyataan"
+                            required
                             className="mt-1"
                             onCheckedChange={(checked) => {
                                 if (onCheckboxChange) {

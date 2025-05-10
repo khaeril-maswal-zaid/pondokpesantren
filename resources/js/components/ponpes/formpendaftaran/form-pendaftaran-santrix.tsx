@@ -209,8 +209,7 @@ export default function FormPendaftaranSantri() {
 
         // Validasi pernyataan
         if (!isChecked) {
-            console.log('Checkbox belum dicentang');
-            alert('Anda harus menyetujui pernyataan kebenaran data');
+            // alert('Anda harus menyetujui pernyataan kebenaran data');
             return;
         }
 
