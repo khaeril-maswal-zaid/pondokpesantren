@@ -26,7 +26,7 @@ class HomeController extends Controller
                     'translation' => 'Sesungguhnya setiap amalan tergantung pada niatnya',
                 ],
                 [
-                    'image' => 'image/assets/hero-3.jpg',
+                    'image' => 'image/assets/hero-3b.jpg',
                     'quote' => 'خير الناس أنفعهم للناس',
                     'translation' => 'Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya',
                 ],
