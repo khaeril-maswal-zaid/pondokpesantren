@@ -12,7 +12,7 @@ export default function HeroPage() {
                 <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
-                        backgroundImage: `url('/storage/image/assets/hero-3.jpg?v=${new Date().getTime()}')`,
+                        backgroundImage: "url('/storage/image/assets/hero-3.jpg?v=" + new Date().getTime() + "')",
                         transform: `translateY(${scrollY * 0.1}px)`,
                     }}
                 ></div>
