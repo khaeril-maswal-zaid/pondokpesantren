@@ -4,27 +4,57 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { CalendarDays, FileText, HandCoins, Image, Info, LayoutDashboard, Phone, UserPlus, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
-        icon: LayoutGrid,
+        icon: LayoutDashboard, // Ikon khas untuk dashboard
+    },
+    {
+        title: 'Calon Santri Baru',
+        href: route('santri-baru.index'),
+        icon: UserPlus, // Dapil = daerah pemilihan = lokasi
+    },
+    {
+        title: 'Blog',
+        href: route('blog.index'),
+        icon: FileText, // Blog = tulisan = dokumen
+    },
+    {
+        title: 'Agenda',
+        href: '/dashboard/agenda',
+        icon: CalendarDays, // Agenda = kalender / jadwal
+    },
+    {
+        title: 'Struktur',
+        href: '/dashboard/struktur',
+        icon: Users2, // Struktur organisasi = orang-orang
+    },
+    {
+        title: 'Kontak UBK',
+        href: 'dashboard/kontak',
+        icon: Phone, // Kontak = telepon
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'Tentang PKS Bulukumba',
+        href: 'dashboard/tentang',
+        icon: Info, // Tentang = informasi
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Donasi PKS',
+        href: 'dashboard/donasi',
+        icon: HandCoins, // Donasi = uang / amal
+    },
+    {
+        title: 'Carousel Web',
+        href: 'dashboard/carousel',
+        icon: Image, // Carousel = gambar berganti
     },
 ];
 

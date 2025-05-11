@@ -17,8 +17,12 @@ Route::get('/cripto-ts-analisis', [HomeController::class, 'cripto'])->name('home
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return Inertia::render('dashboard/home');
     })->name('dashboard');
+
+    Route::get('/dashboard/penerimaan-santri-baru', [SantriBaruController::class, 'index'])->name('santri-baru.index');
+
+    Route::get('/dashboard/blog', [BlogController::class, 'index'])->name('blog.index');
 });
 
 require __DIR__ . '/settings.php';

@@ -17,7 +17,11 @@ class SantriBaruController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            'pendaftarData' => SantriBaru::select(['nik', 'nama_lengkap', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu', 'kontak_ayah', 'kontak_ibu', 'jenjang', 'nama_sekolah', 'nisn', 'tahun_tamat', 'foto', 'no_registrasi',])->latest()->get(),
+        ];
+
+        return Inertia::render('dashboard/pendaftaran/page', $data);
     }
 
     /**

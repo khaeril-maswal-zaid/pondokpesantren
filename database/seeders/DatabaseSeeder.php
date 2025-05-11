@@ -16,10 +16,13 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Official 1 Ponpes UBK',
+            'email' => 'official1@ubaybinkaab.co.id',
+            'password' => 'ponpesubk165',
         ]);
 
+
         $this->call(BlogSeeder::class);
+        $this->call(SantriBaruSeeder::class);
     }
 }
