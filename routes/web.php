@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/penerimaan-santri-baru', [SantriBaruController::class, 'index'])->name('santri-baru.index');
 
     Route::get('/dashboard/blog', [BlogController::class, 'index'])->name('blog.index');
+    Route::post('/dashboard/blog', [BlogController::class, 'store'])->name('blog.store');
 });
 
 require __DIR__ . '/settings.php';
