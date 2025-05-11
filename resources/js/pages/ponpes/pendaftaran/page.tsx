@@ -618,7 +618,7 @@ export default function PendaftaranPage() {
                             <div
                                 className="from-primary/80 absolute inset-0 z-10 bg-gradient-to-r to-green-600/80"
                                 style={{
-                                    backgroundImage: "url('/storage/image/assets/hero-3.jpg')",
+                                    backgroundImage: `url('/storage/image/assets/hero-3.jpg?v=${new Date().getTime()})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     backgroundAttachment: 'fixed',
