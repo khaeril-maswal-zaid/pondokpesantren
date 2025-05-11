@@ -13,6 +13,13 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $ogTags = [
+            'title' => 'Pondok Pesantren' . config('app.name') . 'Bulukumba',
+            'description' => 'Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah, berlandaskan Al-qur`an dan hadist yang sahih.',
+            'image' => asset('/storage/image/assets/logo.png'),
+            'url' => config('app.url'),
+        ];
+
         $data = [
             'heros' => [
                 [

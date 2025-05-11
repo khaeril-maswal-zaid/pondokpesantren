@@ -4,6 +4,20 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        {{-- Dynamic OG Tags --}}
+        @php
+            $og = request()->attributes->get('og') ?? [];
+        @endphp
+
+        @if(!empty($og))
+            <meta property="og:title" content="{{ $og['title'] ?? '' }}" />
+            <meta property="og:description" content="{{ $og['description'] ?? '' }}" />
+            <meta property="og:image" content="{{ $og['image'] ?? '' }}" />
+            <meta property="og:url" content="{{ $og['url'] ?? request()->fullUrl() }}" />
+            <meta property="og:type" content="article" />
+            <meta name="twitter:card" content="summary_large_image">
+        @endif
+
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {
