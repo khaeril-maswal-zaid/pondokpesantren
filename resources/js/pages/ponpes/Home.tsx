@@ -7,10 +7,12 @@ import LocationSection from '@/components/ponpes/location-section';
 import ProgramsSection from '@/components/ponpes/programs-section';
 import StatsOverlay from '@/components/ponpes/stats-overlay';
 import Layout from '@/layouts/ponpes-layout';
+import { Head } from '@inertiajs/react';
 
 export default function Home({ heros, about, figures, programs, agenda, blogs }) {
     return (
         <>
+            <Head title="Home" />
             <Layout>
                 <main className="flex min-h-screen flex-col items-center justify-between">
                     <div className="relative w-full">

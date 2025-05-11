@@ -624,7 +624,7 @@ export default function PendaftaranPage() {
                                     backgroundAttachment: 'fixed',
                                 }}
                             ></div>
-                            <div className="absolute inset-0 z-20 bg-black/70"></div>
+                            <div className="absolute inset-0 z-20 bg-black/60"></div>
                             <div className="relative z-30">
                                 <h2
                                     className="mb-4 text-2xl font-bold text-white md:text-3xl"

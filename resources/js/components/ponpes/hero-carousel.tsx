@@ -46,7 +46,7 @@ export default function HeroCarousel({ slides }) {
                         className="h-full w-full object-cover"
                     />
                     <div
-                        className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 p-4 text-white"
+                        className="absolute inset-0 flex flex-col items-center justify-center bg-black/57 p-4 text-white"
                         style={{ transform: `translateY(${scrollY * -0.2}px)` }}
                     >
                         <h2 className="font-arabic mb-4 text-center text-4xl md:text-5xl">{slide.quote}</h2>

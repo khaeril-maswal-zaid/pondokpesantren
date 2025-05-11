@@ -54,7 +54,7 @@ export default function AgendaSection({ agendaData }) {
                                     alt={agenda.title}
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
                             </div>
 
                             {/* Content */}
