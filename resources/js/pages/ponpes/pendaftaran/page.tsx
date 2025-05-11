@@ -68,7 +68,7 @@ export default function PendaftaranPage() {
                     <div className="container mx-auto mt-16 px-5">
                         {/* Syarat Pendaftaran */}
                         <section ref={sectionRefs.syarat} id="syarat" className="mb-16 opacity-0">
-                            <div className="rounded-lg bg-white p-8 shadow-md">
+                            <div className="rounded-lg bg-white p-3 shadow-md md:p-8">
                                 <div className="mb-6 flex items-center">
                                     <div className="bg-primary/10 mr-4 rounded-full p-3">
                                         <CheckCircle className="text-primary h-8 w-8" />
@@ -81,31 +81,31 @@ export default function PendaftaranPage() {
                                         <h3 className="mb-4 text-xl font-bold">Persyaratan Umum</h3>
                                         <ul className="space-y-3">
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     1
                                                 </span>
                                                 <span>Beragama Islam</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     2
                                                 </span>
                                                 <span>Lulus SD/MI untuk jenjang MTs atau lulus SMP/MTs untuk jenjang MA</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     3
                                                 </span>
                                                 <span>Berusia maksimal 13 tahun untuk jenjang MTs atau 16 tahun untuk jenjang MA</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     4
                                                 </span>
                                                 <span>Sehat jasmani dan rohani</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     5
                                                 </span>
                                                 <span>Mendapat izin dari orang tua/wali</span>
@@ -117,37 +117,37 @@ export default function PendaftaranPage() {
                                         <h3 className="mb-4 text-xl font-bold">Persyaratan Khusus</h3>
                                         <ul className="space-y-3">
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     1
                                                 </span>
                                                 <span>Mampu membaca Al-Qur'an</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     2
                                                 </span>
                                                 <span>Memiliki hafalan minimal 1 juz Al-Qur'an (untuk program tahfidz)</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     3
                                                 </span>
                                                 <span>Lulus tes seleksi masuk yang meliputi tes tulis, tes baca Al-Qur'an, dan wawancara</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     4
                                                 </span>
                                                 <span>Bersedia mematuhi seluruh peraturan pesantren</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     5
                                                 </span>
                                                 <span>Bersedia tinggal di asrama pesantren</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     6
                                                 </span>
                                                 <span>Bersedia untuk tidak pindah sekolah selama minimal 3 tahun</span>
@@ -160,7 +160,7 @@ export default function PendaftaranPage() {
 
                         {/* Dokumen Pendaftaran */}
                         <section ref={sectionRefs.dokumen} id="dokumen" className="mb-16 opacity-0">
-                            <div className="rounded-lg bg-white p-8 shadow-md">
+                            <div className="rounded-lg bg-white p-3 shadow-md md:p-8">
                                 <div className="mb-6 flex items-center">
                                     <div className="bg-primary/10 mr-4 rounded-full p-3">
                                         <FileText className="text-primary h-8 w-8" />
@@ -173,25 +173,25 @@ export default function PendaftaranPage() {
                                         <h3 className="mb-4 text-xl font-bold">Dokumen Wajib</h3>
                                         <ul className="space-y-3">
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     1
                                                 </span>
                                                 <span>Fotokopi ijazah dan SKHUN terakhir yang dilegalisir (3 lembar)</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     2
                                                 </span>
                                                 <span>Fotokopi rapor 2 semester terakhir yang dilegalisir (2 lembar)</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     3
                                                 </span>
                                                 <span>Fotokopi akta kelahiran (3 lembar)</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     4
                                                 </span>
                                                 <span>Fotokopi Kartu Keluarga (3 lembar)</span>
@@ -203,19 +203,19 @@ export default function PendaftaranPage() {
                                         <h3 className="mb-4 text-xl font-bold">Dokumen Tambahan</h3>
                                         <ul className="space-y-3">
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     1
                                                 </span>
                                                 <span>Surat pernyataan kesanggupan mematuhi peraturan (bermaterai)</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     2
                                                 </span>
                                                 <span>Fotokopi piagam prestasi (jika ada)</span>
                                             </li>
                                             <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold text-white">
+                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
                                                     3
                                                 </span>
                                                 <span>Surat rekomendasi dari sekolah/madrasah asal (jika ada)</span>
@@ -228,7 +228,7 @@ export default function PendaftaranPage() {
 
                         {/* Alur Pendaftaran */}
                         <section ref={sectionRefs.alur} id="alur" className="mb-16 opacity-0">
-                            <div className="rounded-lg bg-white p-8 shadow-md">
+                            <div className="rounded-lg bg-white p-3 shadow-md md:p-8">
                                 <div className="mb-6 flex items-center">
                                     <div className="bg-primary/10 mr-4 rounded-full p-3">
                                         <ArrowRight className="text-primary h-8 w-8" />
@@ -423,7 +423,7 @@ export default function PendaftaranPage() {
 
                         {/* Jadwal Pendaftaran */}
                         <section ref={sectionRefs.jadwal} id="jadwal" className="mb-16 opacity-0">
-                            <div className="rounded-lg bg-white p-8 shadow-md">
+                            <div className="rounded-lg bg-white p-3 shadow-md md:p-8">
                                 <div className="mb-6 flex items-center">
                                     <div className="bg-primary/10 mr-4 rounded-full p-3">
                                         <Calendar className="text-primary h-8 w-8" />
@@ -469,7 +469,7 @@ export default function PendaftaranPage() {
                                             <tr>
                                                 <td className="border p-3 font-medium">Masuk Pesantren</td>
                                                 <td className="border p-3" colSpan={2}>
-                                                    1 September 2025
+                                                    Juli 2025
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -509,21 +509,22 @@ export default function PendaftaranPage() {
                                             <ol className="mt-2 list-decimal space-y-1 pl-5">
                                                 <li>Biaya pendaftaran: Gratis</li>
                                                 <li>
-                                                    Biaya daftar ulang: Rp 2.750.000
+                                                    Biaya daftar ulang: Rp 3.000.000
                                                     <ol className="mt-1 list-disc space-y-1 pl-6">
                                                         <li>Biaya bulanan (Juli 2025) : Rp.600.000 *</li>
-                                                        <li>Kegiatan Organisasi (Tahun 2025) : Rp.250.000 **</li>
-                                                        <li>Pemeliharaan sarana & prasarana (Tahun 2025) : Rp.600.000 **</li>
-                                                        <li>Uang pangkal: Rp. 1.000.000 ***</li>
-                                                        <li>Raport, Papan Nama & ID Card: Rp.300.000 ***</li>
+                                                        <li>Biaya Semester (Genap 2025) : Rp.500.000 **</li>
+                                                        <li>Pemeliharaan sarana & prasarana (Tahun 2025) : Rp.600.000 ***</li>
+                                                        <li>Uang pangkal: Rp. 1.000.000 ****</li>
+                                                        <li>Raport, Papan Nama & ID Card: Rp.300.000 ****</li>
                                                     </ol>
                                                 </li>
                                             </ol>
 
                                             <div className="mt-2 space-y-1 text-sm">
                                                 <p>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dibayar per bulan</p>
-                                                <p>**&nbsp;&nbsp;&nbsp; : Dibayar per tahun</p>
-                                                <p>***&nbsp; : Dibayar sekali</p>
+                                                <p>**&nbsp;&nbsp;&nbsp; : Dibayar per semester</p>
+                                                <p>***&nbsp;&nbsp;&nbsp; : Dibayar per tahun</p>
+                                                <p>****&nbsp; : Dibayar sekali</p>
                                             </div>
 
                                             <p className="mt-2">

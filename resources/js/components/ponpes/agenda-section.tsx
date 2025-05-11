@@ -4,42 +4,6 @@ import { Link } from '@inertiajs/react';
 import { ArrowRight, Calendar, Clock, MapPin } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
-// Data agenda pesantren dengan gambar
-const agendaData = [
-    {
-        title: 'Peringatan Maulid Nabi Muhammad SAW',
-        date: '12 Oktober 2023',
-        time: '18:30 - 21:30 WIB',
-        location: 'Masjid Pesantren Al-Zaid',
-        description: 'Peringatan Maulid Nabi Muhammad SAW dengan pembacaan maulid Al-Barzanji dan tausiyah dari KH. Ahmad Zaid.',
-        image: '/images/maulid-nabi.png',
-    },
-    {
-        title: 'Ujian Tengah Semester Ganjil',
-        date: '16-21 Oktober 2023',
-        time: '07:30 - 12:30 WIB',
-        location: 'Ruang Kelas Madrasah',
-        description: 'Pelaksanaan Ujian Tengah Semester Ganjil untuk seluruh santri Madrasah Tsanawiyah dan Aliyah.',
-        image: '/images/ujian-semester.png',
-    },
-    {
-        title: 'Seminar Pendidikan Islam di Era Digital',
-        date: '28 Oktober 2023',
-        time: '08:00 - 12:00 WIB',
-        location: 'Aula Utama Pesantren',
-        description: 'Seminar dengan pembicara Dr. H. Abdul Karim, M.Pd.I tentang tantangan dan peluang pendidikan Islam di era digital.',
-        image: '/images/seminar-pendidikan.png',
-    },
-    {
-        title: "Khataman Al-Qur'an Bulanan",
-        date: '30 Oktober 2023',
-        time: '13:00 - 15:30 WIB',
-        location: 'Masjid Pesantren Al-Zaid',
-        description: "Khataman Al-Qur'an bulanan yang diikuti oleh seluruh santri dan dipimpin oleh Ustadz H. Zainuddin, Lc.",
-        image: '/images/khataman-quran.png',
-    },
-];
-
 export default function AgendaSection({ agendaData }) {
     const sectionRef = useRef<HTMLElement>(null);
 
@@ -86,7 +50,7 @@ export default function AgendaSection({ agendaData }) {
                             {/* Background Image */}
                             <div className="absolute inset-0">
                                 <img
-                                    src={`/storage/${agenda.image}` || '/placeholder.svg'}
+                                    src={`/storage/${agenda.image}?v=${new Date().getTime()})` || '/placeholder.svg'}
                                     alt={agenda.title}
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />

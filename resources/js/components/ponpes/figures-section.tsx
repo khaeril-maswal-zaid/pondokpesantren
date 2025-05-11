@@ -48,7 +48,11 @@ export default function FiguresSection({ figures }) {
                             className="slide-up gap-0 overflow-hidden border-t-4 border-[#051881] py-0 transition-all duration-300 hover:shadow-lg"
                         >
                             <div className="relative w-full overflow-hidden">
-                                <img src={`/storage/${figure.image}` || '/placeholder.svg'} alt={figure.name} className="object-cover" />
+                                <img
+                                    src={`/storage/${figure.image}?v=${new Date().getTime()})` || '/placeholder.svg'}
+                                    alt={figure.name}
+                                    className="object-cover"
+                                />
                             </div>
                             <CardHeader className="p-4 text-center">
                                 <CardTitle className="text-lg">{figure.name}</CardTitle>

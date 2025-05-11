@@ -240,7 +240,7 @@ export default function FormPendaftaranSantri() {
     };
 
     return (
-        <div className="mx-auto mt-20 max-w-3xl">
+        <div className="mx-auto mt-7 max-w-3xl px-3 md:mt-20 md:px-0">
             <Steps currentStep={step} totalSteps={totalSteps} />
 
             {Object.keys(errors).length > 0 && (

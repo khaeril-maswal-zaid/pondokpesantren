@@ -88,7 +88,7 @@ export default function LocationSection() {
                             </div>
                             <div className="flex items-center">
                                 <Phone className="text-primary mr-3 h-5 w-5" />
-                                <p>(021) 1234-5678</p>
+                                <p>+62 813-8125-0081</p>
                             </div>
                             <div className="flex items-center">
                                 <Mail className="text-primary mr-3 h-5 w-5" />

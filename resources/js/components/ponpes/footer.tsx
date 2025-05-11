@@ -10,8 +10,8 @@ export default function Footer() {
                     <div>
                         <h3 className="mb-4 text-xl font-bold">Pesantren {name}</h3>
                         <p className="mb-4">
-                            Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsipmenjalankan amal ibadah sesuai dengan tuntunan Ahlus
-                            Sunnah wal Jamaah, berlandaskan dalil yang sahih
+                            Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip menjalankan amal ibadah sesuai dengan tuntunan Ahlus
+                            Sunnah wal Jamaah, berlandaskan Al-qur`an dan hadist yang sahih.
                         </p>
                         <div className="flex space-x-4">
                             <Link href="#" className="transition-colors hover:text-blue-300" aria-label="Facebook">

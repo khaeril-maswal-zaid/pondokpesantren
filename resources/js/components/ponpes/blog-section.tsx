@@ -49,7 +49,7 @@ export default function BlogSection({ blogPosts }) {
                         >
                             <div className="relative">
                                 <img
-                                    src={`/storage/${post.picture1}` || '/placeholder.svg'}
+                                    src={`/storage/${post.picture1}?v=${new Date().getTime()})` || '/placeholder.svg'}
                                     alt={post.title}
                                     width={600}
                                     height={400}

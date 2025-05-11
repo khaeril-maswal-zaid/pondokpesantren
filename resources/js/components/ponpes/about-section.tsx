@@ -60,7 +60,11 @@ export default function AboutSection({ about }) {
                         className="relative col-span-1 h-full overflow-hidden rounded-lg shadow-lg md:col-span-5"
                         style={{ transform: `translateY(${scrollY * 0.03}px)` }}
                     >
-                        <img src={`/storage/${about?.image}`} alt="Pondok Pesantren Al-Zaid" className="h-full object-cover" />
+                        <img
+                            src={`/storage/${about?.image}?v=${new Date().getTime()})`}
+                            alt="Pondok Pesantren Al-Zaid"
+                            className="h-full object-cover"
+                        />
                         <div className="bg-primary/20 absolute inset-0"></div>
                     </div>
 

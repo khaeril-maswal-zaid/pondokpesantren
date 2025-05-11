@@ -36,8 +36,13 @@ export default function Navbar() {
         >
             <div className="container mx-auto flex items-center justify-between px-8">
                 <Link href="/" className="flex items-center">
-                    <img src={`storage/image/assets/logo.png`} alt="" className="mr-3 h-15" />
-                    <span className={cn('text-xl font-bold transition-colors', isScrolled ? 'text-primary' : 'text-gray-50')}>Pesantren {name}</span>
+                    <img src={`storage/image/assets/logo.png?v=${new Date().getTime()})`} alt="" className="mr-3 h-15" />
+                    <span className={cn('hidden text-xl font-bold transition-colors sm:block', isScrolled ? 'text-primary' : 'text-gray-50')}>
+                        Pesantren {name}
+                    </span>
+                    <span className={cn('block text-lg font-bold transition-colors sm:hidden', isScrolled ? 'text-primary' : 'text-gray-50')}>
+                        Ponpes {name}
+                    </span>
                 </Link>
 
                 {/* Desktop Navigation */}
@@ -94,7 +99,7 @@ export default function Navbar() {
                                 isScrolled ? 'bg-primary hover:bg-primary/90 text-white' : 'text-primary bg-white hover:bg-gray-100',
                             )}
                         >
-                            Daftar
+                            Pendaftaran Santri
                         </Button>
                     </Link>
                 </nav>
@@ -148,7 +153,7 @@ export default function Navbar() {
                             Kontak
                         </Link>
                         <Link href={route('santri-baru.info')} onClick={() => setIsMenuOpen(false)}>
-                            <Button className="bg-primary hover:bg-primary/90 w-full text-white">Daftar</Button>
+                            <Button className="bg-primary hover:bg-primary/90 w-full text-white">Pendaftaran Santri</Button>
                         </Link>
                     </div>
                 </div>

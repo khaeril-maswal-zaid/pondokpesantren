@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateSantriBaruRequest;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SantriBaruController extends Controller
 {
@@ -37,7 +38,7 @@ class SantriBaruController extends Controller
         [, $extension] = explode('/', $type); // jpeg, png
         [, $base64Data] = explode(',', $data);
 
-        $filename = uniqid() . '-' . $request->namaLengkap . '.' . $extension;
+        $filename = uniqid() . '-' . Str::slug($request->namaLengkap) . '.' . $extension;
 
         Storage::disk('public')->put("image/santribaru/{$filename}", base64_decode($base64Data));
 
