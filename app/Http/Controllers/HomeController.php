@@ -20,6 +20,9 @@ class HomeController extends Controller
             'url' => config('app.url'),
         ];
 
+        request()->attributes->set('og', $ogTags);
+
+
         $data = [
             'heros' => [
                 [
