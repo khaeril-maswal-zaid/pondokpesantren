@@ -52,17 +52,17 @@ class HomeController extends Controller
             'stats' => [
                 [
                     'icon' => 'GraduationCap',
-                    'value' => '1.200+',
+                    'value' => '000+',
                     'label' => 'Alumni',
                 ],
                 [
                     'icon' => 'Users',
-                    'value' => '500+',
+                    'value' => '000+',
                     'label' => 'Santri',
                 ],
                 [
                     'icon' => 'BookOpen',
-                    'value' => '350+',
+                    'value' => '000+',
                     'label' => 'Santriwati',
                 ],
             ],
