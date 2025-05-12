@@ -42,12 +42,12 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Tentang PKS Bulukumba',
+        title: 'Tentang Ubay Bin Kaab',
         href: 'dashboard/tentang',
         icon: Info, // Tentang = informasi
     },
     {
-        title: 'Donasi PKS',
+        title: 'Donasi Ponpes UBK',
         href: 'dashboard/donasi',
         icon: HandCoins, // Donasi = uang / amal
     },
