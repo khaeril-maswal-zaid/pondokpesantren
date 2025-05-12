@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { usePage } from '@inertiajs/react';
 import { CropIcon, Loader2, PlusCircle, Upload, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
@@ -35,6 +36,8 @@ type ValidationErrors = {
 };
 
 export default function BlogPostModal() {
+    const { auth } = usePage().props;
+
     const [open, setOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -56,7 +59,7 @@ export default function BlogPostModal() {
 
     const [tagInput, setTagInput] = useState('');
     const [tags, setTags] = useState<string[]>([]);
-    const [activeTab, setActiveTab] = useState('content');
+    const [activeTab, setActiveTab] = useState('media');
 
     // Validation states
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -250,7 +253,6 @@ export default function BlogPostModal() {
             description,
             body1, // This will contain HTML from the rich text editor
             body2, // This will contain HTML from the rich text editor
-            author: currentUser.name,
             mainImage,
             subImage1,
             subImage2,
@@ -287,7 +289,7 @@ export default function BlogPostModal() {
         setSubImage2Preview(null);
         setTagInput('');
         setTags([]);
-        setActiveTab('content');
+        setActiveTab('media');
         setErrors({});
     };
 
@@ -311,7 +313,7 @@ export default function BlogPostModal() {
 
             <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogContent
-                    className={cn('max-h-[90vh] overflow-hidden p-0 transition-all duration-300 sm:max-w-[1000px]', pulse && 'animate-pulse-grow')}
+                    className={'overflow-hidden p-0 transition-all duration-300 sm:max-w-[1000px]'}
                     ref={dialogRef}
                     onInteractOutside={(e) => {
                         e.preventDefault();
@@ -325,15 +327,18 @@ export default function BlogPostModal() {
                     closeButton={false}
                 >
                     <DialogHeader className="relative p-6 pb-2">
-                        <DialogTitle>Create New Blog Post</DialogTitle>
-                        <DialogDescription>Fill in the details below to create a new blog post. Click save when you're done.</DialogDescription>
+                        <DialogTitle>Buat Postingan Blog Baru</DialogTitle>
+                        <DialogDescription>
+                            Isi detail di bawah ini untuk membuat postingan blog baru. Klik Save Post ketika selesai.
+                        </DialogDescription>
+
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none"
+                            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-sm p-0 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none"
                             onClick={() => setOpen(false)}
                         >
-                            <X className="h-4 w-4" />
+                            <X className="h-3" />
                             <span className="sr-only">Close</span>
                         </Button>
                     </DialogHeader>
@@ -341,97 +346,21 @@ export default function BlogPostModal() {
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <div className="px-6">
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="content">Content</TabsTrigger>
-                                <TabsTrigger value="media">Media & Metadata</TabsTrigger>
+                                <TabsTrigger value="media">Step 1</TabsTrigger>
+                                <TabsTrigger value="content">Step 2</TabsTrigger>
                             </TabsList>
                         </div>
 
                         <div className="h-[calc(90vh-180px)] overflow-hidden">
                             <ScrollArea className="h-full w-full">
                                 <div className="p-6">
-                                    <TabsContent value="content" className="mt-0 space-y-6">
-                                        <div className="grid grid-cols-12 gap-6">
-                                            {/* Left sidebar - Tags */}
-                                            <div className="col-span-12 space-y-6 md:col-span-3">
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="tags" className={cn('text-sm font-medium', errors.tags && 'text-destructive')}>
-                                                        Tags <span className="text-red-500">*</span> (max 5, type and press ; to add)
-                                                    </Label>
-                                                    <div className="flex flex-col space-y-2">
-                                                        <Input
-                                                            id="tags"
-                                                            value={tagInput}
-                                                            onChange={handleTagInputChange}
-                                                            onKeyDown={handleTagKeyDown}
-                                                            placeholder="Type a tag and press ; (semicolon)"
-                                                            className={errors.tags ? 'border-destructive' : ''}
-                                                            disabled={tags.length >= 5}
-                                                        />
-                                                        {errors.tags && <p className="text-destructive text-xs">{errors.tags}</p>}
-                                                        <div
-                                                            className={cn(
-                                                                'min-h-[200px] overflow-auto rounded-md border p-3',
-                                                                errors.tags && tags.length === 0 && 'border-destructive',
-                                                            )}
-                                                        >
-                                                            {tags.length > 0 ? (
-                                                                <div className="flex flex-wrap gap-2">
-                                                                    {tags.map((tag) => (
-                                                                        <Badge key={tag} variant="secondary" className="px-2 py-1 text-xs">
-                                                                            {tag}
-                                                                            <X
-                                                                                className="ml-1 h-3 w-3 cursor-pointer"
-                                                                                onClick={() => removeTag(tag)}
-                                                                            />
-                                                                        </Badge>
-                                                                    ))}
-                                                                </div>
-                                                            ) : (
-                                                                <p className="text-sm text-gray-400">No tags added yet</p>
-                                                            )}
-                                                        </div>
-                                                        <p className="text-muted-foreground text-xs">
-                                                            {tags.length}/5 tags used {tags.length === 0 && '(at least one tag required)'}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Right content area - Rich Text Editors */}
-                                            <div className="col-span-12 space-y-6 md:col-span-9">
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="body1" className={cn('text-sm font-medium', errors.body1 && 'text-destructive')}>
-                                                        Body 1 <span className="text-red-500">*</span>
-                                                    </Label>
-                                                    <div className={cn('min-h-[300px] rounded-md border', errors.body1 && 'border-destructive')}>
-                                                        <RichTextEditor value={body1} onChange={setBody1} placeholder="Enter the main content" />
-                                                    </div>
-                                                    {errors.body1 && <p className="text-destructive text-xs">{errors.body1}</p>}
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="body2" className="text-sm font-medium">
-                                                        Body 2
-                                                    </Label>
-                                                    <div className="min-h-[300px] rounded-md border">
-                                                        <RichTextEditor
-                                                            value={body2}
-                                                            onChange={setBody2}
-                                                            placeholder="Enter additional content (optional)"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </TabsContent>
-
                                     <TabsContent value="media" className="mt-0">
                                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                             {/* Left column - Title and Description */}
                                             <div className="space-y-6">
                                                 <div className="space-y-2">
                                                     <Label htmlFor="title" className={cn('text-sm font-medium', errors.title && 'text-destructive')}>
-                                                        Title <span className="text-red-500">*</span>
+                                                        Judul <span className="text-red-500">*</span>
                                                     </Label>
                                                     <Input
                                                         id="title"
@@ -439,6 +368,7 @@ export default function BlogPostModal() {
                                                         onChange={(e) => setTitle(e.target.value)}
                                                         placeholder="Enter blog post title"
                                                         required
+                                                        autoFocus
                                                         className={errors.title ? 'border-destructive' : ''}
                                                     />
                                                     {errors.title && <p className="text-destructive text-xs">{errors.title}</p>}
@@ -449,7 +379,7 @@ export default function BlogPostModal() {
                                                         htmlFor="description"
                                                         className={cn('text-sm font-medium', errors.description && 'text-destructive')}
                                                     >
-                                                        Description <span className="text-red-500">*</span>
+                                                        Deskripsi <span className="text-red-500">*</span>
                                                     </Label>
                                                     <Textarea
                                                         id="description"
@@ -464,9 +394,9 @@ export default function BlogPostModal() {
 
                                                 <div className="space-y-2">
                                                     <Label htmlFor="author" className="text-sm font-medium">
-                                                        Author
+                                                        Penulis
                                                     </Label>
-                                                    <Input id="author" value={currentUser.name} disabled />
+                                                    <Input id="author" value={auth?.user.name} disabled className="bg-gray-300" />
                                                 </div>
                                             </div>
 
@@ -489,7 +419,7 @@ export default function BlogPostModal() {
                                                                         mainImagePreview ? 'border-primary' : 'border-gray-300',
                                                                         errors.mainImage && !mainImagePreview && 'border-destructive',
                                                                     )}
-                                                                    style={{ height: '180px' }}
+                                                                    // style={{ height: '180px' }}
                                                                     onClick={() => document.getElementById('mainImage')?.click()}
                                                                 >
                                                                     {mainImagePreview ? (
@@ -568,7 +498,7 @@ export default function BlogPostModal() {
                                                                             'hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors',
                                                                             subImage1Preview ? 'border-primary' : 'border-gray-300',
                                                                         )}
-                                                                        style={{ height: '120px' }}
+                                                                        // style={{ height: '120px' }}
                                                                         onClick={() => document.getElementById('subImage1')?.click()}
                                                                     >
                                                                         {subImage1Preview ? (
@@ -642,7 +572,7 @@ export default function BlogPostModal() {
                                                                             'hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors',
                                                                             subImage2Preview ? 'border-primary' : 'border-gray-300',
                                                                         )}
-                                                                        style={{ height: '120px' }}
+                                                                        // style={{ height: '120px' }}
                                                                         onClick={() => document.getElementById('subImage2')?.click()}
                                                                     >
                                                                         {subImage2Preview ? (
@@ -706,6 +636,82 @@ export default function BlogPostModal() {
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TabsContent>
+
+                                    <TabsContent value="content" className="mt-0 space-y-6">
+                                        <div className="grid grid-cols-12 gap-6">
+                                            {/* Left sidebar - Tags */}
+                                            <div className="col-span-12 space-y-6 md:col-span-3">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="tags" className={cn('text-sm font-medium', errors.tags && 'text-destructive')}>
+                                                        Tags <span className="text-red-500">*</span> (max 5, type and press ; to add)
+                                                    </Label>
+                                                    <div className="flex flex-col space-y-2">
+                                                        <Input
+                                                            id="tags"
+                                                            value={tagInput}
+                                                            onChange={handleTagInputChange}
+                                                            onKeyDown={handleTagKeyDown}
+                                                            placeholder="Type a tag and press ; (semicolon)"
+                                                            className={errors.tags ? 'border-destructive' : ''}
+                                                            disabled={tags.length >= 5}
+                                                        />
+                                                        {errors.tags && <p className="text-destructive text-xs">{errors.tags}</p>}
+                                                        <div
+                                                            className={cn(
+                                                                'min-h-[200px] overflow-auto rounded-md border p-3',
+                                                                errors.tags && tags.length === 0 && 'border-destructive',
+                                                            )}
+                                                        >
+                                                            {tags.length > 0 ? (
+                                                                <div className="flex flex-wrap gap-2">
+                                                                    {tags.map((tag) => (
+                                                                        <Badge key={tag} variant="secondary" className="px-2 py-1 text-xs">
+                                                                            {tag}
+                                                                            <X
+                                                                                className="ml-1 h-3 w-3 cursor-pointer"
+                                                                                onClick={() => removeTag(tag)}
+                                                                            />
+                                                                        </Badge>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <p className="text-sm text-gray-400">No tags added yet</p>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-muted-foreground text-xs">
+                                                            {tags.length}/5 tags used {tags.length === 0 && '(at least one tag required)'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Right content area - Rich Text Editors */}
+                                            <div className="col-span-12 space-y-6 md:col-span-9">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="body1" className={cn('text-sm font-medium', errors.body1 && 'text-destructive')}>
+                                                        Body 1 <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <div className={cn('min-h-[300px] rounded-md border', errors.body1 && 'border-destructive')}>
+                                                        <RichTextEditor value={body1} onChange={setBody1} placeholder="Enter the main content" />
+                                                    </div>
+                                                    {errors.body1 && <p className="text-destructive text-xs">{errors.body1}</p>}
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="body2" className="text-sm font-medium">
+                                                        Body 2
+                                                    </Label>
+                                                    <div className="min-h-[300px] rounded-md border">
+                                                        <RichTextEditor
+                                                            value={body2}
+                                                            onChange={setBody2}
+                                                            placeholder="Enter additional content (optional)"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>

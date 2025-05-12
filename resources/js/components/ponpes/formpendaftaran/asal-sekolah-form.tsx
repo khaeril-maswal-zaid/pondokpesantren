@@ -33,7 +33,7 @@ export function AsalSekolahForm({ form }: AsalSekolahFormProps) {
                 name="jenjang"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Jenjang Pendidikan</FormLabel>
+                        <FormLabel>Jenjang Didaftari</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                                 <SelectTrigger>

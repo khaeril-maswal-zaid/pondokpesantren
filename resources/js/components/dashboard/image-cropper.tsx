@@ -127,11 +127,11 @@ export default function ImageCropper({ open, onOpenChange, imageUrl, onCropCompl
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[700px]">
+            <DialogContent className="my-8 sm:max-w-[700px]">
                 <DialogHeader>
                     <DialogTitle>Crop Image (4:3 Landscape)</DialogTitle>
                 </DialogHeader>
-                <div className="py-4">
+                <div className="py-3">
                     {imageUrl && (
                         <div className="flex flex-col items-center">
                             <div className="mb-2 text-sm text-gray-500">
@@ -142,14 +142,14 @@ export default function ImageCropper({ open, onOpenChange, imageUrl, onCropCompl
                                 onChange={(c) => setCrop(c)}
                                 onComplete={(c) => setCompletedCrop(c)}
                                 aspect={aspectRatio}
-                                className="mx-auto max-h-[400px] border"
+                                className="mx-auto max-h-[30px] border"
                             >
                                 <img
                                     ref={imgRef}
                                     src={imageUrl || '/placeholder.svg'}
                                     alt="Crop me"
                                     onLoad={onImageLoad}
-                                    className="max-h-[400px] max-w-full"
+                                    className="max-h-[30px] max-w-full"
                                     crossOrigin="anonymous"
                                 />
                             </ReactCrop>

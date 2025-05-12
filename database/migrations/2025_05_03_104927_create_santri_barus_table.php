@@ -40,7 +40,7 @@ return new class extends Migration
 
             // more
             $table->string('foto')->nullable();
-            $table->string('no_registrasi');
+            $table->string('no_registrasi')->unique();
             $table->string('status')->default('Pending'); // pending, accepted, student
 
             $table->timestamps();

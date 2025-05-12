@@ -5,8 +5,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
 import { Phone, Search } from 'lucide-react';
 import { useState } from 'react';
+
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+];
 
 // Sample data for struktur organisasi
 const strukturData = [
@@ -118,72 +129,72 @@ export default function StrukturPage() {
     };
 
     return (
-        <div className="p-6">
-            <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Struktur Organisasi</h1>
-                <StrukturCreateModal />
-            </div>
-
-            <div className="rounded-lg border bg-white shadow-sm">
-                <div className="border-b p-4">
-                    <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                        <h2 className="text-lg font-medium">Daftar Pengurus</h2>
-                        <div className="flex items-center gap-2">
-                            <div className="relative">
-                                <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
-                                <Input
-                                    type="search"
-                                    placeholder="Cari pengurus..."
-                                    className="w-full pl-8 md:w-[250px]"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+        <AppLayout button={<StrukturCreateModal />} breadcrumbs={breadcrumbs}>
+            <Head title="Dashboard" />
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                    <div className="rounded-lg border bg-white shadow-sm">
+                        <div className="border-b p-4">
+                            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                                <h2 className="text-lg font-medium">Daftar Pengurus</h2>
+                                <div className="flex items-center gap-2">
+                                    <div className="relative">
+                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
+                                        <Input
+                                            type="search"
+                                            placeholder="Cari pengurus..."
+                                            className="w-full pl-8 md:w-[250px]"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Foto</TableHead>
+                                        <TableHead>Nama</TableHead>
+                                        <TableHead>Posisi</TableHead>
+                                        <TableHead>Departemen</TableHead>
+                                        <TableHead>Nomor HP</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredStruktur.map((struktur) => (
+                                        <TableRow key={struktur.id}>
+                                            <TableCell>
+                                                <Avatar className="h-14 w-14">
+                                                    <AvatarImage src={struktur.foto || '/placeholder.svg'} alt={struktur.nama} />
+                                                    <AvatarFallback>{getInitials(struktur.nama)}</AvatarFallback>
+                                                </Avatar>
+                                            </TableCell>
+                                            <TableCell className="font-medium">{struktur.nama}</TableCell>
+                                            <TableCell>{struktur.posisi}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className={getDepartmentColor(struktur.departemen)}>
+                                                    {struktur.departemen}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-1">
+                                                    <Phone className="h-3.5 w-3.5 text-gray-500" />
+                                                    <a href={`tel:${struktur.no_hp}`} className="hover:underline">
+                                                        {formatPhoneNumber(struktur.no_hp)}
+                                                    </a>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
                     </div>
                 </div>
-
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Foto</TableHead>
-                                <TableHead>Nama</TableHead>
-                                <TableHead>Posisi</TableHead>
-                                <TableHead>Departemen</TableHead>
-                                <TableHead>Nomor HP</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredStruktur.map((struktur) => (
-                                <TableRow key={struktur.id}>
-                                    <TableCell>
-                                        <Avatar className="h-14 w-14">
-                                            <AvatarImage src={struktur.foto || '/placeholder.svg'} alt={struktur.nama} />
-                                            <AvatarFallback>{getInitials(struktur.nama)}</AvatarFallback>
-                                        </Avatar>
-                                    </TableCell>
-                                    <TableCell className="font-medium">{struktur.nama}</TableCell>
-                                    <TableCell>{struktur.posisi}</TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline" className={getDepartmentColor(struktur.departemen)}>
-                                            {struktur.departemen}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-1">
-                                            <Phone className="h-3.5 w-3.5 text-gray-500" />
-                                            <a href={`tel:${struktur.no_hp}`} className="hover:underline">
-                                                {formatPhoneNumber(struktur.no_hp)}
-                                            </a>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
             </div>
-        </div>
+        </AppLayout>
     );
 }

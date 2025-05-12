@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Agenda;
-use App\Http\Requests\StoreAgendaRequest;
-use App\Http\Requests\UpdateAgendaRequest;
+use App\Models\Struktur;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class AgendaController extends Controller
+class StrukturController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,10 +14,10 @@ class AgendaController extends Controller
     public function index()
     {
         $data = [
-            'blogs' => Agenda::select(['title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
+            // 'blogs' => Agenda::select(['title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
         ];
 
-        return Inertia::render('dashboard/agenda/page', $data);
+        return Inertia::render('dashboard/struktur/page', $data);
     }
 
     /**
@@ -32,7 +31,7 @@ class AgendaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAgendaRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -40,7 +39,7 @@ class AgendaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Agenda $agenda)
+    public function show(Struktur $struktur)
     {
         //
     }
@@ -48,7 +47,7 @@ class AgendaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Agenda $agenda)
+    public function edit(Struktur $struktur)
     {
         //
     }
@@ -56,7 +55,7 @@ class AgendaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAgendaRequest $request, Agenda $agenda)
+    public function update(Request $request, Struktur $struktur)
     {
         //
     }
@@ -64,7 +63,7 @@ class AgendaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Agenda $agenda)
+    public function destroy(Struktur $struktur)
     {
         //
     }

@@ -11,6 +11,17 @@ import { id } from 'date-fns/locale';
 import { Eye, Filter, MapPin, Search } from 'lucide-react';
 import { useState } from 'react';
 
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+];
+
 // Sample data for agenda
 const agendaData = [
     {
@@ -123,149 +134,147 @@ export default function AgendaPage() {
     };
 
     return (
-        <div className="p-6">
-            <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Agenda Kegiatan</h1>
-                <AgendaCreateModal />
-            </div>
-
-            <div className="rounded-lg border bg-white shadow-sm">
-                <div className="border-b p-4">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-medium">Daftar Agenda</h2>
-                        <div className="flex items-center gap-2">
-                            <div className="relative">
-                                <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
-                                <Input
-                                    type="search"
-                                    placeholder="Cari agenda..."
-                                    className="w-[250px] pl-8"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+        <AppLayout button={<AgendaCreateModal />} breadcrumbs={breadcrumbs}>
+            <Head title="Dashboard" />
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                    <div className="border-b p-4">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-lg font-medium">Daftar Agenda</h2>
+                            <div className="flex items-center gap-2">
+                                <div className="relative">
+                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="search"
+                                        placeholder="Cari agenda..."
+                                        className="w-[250px] pl-8"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <Button variant="outline" size="icon">
+                                    <Filter className="h-4 w-4" />
+                                </Button>
                             </div>
-                            <Button variant="outline" size="icon">
-                                <Filter className="h-4 w-4" />
-                            </Button>
                         </div>
                     </div>
-                </div>
 
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Nama Agenda</TableHead>
-                                <TableHead>Waktu</TableHead>
-                                <TableHead>Tempat</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="w-[80px]">Foto</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredAgenda.length > 0 ? (
-                                filteredAgenda.map((agenda) => (
-                                    <TableRow key={agenda.id}>
-                                        <TableCell className="font-medium">{agenda.nama_agenda}</TableCell>
-                                        <TableCell>{formatWaktu(agenda.waktu)}</TableCell>
-                                        <TableCell>
-                                            <div className="flex items-start gap-1">
-                                                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-500" />
-                                                <span>
-                                                    {agenda.tempat}, {agenda.lokasi}
-                                                </span>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Nama Agenda</TableHead>
+                                    <TableHead>Waktu</TableHead>
+                                    <TableHead>Tempat</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="w-[80px]">Foto</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredAgenda.length > 0 ? (
+                                    filteredAgenda.map((agenda) => (
+                                        <TableRow key={agenda.id}>
+                                            <TableCell className="font-medium">{agenda.nama_agenda}</TableCell>
+                                            <TableCell>{formatWaktu(agenda.waktu)}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-start gap-1">
+                                                    <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-500" />
+                                                    <span>
+                                                        {agenda.tempat}, {agenda.lokasi}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className={getStatusColor(agenda.status)}>
+                                                    {agenda.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="flex items-center gap-1"
+                                                    onClick={() => handleViewPhotos(agenda)}
+                                                >
+                                                    <Eye className="h-3.5 w-3.5" />
+                                                    <span className="sr-md:inline sr-only">Lihat</span>
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="py-4 text-center text-gray-500">
+                                            Tidak ada agenda ditemukan
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                    {/* Foto Modal */}
+                    <Dialog open={fotoModalOpen} onOpenChange={setFotoModalOpen}>
+                        <DialogContent className="sm:max-w-[800px]">
+                            <DialogHeader>
+                                <DialogTitle>{selectedAgenda?.nama_agenda}</DialogTitle>
+                                <DialogDescription>
+                                    {selectedAgenda?.deskripsi} - {selectedAgenda && formatWaktu(selectedAgenda.waktu)}
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            {selectedAgenda && (
+                                <div className="flex flex-col items-center">
+                                    <div className="relative w-full">
+                                        <img
+                                            src={selectedAgenda.foto[currentPhotoIndex] || '/placeholder.svg'}
+                                            alt={`Foto ${selectedAgenda.nama_agenda}`}
+                                            className="h-auto max-h-[400px] w-full rounded-md object-contain"
+                                        />
+                                        {selectedAgenda.foto.length > 1 && (
+                                            <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2">
+                                                {selectedAgenda.foto.map((_, index: number) => (
+                                                    <button
+                                                        key={index}
+                                                        className={`h-2.5 w-2.5 rounded-full ${index === currentPhotoIndex ? 'bg-primary' : 'bg-gray-300'}`}
+                                                        onClick={() => setCurrentPhotoIndex(index)}
+                                                    />
+                                                ))}
                                             </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline" className={getStatusColor(agenda.status)}>
-                                                {agenda.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
+                                        )}
+                                    </div>
+
+                                    {selectedAgenda.foto.length > 1 && (
+                                        <div className="mt-4 flex justify-center gap-4">
+                                            <Button variant="outline" size="sm" onClick={prevPhoto} disabled={currentPhotoIndex === 0}>
+                                                Sebelumnya
+                                            </Button>
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                className="flex items-center gap-1"
-                                                onClick={() => handleViewPhotos(agenda)}
+                                                onClick={nextPhoto}
+                                                disabled={currentPhotoIndex === selectedAgenda.foto.length - 1}
                                             >
-                                                <Eye className="h-3.5 w-3.5" />
-                                                <span className="sr-md:inline sr-only">Lihat</span>
+                                                Selanjutnya
                                             </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="py-4 text-center text-gray-500">
-                                        Tidak ada agenda ditemukan
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
+                                        </div>
+                                    )}
 
-            {/* Foto Modal */}
-            <Dialog open={fotoModalOpen} onOpenChange={setFotoModalOpen}>
-                <DialogContent className="sm:max-w-[800px]">
-                    <DialogHeader>
-                        <DialogTitle>{selectedAgenda?.nama_agenda}</DialogTitle>
-                        <DialogDescription>
-                            {selectedAgenda?.deskripsi} - {selectedAgenda && formatWaktu(selectedAgenda.waktu)}
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    {selectedAgenda && (
-                        <div className="flex flex-col items-center">
-                            <div className="relative w-full">
-                                <img
-                                    src={selectedAgenda.foto[currentPhotoIndex] || '/placeholder.svg'}
-                                    alt={`Foto ${selectedAgenda.nama_agenda}`}
-                                    className="h-auto max-h-[400px] w-full rounded-md object-contain"
-                                />
-                                {selectedAgenda.foto.length > 1 && (
-                                    <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2">
-                                        {selectedAgenda.foto.map((_, index: number) => (
-                                            <button
-                                                key={index}
-                                                className={`h-2.5 w-2.5 rounded-full ${index === currentPhotoIndex ? 'bg-primary' : 'bg-gray-300'}`}
-                                                onClick={() => setCurrentPhotoIndex(index)}
-                                            />
-                                        ))}
+                                    <div className="mt-4 text-center">
+                                        <p className="text-sm text-gray-500">
+                                            Foto {currentPhotoIndex + 1} dari {selectedAgenda.foto.length}
+                                        </p>
                                     </div>
-                                )}
-                            </div>
-
-                            {selectedAgenda.foto.length > 1 && (
-                                <div className="mt-4 flex justify-center gap-4">
-                                    <Button variant="outline" size="sm" onClick={prevPhoto} disabled={currentPhotoIndex === 0}>
-                                        Sebelumnya
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={nextPhoto}
-                                        disabled={currentPhotoIndex === selectedAgenda.foto.length - 1}
-                                    >
-                                        Selanjutnya
-                                    </Button>
                                 </div>
                             )}
 
-                            <div className="mt-4 text-center">
-                                <p className="text-sm text-gray-500">
-                                    Foto {currentPhotoIndex + 1} dari {selectedAgenda.foto.length}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    <DialogFooter>
-                        <Button onClick={() => setFotoModalOpen(false)}>Tutup</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </div>
+                            <DialogFooter>
+                                <Button onClick={() => setFotoModalOpen(false)}>Tutup</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+            </div>
+        </AppLayout>
     );
 }

@@ -284,10 +284,10 @@ export default function FormPendaftaranSantri() {
                                     variants={variants}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    {step === 1 && <DataDiriForm form={form} />}
+                                    {step === 4 && <DataDiriForm form={form} />}
                                     {step === 2 && <DataOrangTuaForm form={form} />}
                                     {step === 3 && <AsalSekolahForm form={form} />}
-                                    {step === 4 && <UploadFotoForm form={form} />}
+                                    {step === 1 && <UploadFotoForm form={form} />}
                                     {step === 5 && (
                                         <RingkasanData
                                             data={form.getValues()}
@@ -301,19 +301,22 @@ export default function FormPendaftaranSantri() {
                         </CardContent>
 
                         <CardFooter className="flex justify-between">
-                            <Button type="button" variant="outline" onClick={prevStep} disabled={step === 1}>
-                                Sebelumnya
-                            </Button>
+                            {isSubmitted ? (
+                                <Button type="button" variant="outline" disabled={step === 1 || isSubmitting || isSubmitted}>
+                                    Sebelumnya
+                                </Button>
+                            ) : (
+                                <Button type="button" variant="outline" onClick={prevStep} disabled={step === 1}>
+                                    Sebelumnya
+                                </Button>
+                            )}
 
                             {step < totalSteps ? (
                                 <Button type="button" onClick={nextStep}>
                                     Selanjutnya
                                 </Button>
                             ) : (
-                                <Button
-                                    type="submit"
-                                    //  disabled={isSubmitting || isSubmitted}
-                                >
+                                <Button type="submit" disabled={isSubmitting || isSubmitted}>
                                     {isSubmitting ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -28,7 +28,7 @@ class SantriBaruController extends Controller
     public function index()
     {
         $data = [
-            'pendaftarData' => SantriBaru::select(['nik', 'nama_lengkap', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu', 'kontak_ayah', 'kontak_ibu', 'jenjang', 'nama_sekolah', 'nisn', 'tahun_tamat', 'foto', 'no_registrasi', 'status'])->latest()->get(),
+            'pendaftarData' => SantriBaru::select(['nik', 'nama_lengkap', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu', 'kontak_ayah', 'kontak_ibu', 'jenjang', 'nama_sekolah', 'nisn', 'tahun_tamat', 'foto', 'no_registrasi', 'status'])->latest()->paginate(10),
         ];
 
         return Inertia::render('dashboard/pendaftaran/page', $data);
@@ -126,5 +126,14 @@ class SantriBaruController extends Controller
     public function destroy(SantriBaru $santriBaru)
     {
         //
+    }
+
+    public function approved(SantriBaru $santriBaru, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Approved,Pending',
+        ]);
+
+        $santriBaru->update(['status' => $request->status]);
     }
 }

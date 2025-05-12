@@ -32,5 +32,6 @@ class SantriBaru extends Model
         'tahun_tamat',
         'foto',
         'no_registrasi',
+        'status'
     ];
 }

@@ -17,12 +17,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { getDesaName, getKabupatenName, getKecamatanName, getProvinsiName } from '@/lib/wilayah';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { Check, Eye, Filter, MoreVertical, Search, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -38,16 +39,41 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
     const [pendaftarToDelete, setPendaftarToDelete] = useState<string | null>(null);
 
     // Filter pendaftar berdasarkan nama
-    const filteredPendaftar = pendaftarData.filter((pendaftar) => pendaftar.nama_lengkap.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredPendaftar = pendaftarData.data.filter((pendaftar) => pendaftar.nama_lengkap.toLowerCase().includes(searchTerm.toLowerCase()));
 
     // Format tanggal lahir
     const formatTanggalLahir = (tanggal: string) => {
         return format(new Date(tanggal), 'dd MMMM yyyy', { locale: id });
     };
 
+    function capitalizeFirstLetter(text: string) {
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
+
     // Gabungkan alamat
     const getAlamat = (pendaftar: any) => {
-        return ` ${pendaftar.kecamatan}, ${pendaftar.kabupaten}`;
+        const [provinsiName, setProvinsiName] = useState('');
+        const [kabupatenName, setKabupatenName] = useState('');
+        const [kecamatanName, setKecamatanName] = useState('');
+        const [desaName, setDesaName] = useState('');
+
+        useEffect(() => {
+            const fetchWilayah = async () => {
+                const prov = await getProvinsiName(pendaftar.provinsi);
+                const kab = await getKabupatenName(pendaftar.kabupaten, pendaftar.provinsi);
+                const kec = await getKecamatanName(pendaftar.kecamatan, pendaftar.kabupaten);
+                const desa = await getDesaName(pendaftar.desa, pendaftar.kecamatan);
+
+                setProvinsiName(prov);
+                setKabupatenName(kab);
+                setKecamatanName(kec);
+                setDesaName(desa);
+            };
+
+            fetchWilayah();
+        }, [pendaftar]);
+
+        return ` ${kecamatanName}, ${kabupatenName}`;
     };
 
     // Ambil kontak orang tua (ayah atau ibu)
@@ -67,9 +93,14 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
     };
 
     // Handle approve action
-    const handleApprove = (noRegistrasi: string) => {
-        console.log('approve', noRegistrasi);
-        //Kerja ini dulu
+    const handleApprove = (noRegistrasi: string, value: string) => {
+        router.put(
+            route('santri-baru.approved', noRegistrasi),
+            { status: value },
+            {
+                preserveScroll: true, // Ini penting
+            },
+        );
     };
 
     //-----------------
@@ -105,7 +136,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                         <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
                                         <Input
                                             type="search"
-                                            placeholder="Cari pendaftar..."
+                                            placeholder="Cari berdasarkan nama ..."
                                             className="w-[250px] pl-8"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -122,6 +153,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead>No</TableHead>
                                         <TableHead>Nama</TableHead>
                                         <TableHead>Tempat dan Tanggal Lahir</TableHead>
                                         <TableHead>Alamat</TableHead>
@@ -134,6 +166,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                 <TableBody>
                                     {filteredPendaftar.map((pendaftar) => (
                                         <TableRow key={pendaftar.nik}>
+                                            <TableCell>{}</TableCell>
                                             <TableCell className="font-medium whitespace-nowrap">{pendaftar.nama_lengkap}</TableCell>
                                             <TableCell>
                                                 {pendaftar.tempat_lahir}, {formatTanggalLahir(pendaftar.tanggal_lahir)}
@@ -164,10 +197,27 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                                             Detail
                                                         </DropdownMenuItem>
 
-                                                        <DropdownMenuItem onClick={() => handleApprove(pendaftar.no_registrasi)}>
-                                                            <Check className="mr-2 h-4 w-4" />
-                                                            Approve
-                                                        </DropdownMenuItem>
+                                                        {pendaftar.status == 'Approved' ? (
+                                                            <DropdownMenuItem
+                                                                onClick={(e) => {
+                                                                    // e.preventDefault(); // Cegah default link behavior
+                                                                    handleApprove(pendaftar.no_registrasi, 'Pending');
+                                                                }}
+                                                            >
+                                                                <Check className="mr-2 h-4 w-4" />
+                                                                Ubah ke Pending
+                                                            </DropdownMenuItem>
+                                                        ) : (
+                                                            <DropdownMenuItem
+                                                                onClick={(e) => {
+                                                                    // e.preventDefault(); // Cegah default link behavior
+                                                                    handleApprove(pendaftar.no_registrasi, 'Approved');
+                                                                }}
+                                                            >
+                                                                <Check className="mr-2 h-4 w-4" />
+                                                                Approve
+                                                            </DropdownMenuItem>
+                                                        )}
 
                                                         <DropdownMenuItem
                                                             className="text-red-600"
@@ -205,7 +255,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                     <div className="md:col-span-1">
                                         <div className="flex flex-col items-center">
                                             <img
-                                                src={selectedPendaftar.foto || '/placeholder.svg'}
+                                                src={`storage/image/santribaru/${selectedPendaftar.foto}` || '/placeholder.svg'}
                                                 alt={selectedPendaftar.nama_lengkap}
                                                 className="h-auto w-full max-w-[200px] rounded-md border"
                                             />
