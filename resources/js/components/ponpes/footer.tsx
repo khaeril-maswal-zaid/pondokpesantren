@@ -32,8 +32,8 @@ export default function Footer() {
                         <h3 className="mb-4 text-xl font-bold">Navigasi</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/" className="transition-colors hover:text-blue-300">
-                                    Beranda
+                                <Link href={route('dashboard')} className="transition-colors hover:text-blue-300">
+                                    Dashboard
                                 </Link>
                             </li>
                             <li>
