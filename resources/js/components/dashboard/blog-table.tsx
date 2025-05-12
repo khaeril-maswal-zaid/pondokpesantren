@@ -25,17 +25,6 @@ export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
         setDeleteId(null);
     };
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'Published':
-                return 'bg-green-100 text-green-800 hover:bg-green-100';
-            case 'Draft':
-                return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
-            default:
-                return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
-        }
-    };
-
     return (
         <>
             <div className="overflow-x-auto">

@@ -40,7 +40,7 @@ class SantriBaruFactory extends Factory
             'tahun_tamat' => $this->faker->year(),
             'foto' => $this->faker->imageUrl(300, 300, 'people'),
             'no_registrasi' => $this->faker->unique()->bothify('REG####'),
-            'status' => $this->faker->randomElement(['rejected', 'accepted', 'pending']),
+            'status' => $this->faker->randomElement(['Approved', 'Pending']),
         ];
     }
 }

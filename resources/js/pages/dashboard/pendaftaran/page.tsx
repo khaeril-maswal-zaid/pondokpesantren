@@ -10,6 +10,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -46,7 +47,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
 
     // Gabungkan alamat
     const getAlamat = (pendaftar: any) => {
-        return `${pendaftar.desa}, ${pendaftar.kecamatan}, ${pendaftar.kabupaten}`;
+        return ` ${pendaftar.kecamatan}, ${pendaftar.kabupaten}`;
     };
 
     // Ambil kontak orang tua (ayah atau ibu)
@@ -68,6 +69,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
     // Handle approve action
     const handleApprove = (noRegistrasi: string) => {
         console.log('approve', noRegistrasi);
+        //Kerja ini dulu
     };
 
     //-----------------
@@ -78,6 +80,15 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
     const confirmDelete = (no_registrasi: string | null) => {
         if (!no_registrasi) return;
         // ...lanjutkan proses hapus via fetch/axios
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'Approved':
+                return 'bg-green-100 text-green-800 hover:bg-green-100';
+            case 'Pending':
+                return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
+        }
     };
 
     return (
@@ -116,6 +127,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                         <TableHead>Alamat</TableHead>
                                         <TableHead>Nomor HP Orang Tua</TableHead>
                                         <TableHead>Nomor Registrasi</TableHead>
+                                        <TableHead>Status penerimaan</TableHead>
                                         <TableHead className="w-[100px]">Aksi</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -129,6 +141,11 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                             <TableCell>{getAlamat(pendaftar)}</TableCell>
                                             <TableCell>{getKontakOrangTua(pendaftar)}</TableCell>
                                             <TableCell>{pendaftar.no_registrasi}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className={getStatusColor(pendaftar.status)}>
+                                                    {pendaftar.status}
+                                                </Badge>
+                                            </TableCell>
                                             <TableCell>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
