@@ -42,7 +42,7 @@ export default function ProgramsSection({ programs }) {
     }, []);
 
     return (
-        <section ref={sectionRef} id="program" className="py-20">
+        <section ref={sectionRef} id="program" className="py-15">
             <div className="container mx-auto px-8">
                 <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Program Unggulan</h2>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">

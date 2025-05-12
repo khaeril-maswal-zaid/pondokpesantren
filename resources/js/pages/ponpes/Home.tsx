@@ -9,7 +9,7 @@ import StatsOverlay from '@/components/ponpes/stats-overlay';
 import Layout from '@/layouts/ponpes-layout';
 import { Head } from '@inertiajs/react';
 
-export default function Home({ heros, about, figures, programs, agenda, blogs }) {
+export default function Home({ heros, stats, about, figures, programs, agenda, blogs }) {
     return (
         <>
             <Head title="Home" />
@@ -17,11 +17,12 @@ export default function Home({ heros, about, figures, programs, agenda, blogs })
                 <main className="flex min-h-screen flex-col items-center justify-between">
                     <div className="relative w-full">
                         <HeroCarousel slides={heros} />
-                        <StatsOverlay />
+                        <StatsOverlay stats={stats} />
                     </div>
                     <AboutSection about={about} />
                     <FiguresSection figures={figures} />
                     <ProgramsSection programs={programs} />
+                    <hr className="border-2 border-amber-300" />
                     <AgendaSection agendaData={agenda} />
                     <BlogSection blogPosts={blogs} />
                     <LocationSection />

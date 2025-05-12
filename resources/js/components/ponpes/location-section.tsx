@@ -54,13 +54,16 @@ export default function LocationSection() {
     const parallaxOffset = getParallaxOffset();
 
     return (
-        <section ref={sectionRef} id="lokasi" className="relative overflow-hidden py-20 opacity-0">
+        <section ref={sectionRef} id="lokasi" className="relative overflow-hidden py-9 opacity-0 md:py-20">
             <div
                 className="from-primary/5 to-primary/10 absolute inset-0 -z-10 bg-gradient-to-b"
                 style={{ transform: `translateY(${parallaxOffset * 0.5}px)` }}
             ></div>
             <div className="container mx-auto px-8">
-                <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl" style={{ transform: `translateY(${parallaxOffset * -0.2}px)` }}>
+                <h2
+                    className="mb-7 text-center text-3xl font-bold md:mb-12 md:text-4xl"
+                    style={{ transform: `translateY(${parallaxOffset * -0.2}px)` }}
+                >
                     Lokasi Pesantren
                 </h2>
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

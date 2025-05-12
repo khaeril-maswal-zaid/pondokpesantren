@@ -13,12 +13,9 @@ Route::post('/penerimaan-santri-baru/store', [SantriBaruController::class, 'stor
 
 Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.show');
 
-Route::get('/cripto-ts-analisis', [HomeController::class, 'cripto'])->name('home.cripto');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard/home');
-    })->name('dashboard');
+    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/dashboard/penerimaan-santri-baru', [SantriBaruController::class, 'index'])->name('santri-baru.index');
 

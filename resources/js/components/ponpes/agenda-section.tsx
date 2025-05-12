@@ -38,9 +38,9 @@ export default function AgendaSection({ agendaData }) {
     }, []);
 
     return (
-        <section ref={sectionRef} id="agenda" className="bg-secondary py-20">
+        <section ref={sectionRef} id="agenda" className="bg-secondary py-7 md:py-13">
             <div className="container mx-auto px-8">
-                <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Agenda Pesantren</h2>
+                <h2 className="mb-6 text-center text-3xl font-bold md:mb-10 md:text-4xl">Agenda Pesantren</h2>
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-3 lg:grid-cols-4">
                     {agendaData.slice(0, 4).map((agenda, index) => (
                         <div

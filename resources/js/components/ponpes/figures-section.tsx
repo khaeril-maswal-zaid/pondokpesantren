@@ -38,9 +38,9 @@ export default function FiguresSection({ figures }) {
     }, []);
 
     return (
-        <section ref={sectionRef} id="tokoh" className="bg-secondary wave-pattern-top py-20">
+        <section ref={sectionRef} id="tokoh" className="bg-secondary wave-pattern-top pt-20 pb-15 shadow-md">
             <div className="container mx-auto px-8">
-                <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Struktur Pesantren</h2>
+                <h2 className="mb-6 text-center text-3xl font-bold md:mb-12 md:text-4xl">Struktur Pesantren</h2>
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                     {figures.map((figure, index) => (
                         <Card

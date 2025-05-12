@@ -47,7 +47,7 @@ export default function AboutSection({ about }) {
     return (
         <section ref={sectionRef} id="tentang" className="wave-pattern relative py-20 opacity-0">
             <div className="relative z-10 container mx-auto px-4">
-                <div className="mb-12 text-center">
+                <div className="mb-3 text-center md:mb-12">
                     <h2 className="mb-4 text-3xl font-bold md:text-4xl">Tentang Pondok Pesantren {name}</h2>
                     <p className="mx-auto max-w-3xl text-gray-600">
                         Lembaga pendidikan Islam yang mengintegrasikan nilai-nilai tradisional dengan pendidikan modern untuk mencetak generasi

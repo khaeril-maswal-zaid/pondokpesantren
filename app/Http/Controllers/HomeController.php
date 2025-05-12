@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agenda;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,7 +15,7 @@ class HomeController extends Controller
     public function index()
     {
         $ogTags = [
-            'title' => 'Pondok Pesantren' . config('app.name') . 'Bulukumba',
+            'title' => 'Pondok Pesantren ' . config('app.name') . ' Bulukumba',
             'description' => 'Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah, berlandaskan Al-qur`an dan hadist yang sahih.',
             'image' => asset('/storage/image/assets/logo.png'),
             'url' => config('app.url'),
@@ -48,6 +49,23 @@ class HomeController extends Controller
                 'body1' => '<p class="mb-2 text-gray-800">Pondok Pesantren Ubay Bin Ka’ab Bulukumba dirintis pada bulan Juli tahun 2020 dan berlokasi di Lajae, Jawi-Jawi, Kabupaten Bulukumba. Lahan tempat berdirinya pesantren ini merupakan wakaf dari almarhumah Ibu Hj. Darniati, istri dari Bapak H. Rais Sanusi, seluas 50 x 50 meter persegi.</p><p class="mb-2 text-gray-800">Awalnya, tanah wakaf ini diamanahkan kepada Pondok Pesantren Darul Istiqamah Ponci. Namun, kemudian dialihkan dan dipindahwakafkan secara resmi kepada Yayasan Ubay Bin Ka’ab. Proses serah terima ini dilangsungkan langsung oleh Bapak H. Rais Sanusi kepada pihak yayasan, dengan disaksikan oleh Dr. Muzakkir Arif, Lc., M.A., Bapak Muh. Nasir, S.Pd., M.Pd., serta seluruh ahli waris.</p><p class="mb-2 text-gray-800">Untuk memenuhi kebutuhan pendidikan dan tempat belajar para santri, dibangun ruang kelas dan asrama dua lantai berukuran 7 x 21 meter di samping masjid. Alhamdulillah, pada tahun 2021 pembangunan tersebut telah rampung dan mulai dimanfaatkan oleh para santri.</p><p class="mb-2 text-gray-800">Seiring dengan perkembangan, Pondok Pesantren Ubay Bin Ka’ab Bulukumba kini telah membuka beberapa cabang:</p><ul class="list-disc list-inside ml-4 text-gray-700"><li><strong>Kampus 2</strong> di Desa Manyampa, Kecamatan Ujung Loe, di atas lahan hibah seluas 1 hektar dari Bapak Amiruddin, seorang pengusaha dan warga Manyampa.</li><li><strong>Kampus khusus santri putri</strong> di Ujung Bulu, Kota Bulukumba, tepatnya di Jalan Jati, yang merupakan wakaf dari Bapak H. Hendra, juga seorang pengusaha.</li></ul><p class="mb-2 text-gray-800">Pada tahun 2023, Yayasan Ubay Bin Ka’ab Bulukumba telah mengelola berbagai jenjang pendidikan formal, mulai dari Sekolah Dasar (SD), Madrasah Tsanawiyah/Sekolah Menengah Pertama (MTs/SMP), hingga Madrasah Aliyah/Sekolah Menengah Atas (MA/SMA). Selain itu, tersedia pula program pendidikan non-formal seperti <em>Tahfidz Day</em> dan <em>Tahfidz Weekend</em> untuk tingkat SD dan SMP.</p><p class="mb-2 text-gray-800">Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip <strong>menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah</strong>, berlandaskan dalil yang sahih. Pesantren ini juga secara tegas menolak segala bentuk kesyirikan, khurafat, tahayul, tathayyur, bid’ah, serta praktik-praktik yang bertentangan dengan syariat Islam.</p><p>Dengan semangat keikhlasan dan dakwah yang berlandaskan ilmu, Pondok Pesantren Ubay Bin Ka’ab Bulukumba berkomitmen menjadi pelita ilmu dan keimanan bagi generasi Muslim masa depan.</p>',
             ],
 
+            'stats' => [
+                [
+                    'icon' => 'GraduationCap',
+                    'value' => '1.200+',
+                    'label' => 'Alumni',
+                ],
+                [
+                    'icon' => 'Users',
+                    'value' => '500+',
+                    'label' => 'Santri',
+                ],
+                [
+                    'icon' => 'BookOpen',
+                    'value' => '350+',
+                    'label' => 'Santriwati',
+                ],
+            ],
 
             'figures' => [
                 [
@@ -95,47 +113,25 @@ class HomeController extends Controller
                 ],
             ],
 
-            'agenda' => [
-                [
-                    'title' => 'Halaqoh pengambilan Sanad',
-                    'image' => 'image/agenda/halaqoh-pengambilan-sanad.jpg',
-                    'date' => '05-06-2025',
-                    'time' => '08:00-10:00',
-                    'location' => 'Masjid Ubay Bin Ka\'ab, Bulukumba'
-                ],
-                [
-                    'title' => 'Halaqoh pengambilan Sanad Putri',
-                    'image' => 'image/agenda/halaqoh-pengambilan-sanad-putri.jpg',
-                    'date' => '06-06-2025',
-                    'time' => '08:00-10:00',
-                    'location' => 'Aula Akhwat Ubay Bin Ka\'ab'
-                ],
-                [
-                    'title' => 'Pelatihan TOT Tahfidzul Qur\'an',
-                    'image' => 'image/agenda/pelatihan-tot-tahfidzul-quran.jpg',
-                    'date' => '15-07-2025',
-                    'time' => '08:00-10:00',
-                    'location' => 'Gedung Dakwah Muhammadiyah Bulukumba'
-                ],
-                [
-                    'title' => 'Footsal Rutin oleh Ubay Football Club',
-                    'image' => 'image/agenda/footsal-rutin-oleh-ubay-football-club.jpg',
-                    'date' => '10-05-2025',
-                    'time' => '08:00-10:00',
-                    'location' => 'Lapangan Futsal Nusantara, Bulukumba'
-                ],
-                [
-                    'title' => 'Penerimaan Raport SD Qur\'an Ubay Bin Ka\'ab',
-                    'image' => 'image/agenda/penerimaan-raport-sd-quran-ubay-bin-kaab.jpg',
-                    'date' => '20-06-2025',
-                    'time' => '08:00-10:00',
-                    'location' => 'Ruang Kelas Utama SD Qur\'an Ubay Bin Ka\'ab'
-                ]
-            ],
+            'agenda' => Agenda::select(['title', 'image', 'date', 'time', 'location'])->latest()->take(4)->get(),
 
             'blogs' => Blog::select(['title', 'slug', 'excerpt', 'picture1', 'created_at'])->latest()->take(4)->get()
         ];
 
         return Inertia::render('ponpes/Home', $data);
+    }
+
+    public function dashboard()
+    {
+        $ogTags = [
+            'title' => 'Panel Admin ' . config('app.name') . 'Bulukumba',
+            'description' => 'Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah, berlandaskan Al-qur`an dan hadist yang sahih.',
+            'image' => asset('/storage/image/assets/logo.png'),
+            'url' => config('app.url'),
+        ];
+
+        request()->attributes->set('og', $ogTags);
+
+        return Inertia::render('dashboard/home');
     }
 }

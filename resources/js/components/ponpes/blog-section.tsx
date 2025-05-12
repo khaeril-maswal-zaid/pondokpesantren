@@ -38,9 +38,9 @@ export default function BlogSection({ blogPosts }) {
     }, []);
 
     return (
-        <section ref={sectionRef} id="blog" className="bg-secondary py-20">
+        <section ref={sectionRef} id="blog" className="bg-secondary py-14 md:py-15">
             <div className="container mx-auto px-8">
-                <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Blog Pesantren</h2>
+                <h2 className="mb-7 text-center text-3xl font-bold md:mb-12 md:text-4xl">Blog Pesantren</h2>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {blogPosts.map((post, index) => (
                         <div

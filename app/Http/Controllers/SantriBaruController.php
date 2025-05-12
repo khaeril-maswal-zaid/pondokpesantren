@@ -12,6 +12,16 @@ use Illuminate\Support\Str;
 
 class SantriBaruController extends Controller
 {
+    protected $ogTags;
+    public function __construct()
+    {
+        $this->ogTags = [
+            'title' => 'Pondok Pesantren ' . config('app.name') . ' Bulukumba',
+            'description' => 'Penerimaan Santri/ Santriwati Baru Pondok Pesantren' . config('app.name') . 'Bulukumba tahun ajaran 2025/206 ',
+            'image' => asset('/storage/image/assets/logo.png'),
+            'url' => config('app.url'),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -24,19 +34,19 @@ class SantriBaruController extends Controller
         return Inertia::render('dashboard/pendaftaran/page', $data);
     }
 
+    public function informasi()
+    {
+        request()->attributes->set('og', $this->ogTags);
+
+        return Inertia::render('ponpes/pendaftaran/page');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $ogTags = [
-            'title' => 'Pondok Pesantren' . config('app.name') . 'Bulukumba',
-            'description' => 'Penerimaan Santri/ Santriwati Baru Pondok Pesantren' . config('app.name') . 'Bulukumba tahun ajaran 2025/206 ',
-            'image' => asset('/storage/image/assets/logo.png'),
-            'url' => config('app.url'),
-        ];
-
-        request()->attributes->set('og', $ogTags);
+        request()->attributes->set('og', $this->ogTags);
 
         return Inertia::render('ponpes/pendaftaran/form');
     }
@@ -115,10 +125,5 @@ class SantriBaruController extends Controller
     public function destroy(SantriBaru $santriBaru)
     {
         //
-    }
-
-    public function informasi()
-    {
-        return Inertia::render('ponpes/pendaftaran/page');
     }
 }

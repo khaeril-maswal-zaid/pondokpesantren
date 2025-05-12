@@ -1,48 +1,36 @@
-import { Users, GraduationCap, BookOpen } from "lucide-react"
+import * as LucideIcons from 'lucide-react';
 
-const stats = [
-  {
-    icon: <GraduationCap className="h-8 w-8 text-primary" />,
-    value: "1.200+",
-    label: "Alumni",
-  },
-  {
-    icon: <Users className="h-8 w-8 text-primary" />,
-    value: "500+",
-    label: "Santri",
-  },
-  {
-    icon: <BookOpen className="h-8 w-8 text-primary" />,
-    value: "350+",
-    label: "Santriwati",
-  },
-]
+// Di render:
 
-export default function StatsOverlay() {
-  return (
-    <div className="container mx-auto px-8 relative -mt-16 z-10">
-      <div className="mx-auto max-w-4xl">
-        <div className="grid grid-cols-1 md:grid-cols-3 md:gap-0 gap-0">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className={`bg-white rounded-none md:rounded-lg shadow-lg p-6 flex items-center space-x-4 ${
-                index === 0
-                  ? "md:rounded-r-none md:border-r border-gray-100"
-                  : index === 1
-                    ? "md:rounded-none md:border-r border-gray-100"
-                    : "md:rounded-l-none"
-              }`}
-            >
-              <div className="flex-shrink-0">{stat.icon}</div>
-              <div>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
+export default function StatsOverlay({ stats }) {
+    const Icon = LucideIcons[stats.icon] || LucideIcons.HelpCircle; // fallback jika tidak ditemukan
+    return (
+        <div className="relative z-10 container mx-auto -mt-16 px-8">
+            <div className="mx-auto max-w-4xl">
+                <div className="grid grid-cols-1 gap-0 md:grid-cols-3 md:gap-0">
+                    {stats.map((stat, index) => {
+                        const Icon = LucideIcons[stat.icon]; // Ambil dari nama di DB
+                        return (
+                            <div
+                                key={index}
+                                className={`flex items-center space-x-4 rounded-none bg-white p-6 shadow-lg md:rounded-lg ${
+                                    index === 0
+                                        ? 'border-gray-100 md:rounded-r-none md:border-r'
+                                        : index === 1
+                                          ? 'border-gray-100 md:rounded-none md:border-r'
+                                          : 'md:rounded-l-none'
+                                }`}
+                            >
+                                <div className="flex-shrink-0">{Icon ? <Icon className="text-primary h-8 w-8" /> : null}</div>
+                                <div>
+                                    <div className="text-2xl font-bold">{stat.value}</div>
+                                    <div className="text-gray-600">{stat.label}</div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
-          ))}
         </div>
-      </div>
-    </div>
-  )
+    );
 }
