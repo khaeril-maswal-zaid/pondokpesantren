@@ -284,10 +284,10 @@ export default function FormPendaftaranSantri() {
                                     variants={variants}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    {step === 4 && <DataDiriForm form={form} />}
+                                    {step === 1 && <DataDiriForm form={form} />}
                                     {step === 2 && <DataOrangTuaForm form={form} />}
                                     {step === 3 && <AsalSekolahForm form={form} />}
-                                    {step === 1 && <UploadFotoForm form={form} />}
+                                    {step === 4 && <UploadFotoForm form={form} />}
                                     {step === 5 && (
                                         <RingkasanData
                                             data={form.getValues()}
