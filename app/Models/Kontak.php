@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Struktur extends Model
+class Kontak extends Model
 {
     protected $fillable = [
+        'label',
         'name',
-        'no_hp',
-        'role',
-        'keterangan',
-        'image',
+        'value',
+        'link',
+        'icon',
+        'status',
     ];
 }

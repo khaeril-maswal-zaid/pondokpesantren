@@ -14,7 +14,7 @@ class StrukturController extends Controller
     public function index()
     {
         $data = [
-            // 'blogs' => Agenda::select(['title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
+            'figures' => Struktur::select(['name', 'no_hp', 'role', 'image', 'keterangan'])->latest()->get(),
         ];
 
         return Inertia::render('dashboard/struktur/page', $data);

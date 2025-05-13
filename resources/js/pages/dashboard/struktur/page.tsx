@@ -2,7 +2,6 @@
 
 import StrukturCreateModal from '@/components/dashboard/struktur-create-modal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
@@ -19,79 +18,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Sample data for struktur organisasi
-const strukturData = [
-    {
-        id: '1',
-        nama: 'KH. Ahmad Fauzi',
-        posisi: 'Pengasuh Pondok',
-        no_hp: '081234567890',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Pimpinan',
-    },
-    {
-        id: '2',
-        nama: 'Ustadz Abdul Rahman',
-        posisi: 'Kepala Madrasah',
-        no_hp: '081234567891',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Pendidikan',
-    },
-    {
-        id: '3',
-        nama: 'Ustadz Mahmud Hasan',
-        posisi: 'Sekretaris Pondok',
-        no_hp: '081234567892',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Administrasi',
-    },
-    {
-        id: '4',
-        nama: 'H. Budi Santoso',
-        posisi: 'Bendahara',
-        no_hp: '081234567893',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Keuangan',
-    },
-    {
-        id: '5',
-        nama: 'Ustadzah Siti Aminah',
-        posisi: 'Kepala Asrama Putri',
-        no_hp: '081234567894',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Asrama',
-    },
-    {
-        id: '6',
-        nama: 'Ustadz Rizki Pratama',
-        posisi: 'Kepala Asrama Putra',
-        no_hp: '081234567895',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Asrama',
-    },
-    {
-        id: '7',
-        nama: 'Ustadz Anwar Ibrahim',
-        posisi: 'Koordinator Tahfidz',
-        no_hp: '081234567896',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Pendidikan',
-    },
-    {
-        id: '8',
-        nama: 'Ustadzah Fatimah Az-Zahra',
-        posisi: 'Koordinator Kegiatan',
-        no_hp: '081234567897',
-        foto: '/placeholder.svg?height=100&width=100',
-        departemen: 'Kegiatan',
-    },
-];
-
-export default function StrukturPage() {
+export default function StrukturPage({ figures }) {
     const [searchTerm, setSearchTerm] = useState('');
 
     // Filter struktur berdasarkan nama
-    const filteredStruktur = strukturData.filter((struktur) => struktur.nama.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredStruktur = figures.filter((struktur) => struktur.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     // Format phone number
     const formatPhoneNumber = (phoneNumber: string) => {
@@ -106,26 +37,6 @@ export default function StrukturPage() {
             .join('')
             .toUpperCase()
             .substring(0, 2);
-    };
-
-    // Get department badge color
-    const getDepartmentColor = (department: string) => {
-        switch (department) {
-            case 'Pimpinan':
-                return 'bg-purple-100 text-purple-800 hover:bg-purple-100';
-            case 'Pendidikan':
-                return 'bg-blue-100 text-blue-800 hover:bg-blue-100';
-            case 'Administrasi':
-                return 'bg-green-100 text-green-800 hover:bg-green-100';
-            case 'Keuangan':
-                return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
-            case 'Asrama':
-                return 'bg-red-100 text-red-800 hover:bg-red-100';
-            case 'Kegiatan':
-                return 'bg-indigo-100 text-indigo-800 hover:bg-indigo-100';
-            default:
-                return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
-        }
     };
 
     return (
@@ -159,28 +70,24 @@ export default function StrukturPage() {
                                         <TableHead>Foto</TableHead>
                                         <TableHead>Nama</TableHead>
                                         <TableHead>Posisi</TableHead>
-                                        <TableHead>Departemen</TableHead>
+                                        <TableHead>Keterangan</TableHead>
                                         <TableHead>Nomor HP</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filteredStruktur.map((struktur) => (
-                                        <TableRow key={struktur.id}>
+                                        <TableRow key={struktur.name}>
                                             <TableCell>
                                                 <Avatar className="h-14 w-14">
-                                                    <AvatarImage src={struktur.foto || '/placeholder.svg'} alt={struktur.nama} />
-                                                    <AvatarFallback>{getInitials(struktur.nama)}</AvatarFallback>
+                                                    <AvatarImage src={`/storage/${struktur.image}` || '/placeholder.svg'} alt={struktur.name} />
+                                                    <AvatarFallback>{getInitials(struktur.name)}</AvatarFallback>
                                                 </Avatar>
                                             </TableCell>
-                                            <TableCell className="font-medium">{struktur.nama}</TableCell>
-                                            <TableCell>{struktur.posisi}</TableCell>
+                                            <TableCell className="font-medium text-nowrap">{struktur.name}</TableCell>
+                                            <TableCell className="text-nowrap">{struktur.role}</TableCell>
+                                            <TableCell>{struktur.keterangan}</TableCell>
                                             <TableCell>
-                                                <Badge variant="outline" className={getDepartmentColor(struktur.departemen)}>
-                                                    {struktur.departemen}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-1">
+                                                <div className="flex items-center gap-1 text-nowrap">
                                                     <Phone className="h-3.5 w-3.5 text-gray-500" />
                                                     <a href={`tel:${struktur.no_hp}`} className="hover:underline">
                                                         {formatPhoneNumber(struktur.no_hp)}

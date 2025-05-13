@@ -264,7 +264,7 @@ export default function StrukturCreateModal() {
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="posisi" className={`text-sm font-medium ${errors.posisi ? 'text-destructive' : ''}`}>
-                                    Posisi <span className="text-red-500">*</span>
+                                    Role <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     id="posisi"
@@ -280,50 +280,35 @@ export default function StrukturCreateModal() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="departemen" className={`text-sm font-medium ${errors.departemen ? 'text-destructive' : ''}`}>
-                                    Departemen <span className="text-red-500">*</span>
+                                <Label htmlFor="no_hp" className={`text-sm font-medium ${errors.no_hp ? 'text-destructive' : ''}`}>
+                                    Nomor HP <span className="text-red-500">*</span>
                                 </Label>
-                                <select
-                                    id="departemen"
-                                    value={departemen}
-                                    onChange={(e) => {
-                                        setDepartemen(e.target.value);
-                                        clearError('departemen');
-                                    }}
-                                    className={`border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
-                                        errors.departemen ? 'border-destructive' : ''
-                                    }`}
-                                >
-                                    <option value="" disabled>
-                                        Pilih departemen
-                                    </option>
-                                    <option value="Pimpinan">Pimpinan</option>
-                                    <option value="Pendidikan">Pendidikan</option>
-                                    <option value="Administrasi">Administrasi</option>
-                                    <option value="Keuangan">Keuangan</option>
-                                    <option value="Asrama">Asrama</option>
-                                    <option value="Kegiatan">Kegiatan</option>
-                                </select>
-                                {errors.departemen && <p className="text-destructive text-xs">{errors.departemen}</p>}
+                                <div className="relative">
+                                    <Phone className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        id="no_hp"
+                                        value={no_hp}
+                                        onChange={handlePhoneChange}
+                                        placeholder="Masukkan nomor HP"
+                                        className={`pl-8 ${errors.no_hp ? 'border-destructive' : ''}`}
+                                    />
+                                </div>
+                                {no_hp && <p className="text-xs text-gray-500">Format: {formatPhoneNumber(no_hp) || no_hp}</p>}
+                                {errors.no_hp && <p className="text-destructive text-xs">{errors.no_hp}</p>}
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="no_hp" className={`text-sm font-medium ${errors.no_hp ? 'text-destructive' : ''}`}>
-                                Nomor HP <span className="text-red-500">*</span>
+                            <Label htmlFor="departemen" className={`text-sm font-medium ${errors.departemen ? 'text-destructive' : ''}`}>
+                                Keterangan <span className="text-red-500">*</span>
                             </Label>
-                            <div className="relative">
-                                <Phone className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
-                                <Input
-                                    id="no_hp"
-                                    value={no_hp}
-                                    onChange={handlePhoneChange}
-                                    placeholder="Masukkan nomor HP"
-                                    className={`pl-8 ${errors.no_hp ? 'border-destructive' : ''}`}
-                                />
-                            </div>
-                            {no_hp && <p className="text-xs text-gray-500">Format: {formatPhoneNumber(no_hp) || no_hp}</p>}
-                            {errors.no_hp && <p className="text-destructive text-xs">{errors.no_hp}</p>}
+                            <textarea
+                                id="departemen"
+                                className={`focus:ring-primary min-h-[100px] w-full resize-none rounded-md border px-3 py-2 text-sm shadow-sm focus:border-transparent focus:ring-2 focus:outline-none ${
+                                    errors.departemen ? 'border-destructive focus:ring-destructive' : 'border-gray-300'
+                                }`}
+                            />
+                            {errors.departemen && <p className="text-destructive text-xs">{errors.departemen}</p>}
                         </div>
 
                         <DialogFooter>

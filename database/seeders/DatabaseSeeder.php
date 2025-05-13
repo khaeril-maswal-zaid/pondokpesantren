@@ -25,5 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BlogSeeder::class);
         // $this->call(SantriBaruSeeder::class);
         $this->call(AgendaSeeder::class);
+        $this->call(StrukturSeeder::class);
+        $this->call(KontakSeeder::class);
     }
 }

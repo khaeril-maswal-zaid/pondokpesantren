@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('strukturs', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('no_hp');
+            $table->string('role');
+            $table->string('keterangan');
+            $table->string('image');
             $table->timestamps();
         });
     }

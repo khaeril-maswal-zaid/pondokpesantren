@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agenda;
 use App\Models\Blog;
+use App\Models\Struktur;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -67,28 +68,7 @@ class HomeController extends Controller
                 ],
             ],
 
-            'figures' => [
-                [
-                    'name' => 'Abdurrauf Abdullah P, M.Pd.',
-                    'role' => "Pimpinan Pesantren",
-                    'image' => 'image/structure/abdurrauf-abdullah-pawaly.png',
-                ],
-                [
-                    'name' => 'Al-Hafidz Ahmad Jazee, M.Pd',
-                    'role' => "Dewan Pakar",
-                    'image' => 'image/structure/ahmad-jazee.png',
-                ],
-                [
-                    'name' => 'Al- Hafidz Fathi Ararya Dihyan',
-                    'role' => 'Trainer dan Pembina',
-                    'image' => 'image/structure/fathi-ararya-dihyan.png',
-                ],
-                [
-                    'name' => 'Al-Hafidz M. Zainal Hasani',
-                    'role' => 'Trainer dan Pembina',
-                    'image' => 'image/structure/m-zainal-hasani.png',
-                ],
-            ],
+            'figures' => Struktur::select(['name', 'role', 'image'])->latest()->take(4)->get(),
 
             'programs' => [
                 [
