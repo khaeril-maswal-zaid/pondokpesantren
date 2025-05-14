@@ -2,15 +2,14 @@
 
 import type React from 'react';
 
-import ImageCropper from '@/components/dashboard/image-cropper';
+import { CropDialog } from '@/components/dashboard/crop-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Phone, PlusCircle, RefreshCw, Upload, X } from 'lucide-react';
+import { Loader2, Phone, PlusCircle, Upload, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { z } from 'zod';
 
@@ -28,6 +27,8 @@ type ValidationErrors = {
 };
 
 export default function StrukturCreateModal() {
+    const [cropDialogOpen, setCropDialogOpen] = useState(false);
+
     const [open, setOpen] = useState(false);
     const [nama, setNama] = useState('');
     const [posisi, setPosisi] = useState('');
@@ -39,35 +40,56 @@ export default function StrukturCreateModal() {
     const [src, setSrc] = useState<string | null>(null);
     const [isCropping, setIsCropping] = useState(false);
     const [croppedImage, setCroppedImage] = useState<string | null>(null);
-    const [crop, setCrop] = useState({ unit: '%', width: 75, height: 100, x: 12.5, y: 0, aspect: 3 / 4 });
+    const [crop, setCrop] = useState({
+        unit: '%',
+        width: 75,
+        height: 100,
+        x: 12.5,
+        y: 0,
+        aspect: 3 / 4,
+    });
     const [completedCrop, setCompletedCrop] = useState(null);
 
     const imgRef = useRef<HTMLImageElement | null>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    // ganti onSelectFile menjadi:
     const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.[0]) {
-            const file = e.target.files[0];
-            if (file.size > 510 * 1024) {
-                alert('Ukuran foto tidak boleh melebihi 510 KB');
-                e.target.value = '';
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = () => {
-                setSrc(reader.result as string);
-                setIsCropping(true);
-                setCroppedImage(null);
-            };
-            reader.readAsDataURL(file);
+        if (!e.target.files?.[0]) return;
+
+        const file = e.target.files[0];
+        if (file.size > 510 * 1024) {
+            toast({
+                title: `Gagal Upload Foto`,
+                description: `Ukuran foto tidak boleh melebihi 510 KB`,
+            });
+
+            e.target.value = '';
+            return;
         }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSrc(reader.result as string);
+            setIsCropping(true);
+            setCroppedImage(null);
+        };
+        reader.readAsDataURL(file);
+
+        setCropDialogOpen(true);
     };
 
     const onImageLoad = useCallback((img: HTMLImageElement) => {
         imgRef.current = img;
         const width = img.width * 0.75;
         const height = width * (4 / 3);
-        setCrop({ unit: 'px', width, height, x: (img.width - width) / 2, y: (img.height - height) / 2, aspect: 3 / 4 });
+        setCrop({
+            unit: 'px',
+            width,
+            height,
+            x: (img.width - width) / 2,
+            y: (img.height - height) / 2,
+            aspect: 3 / 4,
+        });
         return false;
     }, []);
 
@@ -197,7 +219,6 @@ export default function StrukturCreateModal() {
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Tambah Pengurus
             </Button>
-
             <Dialog
                 open={open}
                 onOpenChange={(newOpen) => {
@@ -329,35 +350,25 @@ export default function StrukturCreateModal() {
                 </DialogContent>
             </Dialog>
 
-            {isCropping && src && (
-                <ImageCropper
-                    src={src}
-                    crop={crop}
-                    completedCrop={completedCrop}
-                    setCrop={setCrop}
-                    setCompletedCrop={setCompletedCrop}
-                    onImageLoad={onImageLoad}
-                    generateCrop={generateCrop}
-                    resetCrop={resetCrop}
-                    previewCanvasRef={previewCanvasRef}
-                />
-            )}
-
-            {croppedImage && !isCropping && (
-                <div className="space-y-4">
-                    <Card className="flex flex-col items-center p-4">
-                        <p className="mb-2 text-sm font-medium">Hasil Foto 3x4</p>
-                        <div className="overflow-hidden rounded border" style={{ width: '3in', height: '4in' }}>
-                            <img src={croppedImage} alt="Cropped" className="h-full w-full object-cover" />
-                        </div>
-                    </Card>
-                    <div className="flex justify-end">
-                        <Button type="button" variant="outline" onClick={resetCrop}>
-                            <RefreshCw className="mr-2 h-4 w-4" /> Ganti Foto
-                        </Button>
-                    </div>
-                </div>
-            )}
+            <CropDialog
+                open={cropDialogOpen}
+                onClose={() => {
+                    setCropDialogOpen(false);
+                }}
+                onCropDone={(base64) => {
+                    setCroppedImage(base64);
+                    setFoto(base64);
+                }}
+                src={src!}
+                crop={crop}
+                setCrop={setCrop}
+                completedCrop={completedCrop}
+                setCompletedCrop={setCompletedCrop}
+                onImageLoad={onImageLoad}
+                generateCrop={generateCrop}
+                resetCrop={resetCrop}
+                previewCanvasRef={previewCanvasRef}
+            />
         </>
     );
 }
