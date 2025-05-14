@@ -31,7 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/struktur', [StrukturController::class, 'index'])->name('struktur.index');
 
     Route::get('/dashboard/kontak', [KontakController::class, 'index'])->name('kontak.index');
+    Route::put('/dashboard/kontak/status/{kontak:label}', [KontakController::class, 'status'])->name('kontak.status');
+    Route::put('/dashboard/kontak/update/{kontak:label}', [KontakController::class, 'update'])->name('kontak.update');
 });
+
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

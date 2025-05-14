@@ -25,17 +25,17 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Agenda',
-        href: '/dashboard/agenda',
+        href: route('agenda.index'),
         icon: CalendarDays, // Agenda = kalender / jadwal
     },
     {
         title: 'Struktur',
-        href: '/dashboard/struktur',
+        href: route('struktur.index'),
         icon: Users2, // Struktur organisasi = orang-orang
     },
     {
         title: 'Kontak UBK',
-        href: 'dashboard/kontak',
+        href: route('kontak.index'),
         icon: Phone, // Kontak = telepon
     },
 ];

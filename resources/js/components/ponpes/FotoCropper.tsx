@@ -1,3 +1,8 @@
+/*
+File: components/FotoCropper.tsx
+This component handles all cropping logic and UI.
+*/
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -30,7 +35,7 @@ export default function FotoCropper({
     previewCanvasRef,
 }: FotoCropperProps) {
     return (
-        <div>
+        <div className="space-y-4">
             <div className="rounded-lg border bg-gray-50 p-4">
                 <p className="mb-2 text-sm text-gray-500">Sesuaikan area foto dengan rasio 3:4</p>
                 <p className="mb-4 text-sm text-gray-500">

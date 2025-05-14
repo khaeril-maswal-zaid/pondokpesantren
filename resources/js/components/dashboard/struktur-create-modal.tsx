@@ -5,12 +5,13 @@ import type React from 'react';
 import ImageCropper from '@/components/dashboard/image-cropper';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Phone, PlusCircle, Upload, X } from 'lucide-react';
-import { useState } from 'react';
+import { Loader2, Phone, PlusCircle, RefreshCw, Upload, X } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
 import { z } from 'zod';
 
 // Define validation schema
@@ -32,30 +33,81 @@ export default function StrukturCreateModal() {
     const [posisi, setPosisi] = useState('');
     const [departemen, setDepartemen] = useState('');
     const [no_hp, setNoHp] = useState('');
-
-    // Image states
-    const [foto, setFoto] = useState<File | null>(null);
-    const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+    const [foto, setFoto] = useState('');
 
     // Cropping states
-    const [cropModalOpen, setCropModalOpen] = useState(false);
-    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+    const [src, setSrc] = useState<string | null>(null);
+    const [isCropping, setIsCropping] = useState(false);
+    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ unit: '%', width: 75, height: 100, x: 12.5, y: 0, aspect: 3 / 4 });
+    const [completedCrop, setCompletedCrop] = useState(null);
 
-    // Validation states
+    const imgRef = useRef<HTMLImageElement | null>(null);
+    const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files?.[0]) {
+            const file = e.target.files[0];
+            if (file.size > 510 * 1024) {
+                alert('Ukuran foto tidak boleh melebihi 510 KB');
+                e.target.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                setSrc(reader.result as string);
+                setIsCropping(true);
+                setCroppedImage(null);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const onImageLoad = useCallback((img: HTMLImageElement) => {
+        imgRef.current = img;
+        const width = img.width * 0.75;
+        const height = width * (4 / 3);
+        setCrop({ unit: 'px', width, height, x: (img.width - width) / 2, y: (img.height - height) / 2, aspect: 3 / 4 });
+        return false;
+    }, []);
+
+    const generateCrop = useCallback(() => {
+        if (!completedCrop || !imgRef.current || !previewCanvasRef.current) return;
+        const image = imgRef.current;
+        const canvas = previewCanvasRef.current;
+        const { width, height, x, y } = completedCrop;
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        canvas.width = width * scaleX;
+        canvas.height = height * scaleY;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width * scaleX, height * scaleY);
+        let base64 = canvas.toDataURL('image/jpeg', 1.0);
+        if (base64.length > 700000) base64 = canvas.toDataURL('image/jpeg', 0.8);
+        setCroppedImage(base64);
+        setFoto(base64);
+        setIsCropping(false);
+    }, [completedCrop]);
+
+    const resetCrop = () => {
+        setSrc(null);
+        setCroppedImage(null);
+        setIsCropping(false);
+        setFoto('');
+    };
+
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Square aspect ratio (1:1)
-    const aspectRatio = 1;
-
-    // Reset errors when inputs change
     const clearError = (field: string) => {
         if (errors[field]) {
             setErrors((prev) => ({ ...prev, [field]: undefined }));
         }
     };
 
-    // Get initials for avatar fallback
     const getInitials = (name: string) => {
         return name
             .split(' ')
@@ -65,37 +117,9 @@ export default function StrukturCreateModal() {
             .substring(0, 2);
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                setImageToCrop(reader.result as string);
-                setCropModalOpen(true);
-            };
-
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleCroppedImage = (croppedImage: string, file: File) => {
-        setFoto(file);
-        setFotoPreview(croppedImage);
-        setCropModalOpen(false);
-        setImageToCrop(null);
-        clearError('foto');
-    };
-
     const validateForm = () => {
         try {
-            strukturSchema.parse({
-                nama,
-                posisi,
-                departemen,
-                no_hp,
-                foto,
-            });
+            strukturSchema.parse({ nama, posisi, departemen, no_hp, foto });
             return true;
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -105,8 +129,6 @@ export default function StrukturCreateModal() {
                     newErrors[path] = err.message;
                 });
                 setErrors(newErrors);
-
-                // Show toast for the first error
                 const firstError = error.errors[0];
                 if (firstError) {
                     toast({
@@ -116,7 +138,6 @@ export default function StrukturCreateModal() {
                     });
                 }
             } else {
-                console.error('Validation error:', error);
                 toast({
                     title: 'Error',
                     description: 'Terjadi kesalahan. Silakan coba lagi.',
@@ -130,38 +151,24 @@ export default function StrukturCreateModal() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-
-        // Validate form
         const isValid = validateForm();
         if (!isValid) {
             setIsSubmitting(false);
             return;
         }
 
-        // Create form data object with all fields
-        const formData = {
-            nama,
-            posisi,
-            departemen,
-            no_hp,
-            foto,
-        };
-
+        const formData = { nama, posisi, departemen, no_hp, foto };
         console.log('Form submitted:', formData);
 
-        // Simulate API call
         setTimeout(() => {
-            // Simulate successful API response
             toast({
                 title: 'Berhasil!',
                 description: 'Data pengurus berhasil ditambahkan',
             });
-
-            // Reset form and close modal
             resetForm();
             setOpen(false);
             setIsSubmitting(false);
-        }, 2000); // 2 second delay to simulate network request
+        }, 2000);
     };
 
     const resetForm = () => {
@@ -169,20 +176,16 @@ export default function StrukturCreateModal() {
         setPosisi('');
         setDepartemen('');
         setNoHp('');
-        setFoto(null);
-        setFotoPreview(null);
+        setFoto('');
         setErrors({});
     };
 
-    // Format phone number input
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Remove non-numeric characters
         const value = e.target.value.replace(/\D/g, '');
         setNoHp(value);
         clearError('no_hp');
     };
 
-    // Format phone number for display
     const formatPhoneNumber = (phoneNumber: string) => {
         if (!phoneNumber) return '';
         return phoneNumber.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3');
@@ -214,8 +217,8 @@ export default function StrukturCreateModal() {
                         <div className="mb-4 flex flex-col items-center">
                             <div className="mb-2">
                                 <Avatar className="h-24 w-24 cursor-pointer" onClick={() => document.getElementById('foto')?.click()}>
-                                    {fotoPreview ? (
-                                        <AvatarImage src={fotoPreview || '/placeholder.svg'} alt="Preview" />
+                                    {foto ? (
+                                        <AvatarImage src={foto} alt="Preview" />
                                     ) : (
                                         <>
                                             <AvatarFallback>{nama ? getInitials(nama) : '+'}</AvatarFallback>
@@ -225,20 +228,11 @@ export default function StrukturCreateModal() {
                                         </>
                                     )}
                                 </Avatar>
-                                <Input id="foto" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                                <Input id="foto" type="file" accept="image/*" onChange={onSelectFile} className="hidden" />
                             </div>
                             <p className="text-xs text-gray-500">Klik untuk mengunggah foto</p>
-                            {fotoPreview && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    className="mt-2"
-                                    onClick={() => {
-                                        setFoto(null);
-                                        setFotoPreview(null);
-                                    }}
-                                >
+                            {foto && (
+                                <Button type="button" variant="outline" size="sm" className="mt-2" onClick={resetCrop}>
                                     <X className="mr-1 h-3 w-3" /> Hapus Foto
                                 </Button>
                             )}
@@ -293,7 +287,7 @@ export default function StrukturCreateModal() {
                                         className={`pl-8 ${errors.no_hp ? 'border-destructive' : ''}`}
                                     />
                                 </div>
-                                {no_hp && <p className="text-xs text-gray-500">Format: {formatPhoneNumber(no_hp) || no_hp}</p>}
+                                {no_hp && <p className="text-xs text-gray-500">Format: {formatPhoneNumber(no_hp)}</p>}
                                 {errors.no_hp && <p className="text-destructive text-xs">{errors.no_hp}</p>}
                             </div>
                         </div>
@@ -304,6 +298,11 @@ export default function StrukturCreateModal() {
                             </Label>
                             <textarea
                                 id="departemen"
+                                value={departemen}
+                                onChange={(e) => {
+                                    setDepartemen(e.target.value);
+                                    clearError('departemen');
+                                }}
                                 className={`focus:ring-primary min-h-[100px] w-full resize-none rounded-md border px-3 py-2 text-sm shadow-sm focus:border-transparent focus:ring-2 focus:outline-none ${
                                     errors.departemen ? 'border-destructive focus:ring-destructive' : 'border-gray-300'
                                 }`}
@@ -330,14 +329,35 @@ export default function StrukturCreateModal() {
                 </DialogContent>
             </Dialog>
 
-            {/* Image Cropper Modal */}
-            <ImageCropper
-                open={cropModalOpen}
-                onOpenChange={setCropModalOpen}
-                imageUrl={imageToCrop}
-                onCropComplete={handleCroppedImage}
-                aspectRatio={aspectRatio}
-            />
+            {isCropping && src && (
+                <ImageCropper
+                    src={src}
+                    crop={crop}
+                    completedCrop={completedCrop}
+                    setCrop={setCrop}
+                    setCompletedCrop={setCompletedCrop}
+                    onImageLoad={onImageLoad}
+                    generateCrop={generateCrop}
+                    resetCrop={resetCrop}
+                    previewCanvasRef={previewCanvasRef}
+                />
+            )}
+
+            {croppedImage && !isCropping && (
+                <div className="space-y-4">
+                    <Card className="flex flex-col items-center p-4">
+                        <p className="mb-2 text-sm font-medium">Hasil Foto 3x4</p>
+                        <div className="overflow-hidden rounded border" style={{ width: '3in', height: '4in' }}>
+                            <img src={croppedImage} alt="Cropped" className="h-full w-full object-cover" />
+                        </div>
+                    </Card>
+                    <div className="flex justify-end">
+                        <Button type="button" variant="outline" onClick={resetCrop}>
+                            <RefreshCw className="mr-2 h-4 w-4" /> Ganti Foto
+                        </Button>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

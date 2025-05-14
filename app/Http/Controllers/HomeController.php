@@ -7,13 +7,14 @@ use App\Models\Blog;
 use App\Models\Struktur;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class HomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
         $ogTags = [
             'title' => 'Pondok Pesantren ' . config('app.name') . ' Bulukumba',
@@ -101,7 +102,7 @@ class HomeController extends Controller
         return Inertia::render('ponpes/Home', $data);
     }
 
-    public function dashboard()
+    public function dashboard(): Response
     {
         $ogTags = [
             'title' => 'Panel Admin ' . config('app.name') . 'Bulukumba',

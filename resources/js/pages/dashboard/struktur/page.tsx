@@ -44,61 +44,59 @@ export default function StrukturPage({ figures }) {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="rounded-lg border bg-white shadow-sm">
-                        <div className="border-b p-4">
-                            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                                <h2 className="text-lg font-medium">Daftar Pengurus</h2>
-                                <div className="flex items-center gap-2">
-                                    <div className="relative">
-                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
-                                        <Input
-                                            type="search"
-                                            placeholder="Cari pengurus..."
-                                            className="w-full pl-8 md:w-[250px]"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                    </div>
+                    <div className="border-b p-4">
+                        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                            <h2 className="text-lg font-medium">Daftar Pengurus</h2>
+                            <div className="flex items-center gap-2">
+                                <div className="relative">
+                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="search"
+                                        placeholder="Cari pengurus..."
+                                        className="w-full pl-8 md:w-[250px]"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Foto</TableHead>
-                                        <TableHead>Nama</TableHead>
-                                        <TableHead>Posisi</TableHead>
-                                        <TableHead>Keterangan</TableHead>
-                                        <TableHead>Nomor HP</TableHead>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Foto</TableHead>
+                                    <TableHead>Nama</TableHead>
+                                    <TableHead>Posisi</TableHead>
+                                    <TableHead>Keterangan</TableHead>
+                                    <TableHead>Nomor HP</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredStruktur.map((struktur) => (
+                                    <TableRow key={struktur.name}>
+                                        <TableCell>
+                                            <Avatar className="h-14 w-14">
+                                                <AvatarImage src={`/storage/${struktur.image}` || '/placeholder.svg'} alt={struktur.name} />
+                                                <AvatarFallback>{getInitials(struktur.name)}</AvatarFallback>
+                                            </Avatar>
+                                        </TableCell>
+                                        <TableCell className="font-medium text-nowrap">{struktur.name}</TableCell>
+                                        <TableCell className="text-nowrap">{struktur.role}</TableCell>
+                                        <TableCell>{struktur.keterangan}</TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-1 text-nowrap">
+                                                <Phone className="h-3.5 w-3.5 text-gray-500" />
+                                                <a href={`tel:${struktur.no_hp}`} className="hover:underline">
+                                                    {formatPhoneNumber(struktur.no_hp)}
+                                                </a>
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {filteredStruktur.map((struktur) => (
-                                        <TableRow key={struktur.name}>
-                                            <TableCell>
-                                                <Avatar className="h-14 w-14">
-                                                    <AvatarImage src={`/storage/${struktur.image}` || '/placeholder.svg'} alt={struktur.name} />
-                                                    <AvatarFallback>{getInitials(struktur.name)}</AvatarFallback>
-                                                </Avatar>
-                                            </TableCell>
-                                            <TableCell className="font-medium text-nowrap">{struktur.name}</TableCell>
-                                            <TableCell className="text-nowrap">{struktur.role}</TableCell>
-                                            <TableCell>{struktur.keterangan}</TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-1 text-nowrap">
-                                                    <Phone className="h-3.5 w-3.5 text-gray-500" />
-                                                    <a href={`tel:${struktur.no_hp}`} className="hover:underline">
-                                                        {formatPhoneNumber(struktur.no_hp)}
-                                                    </a>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                                ))}
+                            </TableBody>
+                        </Table>
                     </div>
                 </div>
             </div>

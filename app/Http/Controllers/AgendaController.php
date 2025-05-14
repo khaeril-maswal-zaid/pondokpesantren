@@ -6,13 +6,14 @@ use App\Models\Agenda;
 use App\Http\Requests\StoreAgendaRequest;
 use App\Http\Requests\UpdateAgendaRequest;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class AgendaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
         $data = [
             'blogs' => Agenda::select(['title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
@@ -24,7 +25,7 @@ class AgendaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         //
     }

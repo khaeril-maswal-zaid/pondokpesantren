@@ -98,7 +98,16 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
             route('santri-baru.approved', noRegistrasi),
             { status: value },
             {
-                preserveScroll: true, // Ini penting
+                preserveScroll: true, // Ini penting agar tidak terscrol up
+                onSuccess: () => {
+                    console.log('ok');
+
+                    // Tampilkan toast setelah update sukses
+                    // toast({
+                    //     title: `Status ${kontak.name} diubah`,
+                    //     description: `Status kontak ${kontak.name} diubah menjadi ${newStatus}`,
+                    // });
+                },
             },
         );
     };
@@ -127,119 +136,118 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="rounded-lg border bg-white shadow-sm">
-                        <div className="border-b p-4">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-medium">Daftar Pendaftar</h2>
-                                <div className="flex items-center gap-2">
-                                    <div className="relative">
-                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
-                                        <Input
-                                            type="search"
-                                            placeholder="Cari berdasarkan nama ..."
-                                            className="w-[250px] pl-8"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                    </div>
-                                    <Button variant="outline" size="icon">
-                                        <Filter className="h-4 w-4" />
-                                    </Button>
+                    <div className="border-b p-4">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-lg font-medium">Daftar Pendaftar</h2>
+                            <div className="flex items-center gap-2">
+                                <div className="relative">
+                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="search"
+                                        placeholder="Cari berdasarkan nama ..."
+                                        className="w-[250px] pl-8"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
                                 </div>
+                                <Button variant="outline" size="icon">
+                                    <Filter className="h-4 w-4" />
+                                </Button>
                             </div>
                         </div>
-
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>No</TableHead>
-                                        <TableHead>Nama</TableHead>
-                                        <TableHead>Tempat dan Tanggal Lahir</TableHead>
-                                        <TableHead>Alamat</TableHead>
-                                        <TableHead>Nomor HP Orang Tua</TableHead>
-                                        <TableHead>Nomor Registrasi</TableHead>
-                                        <TableHead>Status penerimaan</TableHead>
-                                        <TableHead className="w-[100px]">Aksi</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {filteredPendaftar.map((pendaftar) => (
-                                        <TableRow key={pendaftar.nik}>
-                                            <TableCell>{}</TableCell>
-                                            <TableCell className="font-medium whitespace-nowrap">{pendaftar.nama_lengkap}</TableCell>
-                                            <TableCell>
-                                                {pendaftar.tempat_lahir}, {formatTanggalLahir(pendaftar.tanggal_lahir)}
-                                            </TableCell>
-                                            <TableCell>{getAlamat(pendaftar)}</TableCell>
-                                            <TableCell>{getKontakOrangTua(pendaftar)}</TableCell>
-                                            <TableCell>{pendaftar.no_registrasi}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className={getStatusColor(pendaftar.status)}>
-                                                    {pendaftar.status}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon">
-                                                            <MoreVertical className="h-4 w-4" />
-                                                            <span className="sr-only">Open menu</span>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem
-                                                            onClick={() => {
-                                                                setTimeout(() => handleDetail(pendaftar), 0);
-                                                            }}
-                                                        >
-                                                            <Eye className="mr-2 h-4 w-4" />
-                                                            Detail
-                                                        </DropdownMenuItem>
-
-                                                        {pendaftar.status == 'Approved' ? (
-                                                            <DropdownMenuItem
-                                                                onClick={(e) => {
-                                                                    // e.preventDefault(); // Cegah default link behavior
-                                                                    handleApprove(pendaftar.no_registrasi, 'Pending');
-                                                                }}
-                                                            >
-                                                                <Check className="mr-2 h-4 w-4" />
-                                                                Ubah ke Pending
-                                                            </DropdownMenuItem>
-                                                        ) : (
-                                                            <DropdownMenuItem
-                                                                onClick={(e) => {
-                                                                    // e.preventDefault(); // Cegah default link behavior
-                                                                    handleApprove(pendaftar.no_registrasi, 'Approved');
-                                                                }}
-                                                            >
-                                                                <Check className="mr-2 h-4 w-4" />
-                                                                Approve
-                                                            </DropdownMenuItem>
-                                                        )}
-
-                                                        <DropdownMenuItem
-                                                            className="text-red-600"
-                                                            onClick={() => {
-                                                                setTimeout(() => setSelectedToDelete(pendaftar), 0);
-                                                                setTimeout(() => setDeleteModalOpen(true), 0);
-                                                            }}
-                                                        >
-                                                            <Trash2 className="mr-2 h-4 w-4" />
-                                                            Hapus
-                                                        </DropdownMenuItem>
-
-                                                        <DropdownMenuSeparator />
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
                     </div>
+
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>No</TableHead>
+                                    <TableHead>Nama</TableHead>
+                                    <TableHead>Tempat dan Tanggal Lahir</TableHead>
+                                    <TableHead>Alamat</TableHead>
+                                    <TableHead>Nomor HP Orang Tua</TableHead>
+                                    <TableHead>Nomor Registrasi</TableHead>
+                                    <TableHead>Status penerimaan</TableHead>
+                                    <TableHead className="w-[100px]">Aksi</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredPendaftar.map((pendaftar) => (
+                                    <TableRow key={pendaftar.nik}>
+                                        <TableCell>{}</TableCell>
+                                        <TableCell className="font-medium whitespace-nowrap">{pendaftar.nama_lengkap}</TableCell>
+                                        <TableCell>
+                                            {pendaftar.tempat_lahir}, {formatTanggalLahir(pendaftar.tanggal_lahir)}
+                                        </TableCell>
+                                        <TableCell>{getAlamat(pendaftar)}</TableCell>
+                                        <TableCell>{getKontakOrangTua(pendaftar)}</TableCell>
+                                        <TableCell>{pendaftar.no_registrasi}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className={getStatusColor(pendaftar.status)}>
+                                                {pendaftar.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                        <MoreVertical className="h-4 w-4" />
+                                                        <span className="sr-only">Open menu</span>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem
+                                                        onClick={() => {
+                                                            setTimeout(() => handleDetail(pendaftar), 0);
+                                                        }}
+                                                    >
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        Detail
+                                                    </DropdownMenuItem>
+
+                                                    {pendaftar.status == 'Approved' ? (
+                                                        <DropdownMenuItem
+                                                            onClick={(e) => {
+                                                                // e.preventDefault(); // Cegah default link behavior
+                                                                handleApprove(pendaftar.no_registrasi, 'Pending');
+                                                            }}
+                                                        >
+                                                            <Check className="mr-2 h-4 w-4" />
+                                                            Ubah ke Pending
+                                                        </DropdownMenuItem>
+                                                    ) : (
+                                                        <DropdownMenuItem
+                                                            onClick={(e) => {
+                                                                // e.preventDefault(); // Cegah default link behavior
+                                                                handleApprove(pendaftar.no_registrasi, 'Approved');
+                                                            }}
+                                                        >
+                                                            <Check className="mr-2 h-4 w-4" />
+                                                            Approve
+                                                        </DropdownMenuItem>
+                                                    )}
+
+                                                    <DropdownMenuItem
+                                                        className="text-red-600"
+                                                        onClick={() => {
+                                                            setTimeout(() => setSelectedToDelete(pendaftar), 0);
+                                                            setTimeout(() => setDeleteModalOpen(true), 0);
+                                                        }}
+                                                    >
+                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                        Hapus
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuSeparator />
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+
                     {/* Detail Modal */}
                     <Dialog open={detailModalOpen} onOpenChange={setDetailModalOpen}>
                         <DialogContent className="sm:max-w-[700px]">

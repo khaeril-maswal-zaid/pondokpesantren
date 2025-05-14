@@ -6,6 +6,7 @@ use App\Models\SantriBaru;
 use App\Http\Requests\StoreSantriBaruRequest;
 use App\Http\Requests\UpdateSantriBaruRequest;
 use Inertia\Inertia;
+use Inertia\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -25,7 +26,7 @@ class SantriBaruController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
         $data = [
             'pendaftarData' => SantriBaru::select(['nik', 'nama_lengkap', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu', 'kontak_ayah', 'kontak_ibu', 'jenjang', 'nama_sekolah', 'nisn', 'tahun_tamat', 'foto', 'no_registrasi', 'status'])->latest()->paginate(10),
@@ -34,7 +35,7 @@ class SantriBaruController extends Controller
         return Inertia::render('dashboard/pendaftaran/page', $data);
     }
 
-    public function informasi()
+    public function informasi(): Response
     {
         request()->attributes->set('og', $this->ogTags);
 
@@ -44,7 +45,7 @@ class SantriBaruController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         request()->attributes->set('og', $this->ogTags);
 
