@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Kontak;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -42,11 +43,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'contact' => [
-                'email' => 'info@ubaybinkaab.ponpes.id',
-                'phone' => '+62 813-8125-0081',
-                'alamat' => "Jln. Poros Manyampa - Palangisan Kalikia, Desa Manyampa Kec. Ujung Loe Kab. Bulukumba",
-            ],
+            'contact' =>  Kontak::select("name", 'value', 'link', 'icon')->where('label', 'wa')->orWhere('label', 'email')->get(),
+            'alamat' => "Jln. Poros Manyampa - Palangisan Kalikia, Desa Manyampa Kec. Ujung Loe Kab. Bulukumba",
             'programUtams' => [
                 [
                     'name' => 'Akademi Tahsin dan Tajwid',

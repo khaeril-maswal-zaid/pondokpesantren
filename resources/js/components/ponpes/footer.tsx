@@ -2,7 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 
 export default function Footer() {
-    const { name, contact, programUtams } = usePage().props;
+    const { name, contact, programUtams, alamat } = usePage().props;
     return (
         <footer className="bg-blue-800 text-white">
             <div className="container mx-auto px-8 py-12">
@@ -78,9 +78,14 @@ export default function Footer() {
                     <div>
                         <h3 className="mb-4 text-xl font-bold">Kontak</h3>
                         <address className="not-italic">
-                            <p className="mb-2">{contact.alamat}</p>
-                            <p className="mb-2">Telepon: {contact.phone}</p>
-                            <p className="mb-2">Email: {contact.email}</p>
+                            <p className="mb-2">{alamat}</p>
+                            {contact.map((item) => (
+                                <div className="flex items-center">
+                                    <p className="mb-2">
+                                        {item.name}: {item.value}
+                                    </p>
+                                </div>
+                            ))}
                         </address>
                     </div>
                 </div>

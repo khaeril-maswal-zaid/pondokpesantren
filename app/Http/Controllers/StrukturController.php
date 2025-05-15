@@ -91,7 +91,9 @@ class StrukturController extends Controller
 
     public function cards()
     {
-        $data = [];
+        $data = [
+            'strukturData' => Struktur::select('name', 'role', 'keterangan', 'image')->paginate(9)
+        ];
         return Inertia::render('ponpes/struktur/page', $data);
     }
 }

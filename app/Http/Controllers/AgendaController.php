@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Agenda;
 use App\Http\Requests\StoreAgendaRequest;
 use App\Http\Requests\UpdateAgendaRequest;
+use App\Models\Struktur;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Str;
@@ -91,7 +92,19 @@ class AgendaController extends Controller
 
     public function cards()
     {
-        $data = [];
+        // $query = Agenda::select('title', 'date', 'time', 'location', 'image')->paginate(6);
+        $query = Agenda::all();
+
+        // Group by year
+        $byYear = $query->groupBy(function ($agenda) {
+            // $agenda->created_at sudah instance Carbon
+            return $agenda->created_at->format('Y');
+        });
+
+        $data = [
+            'allAgendaData' => $byYear,
+            'strukturSlides' => Struktur::select('name', 'role', 'keterangan', 'image')->take(3)->get()
+        ];
         return Inertia::render('ponpes/agenda/page', $data);
     }
 }

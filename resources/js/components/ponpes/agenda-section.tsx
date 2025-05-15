@@ -80,7 +80,7 @@ export default function AgendaSection({ agendaData }) {
                 </div>
                 <div className="mt-10 text-center">
                     <Link
-                        href={route('blog.cards')}
+                        href={route('agenda.cards')}
                         className="bg-primary hover:bg-primary/90 inline-flex items-center justify-center rounded-md border border-transparent px-6 py-3 text-base font-medium text-white transition-colors"
                     >
                         Lihat Semua Agenda <ArrowRight className="ml-2 h-4 w-4" />

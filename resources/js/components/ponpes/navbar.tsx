@@ -57,16 +57,16 @@ export default function Navbar() {
                         Beranda
                     </Link>
                     <Link
-                        href="/#program"
+                        href={route('agenda.cards')}
                         className={cn(
                             'font-medium transition-colors',
                             isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',
                         )}
                     >
-                        Program
+                        Agenda
                     </Link>
                     <Link
-                        href="/#tokoh"
+                        href={route('struktur.cards')}
                         className={cn(
                             'font-medium transition-colors',
                             isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',
@@ -75,6 +75,7 @@ export default function Navbar() {
                         Struktur
                     </Link>
                     <Link
+                        // href={route('blog.cards')}
                         href="/#blog"
                         className={cn(
                             'font-medium transition-colors',

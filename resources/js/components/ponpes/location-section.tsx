@@ -1,13 +1,20 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+
+import * as Icons from 'lucide-react';
+
+function getIconComponent(name) {
+    const LucideIcon = Icons[name];
+    return LucideIcon ? <LucideIcon className="text-primary mr-3 h-5 w-5" /> : null;
+}
 
 export default function LocationSection() {
     const sectionRef = useRef<HTMLElement>(null);
     const [scrollY, setScrollY] = useState(0);
-
+    const { contact, name } = usePage().props;
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -86,17 +93,15 @@ export default function LocationSection() {
                         <h3 className="mb-4 text-xl font-bold">Informasi Kontak</h3>
                         <div className="space-y-4">
                             <div className="flex items-start">
-                                <MapPin className="text-primary mt-1 mr-3 h-5 w-5" />
+                                <div className="mt-1 mb-4">{getIconComponent('MapPin')}</div>
                                 <p>Jln. Poros Manyampa - Palangisan Kalikia, Desa Manyampa Kec. Ujung Loe Kab. Bulukumba</p>
                             </div>
-                            <div className="flex items-center">
-                                <Phone className="text-primary mr-3 h-5 w-5" />
-                                <p>+62 813-8125-0081</p>
-                            </div>
-                            <div className="flex items-center">
-                                <Mail className="text-primary mr-3 h-5 w-5" />
-                                <p>info@ubaybinkaab.ponpes.id</p>
-                            </div>
+                            {contact.map((item) => (
+                                <div className="flex items-center">
+                                    <div className="">{getIconComponent(item.icon)}</div>
+                                    <p>{item.value}</p>
+                                </div>
+                            ))}
                         </div>
                         <div className="mt-6">
                             <Button

@@ -22,7 +22,7 @@ export default function Home({ heros, stats, about, figures, programs, agenda, b
                     <AboutSection about={about} />
                     <FiguresSection figures={figures} />
                     <ProgramsSection programs={programs} />
-                    <hr className="border-2 border-amber-300" />
+                    <hr className="w-full border border-gray-300" />
                     <AgendaSection agendaData={agenda} />
                     <BlogSection blogPosts={blogs} />
                     <LocationSection />
