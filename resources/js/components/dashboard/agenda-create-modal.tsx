@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { router } from '@inertiajs/react';
-import { Calendar, CropIcon, Loader2, PlusCircle, Upload, X } from 'lucide-react';
+import { Calendar, Loader2, PlusCircle, Upload } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { z } from 'zod';
 import { CropDialog } from './crop-dialog';
@@ -38,12 +38,6 @@ export default function AgendaCreateModal() {
     const [time2, setTime2] = useState('');
 
     // Image states
-    const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
-
-    // Cropping states
-    const [cropModalOpen, setCropModalOpen] = useState(false);
-    const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number | null>(null);
-    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
     // Validation states
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -64,8 +58,6 @@ export default function AgendaCreateModal() {
     //---------------------------------------------------
 
     const [src, setSrc] = useState<string | null>(null);
-    const [isCropping, setIsCropping] = useState(false);
-    const [croppedImage, setCroppedImage] = useState<string | null>(null);
 
     const [cropDialogOpen, setCropDialogOpen] = useState(false);
     const [foto, setFoto] = useState('');
@@ -77,14 +69,14 @@ export default function AgendaCreateModal() {
     const onImageLoad = useCallback((img: HTMLImageElement) => {
         imgRef.current = img;
         const width = img.width * 0.75;
-        const height = width * (4 / 3);
+        const height = width * (3 / 4);
         setCrop({
             unit: 'px',
             width,
             height,
             x: (img.width - width) / 2,
             y: (img.height - height) / 2,
-            aspect: 3 / 4,
+            aspect: aspectRatio,
         });
         return false;
     }, []);
@@ -105,17 +97,8 @@ export default function AgendaCreateModal() {
         ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width * scaleX, height * scaleY);
         let base64 = canvas.toDataURL('image/jpeg', 1.0);
         if (base64.length > 700000) base64 = canvas.toDataURL('image/jpeg', 0.8);
-        setCroppedImage(base64);
         setFoto(base64);
-        setIsCropping(false);
     }, [completedCrop]);
-
-    const resetCrop = () => {
-        setSrc(null);
-        setCroppedImage(null);
-        setIsCropping(false);
-        setFoto('');
-    };
 
     const [crop, setCrop] = useState({
         unit: '%',
@@ -123,7 +106,7 @@ export default function AgendaCreateModal() {
         height: 100,
         x: 12.5,
         y: 0,
-        aspect: 3 / 4,
+        aspect: aspectRatio,
     });
 
     const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,8 +125,6 @@ export default function AgendaCreateModal() {
         const reader = new FileReader();
         reader.onload = () => {
             setSrc(reader.result as string);
-            setIsCropping(true);
-            setCroppedImage(null);
         };
         reader.readAsDataURL(file);
 
@@ -151,35 +132,20 @@ export default function AgendaCreateModal() {
     };
 
     //----------------------------------------------------
-
-    const removePhoto = (index: number) => {
-        const newPhotos = [...foto];
-        const newPreviews = [...photosPreviews];
-        newPhotos.splice(index, 1);
-        newPreviews.splice(index, 1);
-        setFoto('');
-        setPhotosPreviews(newPreviews);
-
-        if (newPhotos.length === 0) {
-            setErrors((prev) => ({ ...prev, foto: 'Minimal satu foto harus diunggah' }));
-        }
-    };
-
-    const editPhoto = (index: number) => {
-        if (foto[index]) {
-            setCurrentPhotoIndex(index);
-            const reader = new FileReader();
-            reader.onload = () => {
-                setImageToCrop(reader.result as string);
-                setCropModalOpen(true);
-            };
-            reader.readAsDataURL(foto[index]);
-        } else if (photosPreviews[index]) {
-            setCurrentPhotoIndex(index);
-            setImageToCrop(photosPreviews[index]);
-            setCropModalOpen(true);
-        }
-    };
+    //     if (foto[index]) {
+    //         setCurrentPhotoIndex(index);
+    //         const reader = new FileReader();
+    //         reader.onload = () => {
+    //             setImageToCrop(reader.result as string);
+    //             setCropModalOpen(true);
+    //         };
+    //         reader.readAsDataURL(foto[index]);
+    //     } else if (photosPreviews[index]) {
+    //         setCurrentPhotoIndex(index);
+    //         setImageToCrop(photosPreviews[index]);
+    //         setCropModalOpen(true);
+    //     }
+    // };
 
     const validateForm = () => {
         try {
@@ -268,7 +234,6 @@ export default function AgendaCreateModal() {
         setLokasi('');
         setTime2('');
         setFoto('');
-        setPhotosPreviews([]);
         setErrors({});
     };
 
@@ -406,35 +371,17 @@ export default function AgendaCreateModal() {
                             </Label>
                             <div className="grid grid-cols-1 gap-4">
                                 <div className="flex flex-wrap gap-4">
-                                    {photosPreviews.map((preview, index) => (
-                                        <div key={index} className="relative h-[90px] w-[120px]">
+                                    {foto ? (
+                                        <div className="relative h-[90px] w-[120px]">
                                             <img
-                                                src={preview || '/placeholder.svg'}
-                                                alt={`Preview ${index + 1}`}
+                                                src={foto || '/placeholder.svg'}
+                                                alt={`Preview ${foto}`}
                                                 className="h-full w-full rounded-md border object-cover"
                                             />
-                                            <div className="absolute top-1 right-1 flex gap-1">
-                                                <Button
-                                                    type="button"
-                                                    variant="secondary"
-                                                    size="icon"
-                                                    className="h-6 w-6 bg-white"
-                                                    onClick={() => editPhoto(index)}
-                                                >
-                                                    <CropIcon className="h-3 w-3" />
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="destructive"
-                                                    size="icon"
-                                                    className="h-6 w-6"
-                                                    onClick={() => removePhoto(index)}
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </Button>
-                                            </div>
                                         </div>
-                                    ))}
+                                    ) : (
+                                        ''
+                                    )}
 
                                     <div
                                         className={`hover:border-primary/50 flex h-[90px] w-[120px] cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed p-2 transition-colors ${
@@ -476,18 +423,16 @@ export default function AgendaCreateModal() {
                     setCropDialogOpen(false);
                 }}
                 onCropDone={(base64) => {
-                    setCroppedImage(base64);
                     setFoto(base64);
                 }}
                 src={src!}
                 crop={crop}
                 setCrop={setCrop}
-                completedCrop={completedCrop}
                 setCompletedCrop={setCompletedCrop}
                 onImageLoad={onImageLoad}
                 generateCrop={generateCrop}
-                resetCrop={resetCrop}
                 previewCanvasRef={previewCanvasRef}
+                aspectRatio={aspectRatio}
             />
         </>
     );

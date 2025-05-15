@@ -47,17 +47,10 @@ export default function BlogPostModal() {
 
     // Image states
     const [mainImage, setMainImage] = useState('');
-    const [subImage1, setSubImage1] = useState<File | null>(null);
-    const [subImage2, setSubImage2] = useState<File | null>(null);
-    const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
-    const [subImage1Preview, setSubImage1Preview] = useState<string | null>(null);
-    const [subImage2Preview, setSubImage2Preview] = useState<string | null>(null);
+    const [subImage1, setSubImage1] = useState('');
+    const [subImage2, setSubImage2] = useState('');
 
     // Cropping states
-    const [cropModalOpen, setCropModalOpen] = useState(false);
-    const [currentImageType, setCurrentImageType] = useState<'main' | 'sub1' | 'sub2' | null>(null);
-    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-
     const [tagInput, setTagInput] = useState('');
     const [tags, setTags] = useState<string[]>([]);
     const [activeTab, setActiveTab] = useState('media');
@@ -75,8 +68,6 @@ export default function BlogPostModal() {
     //---------------------------------------------------
 
     const [src, setSrc] = useState<string | null>(null);
-    const [isCropping, setIsCropping] = useState(false);
-    const [croppedImage, setCroppedImage] = useState<string | null>(null);
 
     const [cropDialogOpen, setCropDialogOpen] = useState(false);
     const [completedCrop, setCompletedCrop] = useState(null);
@@ -84,17 +75,20 @@ export default function BlogPostModal() {
     const imgRef = useRef<HTMLImageElement | null>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    // Landscape aspect ratio (4:3)
+    const aspectRatio = 4 / 3;
+
     const onImageLoad = useCallback((img: HTMLImageElement) => {
         imgRef.current = img;
         const width = img.width * 0.75;
-        const height = width * (4 / 3);
+        const height = width * (3 / 4);
         setCrop({
             unit: 'px',
             width,
             height,
             x: (img.width - width) / 2,
             y: (img.height - height) / 2,
-            aspect: 3 / 4,
+            aspect: aspectRatio,
         });
         return false;
     }, []);
@@ -115,15 +109,11 @@ export default function BlogPostModal() {
         ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width * scaleX, height * scaleY);
         let base64 = canvas.toDataURL('image/jpeg', 1.0);
         if (base64.length > 700000) base64 = canvas.toDataURL('image/jpeg', 0.8);
-        setCroppedImage(base64);
         setMainImage(base64);
-        setIsCropping(false);
     }, [completedCrop]);
 
     const resetCrop = () => {
         setSrc(null);
-        setCroppedImage(null);
-        setIsCropping(false);
         setMainImage('');
     };
 
@@ -133,7 +123,7 @@ export default function BlogPostModal() {
         height: 100,
         x: 12.5,
         y: 0,
-        aspect: 3 / 4,
+        aspect: aspectRatio,
     });
 
     const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,8 +142,6 @@ export default function BlogPostModal() {
         const reader = new FileReader();
         reader.onload = () => {
             setSrc(reader.result as string);
-            setIsCropping(true);
-            setCroppedImage(null);
         };
         reader.readAsDataURL(file);
 
@@ -161,9 +149,6 @@ export default function BlogPostModal() {
     };
 
     //----------------------------------------------------
-
-    // Landscape aspect ratio (4:3)
-    const aspectRatio = 4 / 3;
 
     // Reset errors when inputs change
     useEffect(() => {
@@ -334,12 +319,9 @@ export default function BlogPostModal() {
         setDescription('');
         setBody1('');
         setBody2('');
-        setMainImage(null);
-        setSubImage1(null);
-        setSubImage2(null);
-        setMainImagePreview(null);
-        setSubImage1Preview(null);
-        setSubImage2Preview(null);
+        setMainImage('');
+        setSubImage1('');
+        setSubImage2('');
         setTagInput('');
         setTags([]);
         setActiveTab('media');
@@ -469,16 +451,16 @@ export default function BlogPostModal() {
                                                                 <div
                                                                     className={cn(
                                                                         'hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors',
-                                                                        mainImagePreview ? 'border-primary' : 'border-gray-300',
-                                                                        errors.mainImage && !mainImagePreview && 'border-destructive',
+                                                                        mainImage ? 'border-primary' : 'border-gray-300',
+                                                                        errors.mainImage && !mainImage && 'border-destructive',
                                                                     )}
                                                                     // style={{ height: '180px' }}
                                                                     onClick={() => document.getElementById('mainImage')?.click()}
                                                                 >
-                                                                    {mainImagePreview ? (
+                                                                    {mainImage ? (
                                                                         <div className="relative h-full w-full">
                                                                             <img
-                                                                                src={mainImagePreview || '/placeholder.svg'}
+                                                                                src={mainImage || '/placeholder.svg'}
                                                                                 alt="Main preview"
                                                                                 className="h-full w-full rounded-md object-cover"
                                                                                 style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
@@ -493,11 +475,6 @@ export default function BlogPostModal() {
                                                                                         e.stopPropagation();
                                                                                         if (mainImage) {
                                                                                             const reader = new FileReader();
-                                                                                            reader.onload = () => {
-                                                                                                setImageToCrop(reader.result as string);
-                                                                                                setCurrentImageType('main');
-                                                                                                setCropModalOpen(true);
-                                                                                            };
                                                                                             reader.readAsDataURL(mainImage);
                                                                                         }
                                                                                     }}
@@ -511,8 +488,7 @@ export default function BlogPostModal() {
                                                                                     className="h-6 w-6"
                                                                                     onClick={(e) => {
                                                                                         e.stopPropagation();
-                                                                                        setMainImage(null);
-                                                                                        setMainImagePreview(null);
+                                                                                        mainImage('');
                                                                                     }}
                                                                                 >
                                                                                     <X className="h-3 w-3" />
@@ -534,7 +510,7 @@ export default function BlogPostModal() {
                                                                     required
                                                                     className="hidden"
                                                                 />
-                                                                {errors.mainImage && !mainImagePreview && (
+                                                                {errors.mainImage && !setMainImage && (
                                                                     <p className="text-destructive mt-1 text-xs">{errors.mainImage}</p>
                                                                 )}
                                                             </div>
@@ -549,15 +525,15 @@ export default function BlogPostModal() {
                                                                     <div
                                                                         className={cn(
                                                                             'hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors',
-                                                                            subImage1Preview ? 'border-primary' : 'border-gray-300',
+                                                                            subImage1 ? 'border-primary' : 'border-gray-300',
                                                                         )}
                                                                         // style={{ height: '120px' }}
                                                                         onClick={() => document.getElementById('subImage1')?.click()}
                                                                     >
-                                                                        {subImage1Preview ? (
+                                                                        {subImage1 ? (
                                                                             <div className="relative h-full w-full">
                                                                                 <img
-                                                                                    src={subImage1Preview || '/placeholder.svg'}
+                                                                                    src={subImage1 || '/placeholder.svg'}
                                                                                     alt="Sub image 1 preview"
                                                                                     className="h-full w-full rounded-md object-cover"
                                                                                     style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
@@ -572,11 +548,6 @@ export default function BlogPostModal() {
                                                                                             e.stopPropagation();
                                                                                             if (subImage1) {
                                                                                                 const reader = new FileReader();
-                                                                                                reader.onload = () => {
-                                                                                                    setImageToCrop(reader.result as string);
-                                                                                                    setCurrentImageType('sub1');
-                                                                                                    setCropModalOpen(true);
-                                                                                                };
                                                                                                 reader.readAsDataURL(subImage1);
                                                                                             }
                                                                                         }}
@@ -623,15 +594,15 @@ export default function BlogPostModal() {
                                                                     <div
                                                                         className={cn(
                                                                             'hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors',
-                                                                            subImage2Preview ? 'border-primary' : 'border-gray-300',
+                                                                            subImage2 ? 'border-primary' : 'border-gray-300',
                                                                         )}
                                                                         // style={{ height: '120px' }}
                                                                         onClick={() => document.getElementById('subImage2')?.click()}
                                                                     >
-                                                                        {subImage2Preview ? (
+                                                                        {subImage2 ? (
                                                                             <div className="relative h-full w-full">
                                                                                 <img
-                                                                                    src={subImage2Preview || '/placeholder.svg'}
+                                                                                    src={subImage2 || '/placeholder.svg'}
                                                                                     alt="Sub image 2 preview"
                                                                                     className="h-full w-full rounded-md object-cover"
                                                                                     style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
@@ -646,11 +617,7 @@ export default function BlogPostModal() {
                                                                                             e.stopPropagation();
                                                                                             if (subImage2) {
                                                                                                 const reader = new FileReader();
-                                                                                                reader.onload = () => {
-                                                                                                    setImageToCrop(reader.result as string);
-                                                                                                    setCurrentImageType('sub2');
-                                                                                                    setCropModalOpen(true);
-                                                                                                };
+
                                                                                                 reader.readAsDataURL(subImage2);
                                                                                             }
                                                                                         }}
@@ -799,18 +766,16 @@ export default function BlogPostModal() {
                     setCropDialogOpen(false);
                 }}
                 onCropDone={(base64) => {
-                    setCroppedImage(base64);
-                    setFoto(base64);
+                    setMainImage(base64);
                 }}
                 src={src!}
                 crop={crop}
                 setCrop={setCrop}
-                completedCrop={completedCrop}
                 setCompletedCrop={setCompletedCrop}
                 onImageLoad={onImageLoad}
                 generateCrop={generateCrop}
-                resetCrop={resetCrop}
                 previewCanvasRef={previewCanvasRef}
+                aspectRatio={aspectRatio}
             />
         </>
     );

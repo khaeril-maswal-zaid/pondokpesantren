@@ -28,13 +28,12 @@ export function CropDialog({
     onCropDone,
     src,
     crop,
-    completedCrop,
     setCrop,
     setCompletedCrop,
     onImageLoad,
     generateCrop,
-    resetCrop,
     previewCanvasRef,
+    aspectRatio,
 }: CropDialog) {
     const handleSave = () => {
         // generate the cropped image on canvas
@@ -61,7 +60,13 @@ export function CropDialog({
                         Mata sebaiknya berada pada 1/3 bagian atas foto.
                     </p>
                     <div className="relative mx-auto">
-                        <ReactCrop crop={crop} onChange={setCrop} onComplete={setCompletedCrop} aspect={3 / 4} className="mx-auto max-h-[400px]">
+                        <ReactCrop
+                            crop={crop}
+                            onChange={setCrop}
+                            onComplete={setCompletedCrop}
+                            aspect={aspectRatio}
+                            className="mx-auto max-h-[400px]"
+                        >
                             <img alt="Crop me" src={src} onLoad={(e) => onImageLoad(e.currentTarget)} className="mx-auto max-h-[400px]" />
                         </ReactCrop>
                     </div>

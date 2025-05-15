@@ -39,8 +39,6 @@ export default function StrukturCreateModal() {
 
     // Cropping states
     const [src, setSrc] = useState<string | null>(null);
-    const [isCropping, setIsCropping] = useState(false);
-    const [croppedImage, setCroppedImage] = useState<string | null>(null);
     const [crop, setCrop] = useState({
         unit: '%',
         width: 75,
@@ -71,8 +69,6 @@ export default function StrukturCreateModal() {
         const reader = new FileReader();
         reader.onload = () => {
             setSrc(reader.result as string);
-            setIsCropping(true);
-            setCroppedImage(null);
         };
         reader.readAsDataURL(file);
 
@@ -110,15 +106,11 @@ export default function StrukturCreateModal() {
         ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width * scaleX, height * scaleY);
         let base64 = canvas.toDataURL('image/jpeg', 1.0);
         if (base64.length > 700000) base64 = canvas.toDataURL('image/jpeg', 0.8);
-        setCroppedImage(base64);
         setFoto(base64);
-        setIsCropping(false);
     }, [completedCrop]);
 
     const resetCrop = () => {
         setSrc(null);
-        setCroppedImage(null);
-        setIsCropping(false);
         setFoto('');
     };
 
@@ -390,18 +382,17 @@ export default function StrukturCreateModal() {
                     setCropDialogOpen(false);
                 }}
                 onCropDone={(base64) => {
-                    setCroppedImage(base64);
                     setFoto(base64);
                 }}
                 src={src!}
                 crop={crop}
                 setCrop={setCrop}
-                completedCrop={completedCrop}
                 setCompletedCrop={setCompletedCrop}
                 onImageLoad={onImageLoad}
                 generateCrop={generateCrop}
                 resetCrop={resetCrop}
                 previewCanvasRef={previewCanvasRef}
+                aspectRatio={3 / 4}
             />
         </>
     );
