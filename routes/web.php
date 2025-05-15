@@ -27,8 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/dashboard/blog', [BlogController::class, 'store'])->name('blog.store');
 
     Route::get('/dashboard/agenda', [AgendaController::class, 'index'])->name('agenda.index');
+    Route::post('/dashboard/agenda', [AgendaController::class, 'store'])->name('agenda.store');
 
     Route::get('/dashboard/struktur', [StrukturController::class, 'index'])->name('struktur.index');
+    Route::post('/dashboard/struktur', [StrukturController::class, 'store'])->name('struktur.store');
 
     Route::get('/dashboard/kontak', [KontakController::class, 'index'])->name('kontak.index');
     Route::put('/dashboard/kontak/status/{kontak:label}', [KontakController::class, 'status'])->name('kontak.status');

@@ -13,7 +13,6 @@ class Blog extends Model
 
     protected $fillable = [
         'user_id',
-        'oleh',
         'slug',
         'title',
         'excerpt',
@@ -31,7 +30,7 @@ class Blog extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    public function athor(): BelongsTo
+    public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }

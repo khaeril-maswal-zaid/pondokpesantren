@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\ValidBase64Image;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAgendaRequest extends FormRequest
+class StoreStrukturRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,10 @@ class StoreAgendaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nama_agenda' => 'required|string|max:255',
-            'date' => 'required|date',
-            'time1' => 'nullable|string',
-            'time2' => 'nullable|string',
-            'lokasi' => 'required|string|max:20',
-            'lokasi' => 'required|string|max:20',
+            'nama' => 'required|string|max:255',
+            'role' => 'required|string|max:100',
+            'keterangan' => 'nullable|string',
+            'no_hp' => 'required|string|max:20',
             'foto' => ['required', 'string', new ValidBase64Image],
         ];
     }

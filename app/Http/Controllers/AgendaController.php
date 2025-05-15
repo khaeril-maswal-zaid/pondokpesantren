@@ -7,6 +7,8 @@ use App\Http\Requests\StoreAgendaRequest;
 use App\Http\Requests\UpdateAgendaRequest;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AgendaController extends Controller
 {
@@ -16,7 +18,7 @@ class AgendaController extends Controller
     public function index(): Response
     {
         $data = [
-            'blogs' => Agenda::select(['title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
+            'agendaData' => Agenda::select(['title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
         ];
 
         return Inertia::render('dashboard/agenda/page', $data);
@@ -35,7 +37,24 @@ class AgendaController extends Controller
      */
     public function store(StoreAgendaRequest $request)
     {
-        //
+        $base64Image = $request->foto;
+        [$type, $data] = explode(';', $base64Image);
+        [, $extension] = explode('/', $type); // jpeg, png
+        [, $base64Data] = explode(',', $data);
+
+        $filename = uniqid() . '-' . Str::slug($request->nama) . '.' . $extension;
+
+        Storage::disk('public')->put("image/agenda/{$filename}", base64_decode($base64Data));
+
+        $imagePath = "image/agenda/{$filename}";
+
+        Agenda::create([
+            'title' => $request->nama_agenda,
+            'image' => $imagePath,
+            'date' => $request->date,
+            'time' => $request->time1 . ' - ' . $request->time2,
+            'location' => $request->lokasi,
+        ]);
     }
 
     /**

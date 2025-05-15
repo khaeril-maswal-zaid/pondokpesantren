@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import ImageCropper from '@/components/dashboard/image-cropper';
+import { CropDialog } from '@/components/dashboard/crop-dialog';
 import RichTextEditor from '@/components/dashboard/rich-text-editor';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,9 +14,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { CropIcon, Loader2, PlusCircle, Upload, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 
 // Define validation schema
@@ -26,7 +26,8 @@ const blogPostSchema = z.object({
     body1: z.string().min(20, 'Main content must be at least 20 characters'),
     body2: z.string().optional(),
     tags: z.array(z.string()).min(1, 'At least one tag is required').max(5, 'Maximum 5 tags allowed'),
-    mainImage: z.any().refine((file) => file instanceof File, { message: 'Main image is required' }),
+    // mainImage: z.any().refine((file) => file instanceof File, { message: 'Main image is required' }),
+    mainImage: z.any().optional(),
     subImage1: z.any().optional(),
     subImage2: z.any().optional(),
 });
@@ -45,7 +46,7 @@ export default function BlogPostModal() {
     const [body2, setBody2] = useState('');
 
     // Image states
-    const [mainImage, setMainImage] = useState<File | null>(null);
+    const [mainImage, setMainImage] = useState('');
     const [subImage1, setSubImage1] = useState<File | null>(null);
     const [subImage2, setSubImage2] = useState<File | null>(null);
     const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
@@ -69,14 +70,100 @@ export default function BlogPostModal() {
     const [pulse, setPulse] = useState(false);
     const dialogRef = useRef<HTMLDivElement>(null);
 
+    const [errorsServer, setErrorsServer] = useState('');
+
+    //---------------------------------------------------
+
+    const [src, setSrc] = useState<string | null>(null);
+    const [isCropping, setIsCropping] = useState(false);
+    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+
+    const [cropDialogOpen, setCropDialogOpen] = useState(false);
+    const [completedCrop, setCompletedCrop] = useState(null);
+
+    const imgRef = useRef<HTMLImageElement | null>(null);
+    const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    const onImageLoad = useCallback((img: HTMLImageElement) => {
+        imgRef.current = img;
+        const width = img.width * 0.75;
+        const height = width * (4 / 3);
+        setCrop({
+            unit: 'px',
+            width,
+            height,
+            x: (img.width - width) / 2,
+            y: (img.height - height) / 2,
+            aspect: 3 / 4,
+        });
+        return false;
+    }, []);
+
+    const generateCrop = useCallback(() => {
+        if (!completedCrop || !imgRef.current || !previewCanvasRef.current) return;
+        const image = imgRef.current;
+        const canvas = previewCanvasRef.current;
+        const { width, height, x, y } = completedCrop;
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        canvas.width = width * scaleX;
+        canvas.height = height * scaleY;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width * scaleX, height * scaleY);
+        let base64 = canvas.toDataURL('image/jpeg', 1.0);
+        if (base64.length > 700000) base64 = canvas.toDataURL('image/jpeg', 0.8);
+        setCroppedImage(base64);
+        setMainImage(base64);
+        setIsCropping(false);
+    }, [completedCrop]);
+
+    const resetCrop = () => {
+        setSrc(null);
+        setCroppedImage(null);
+        setIsCropping(false);
+        setMainImage('');
+    };
+
+    const [crop, setCrop] = useState({
+        unit: '%',
+        width: 75,
+        height: 100,
+        x: 12.5,
+        y: 0,
+        aspect: 3 / 4,
+    });
+
+    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.[0]) return;
+
+        const file = e.target.files[0];
+        if (file.size > 510 * 1024) {
+            toast({
+                title: `Gagal Upload Foto`,
+                description: `Ukuran foto tidak boleh melebihi 510 KB`,
+            });
+
+            e.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSrc(reader.result as string);
+            setIsCropping(true);
+            setCroppedImage(null);
+        };
+        reader.readAsDataURL(file);
+
+        setCropDialogOpen(true);
+    };
+
+    //----------------------------------------------------
+
     // Landscape aspect ratio (4:3)
     const aspectRatio = 4 / 3;
-
-    // Simulated admin user
-    const currentUser = {
-        name: 'Admin User',
-        email: 'admin@example.com',
-    };
 
     // Reset errors when inputs change
     useEffect(() => {
@@ -106,41 +193,6 @@ export default function BlogPostModal() {
             return () => clearTimeout(timer);
         }
     }, [pulse]);
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'sub1' | 'sub2') => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                setImageToCrop(reader.result as string);
-                setCurrentImageType(type);
-                setCropModalOpen(true);
-            };
-
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleCroppedImage = (croppedImage: string, file: File) => {
-        if (currentImageType === 'main') {
-            setMainImage(file);
-            setMainImagePreview(croppedImage);
-            if (errors.mainImage) {
-                setErrors((prev) => ({ ...prev, mainImage: undefined }));
-            }
-        } else if (currentImageType === 'sub1') {
-            setSubImage1(file);
-            setSubImage1Preview(croppedImage);
-        } else if (currentImageType === 'sub2') {
-            setSubImage2(file);
-            setSubImage2Preview(croppedImage);
-        }
-
-        setCropModalOpen(false);
-        setCurrentImageType(null);
-        setImageToCrop(null);
-    };
 
     const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Create tag when semicolon is pressed
@@ -247,33 +299,34 @@ export default function BlogPostModal() {
             return;
         }
 
-        // Create form data object with all fields
-        const formData = {
-            title,
-            description,
-            body1, // This will contain HTML from the rich text editor
-            body2, // This will contain HTML from the rich text editor
-            mainImage,
-            subImage1,
-            subImage2,
-            tags,
-        };
-
-        console.log('Form submitted:', formData);
-
-        // Simulate API call
-        setTimeout(() => {
-            // Simulate successful API response
-            toast({
-                title: 'Success!',
-                description: 'Blog post created successfully',
-            });
-
-            // Reset form and close modal
-            resetForm();
-            setOpen(false);
-            setIsSubmitting(false);
-        }, 2000); // 2 second delay to simulate network request
+        router.post(
+            route('blog.store'),
+            {
+                title,
+                description,
+                body1, // This will contain HTML from the rich text editor
+                body2, // This will contain HTML from the rich text editor
+                mainImage,
+                subImage1,
+                subImage2,
+                tags,
+            },
+            {
+                onError: (e) => {
+                    setErrorsServer(e);
+                    setIsSubmitting(false);
+                },
+                onSuccess: () => {
+                    toast({
+                        title: 'Berhasil!',
+                        description: 'Blog berhasil dipublis',
+                    });
+                    resetForm();
+                    setOpen(false);
+                    setIsSubmitting(false);
+                },
+            },
+        );
     };
 
     const resetForm = () => {
@@ -477,7 +530,7 @@ export default function BlogPostModal() {
                                                                     id="mainImage"
                                                                     type="file"
                                                                     accept="image/*"
-                                                                    onChange={(e) => handleImageChange(e, 'main')}
+                                                                    onChange={(e) => onSelectFile(e, 'main')}
                                                                     required
                                                                     className="hidden"
                                                                 />
@@ -556,7 +609,7 @@ export default function BlogPostModal() {
                                                                         id="subImage1"
                                                                         type="file"
                                                                         accept="image/*"
-                                                                        onChange={(e) => handleImageChange(e, 'sub1')}
+                                                                        onChange={(e) => onSelectFile(e, 'sub1')}
                                                                         className="hidden"
                                                                     />
                                                                 </div>
@@ -630,7 +683,7 @@ export default function BlogPostModal() {
                                                                         id="subImage2"
                                                                         type="file"
                                                                         accept="image/*"
-                                                                        onChange={(e) => handleImageChange(e, 'sub2')}
+                                                                        onChange={(e) => onSelectFile(e, 'sub2')}
                                                                         className="hidden"
                                                                     />
                                                                 </div>
@@ -740,13 +793,24 @@ export default function BlogPostModal() {
                 </DialogContent>
             </Dialog>
 
-            {/* Image Cropper Modal */}
-            <ImageCropper
-                open={cropModalOpen}
-                onOpenChange={setCropModalOpen}
-                imageUrl={imageToCrop}
-                onCropComplete={handleCroppedImage}
-                aspectRatio={aspectRatio}
+            <CropDialog
+                open={cropDialogOpen}
+                onClose={() => {
+                    setCropDialogOpen(false);
+                }}
+                onCropDone={(base64) => {
+                    setCroppedImage(base64);
+                    setFoto(base64);
+                }}
+                src={src!}
+                crop={crop}
+                setCrop={setCrop}
+                completedCrop={completedCrop}
+                setCompletedCrop={setCompletedCrop}
+                onImageLoad={onImageLoad}
+                generateCrop={generateCrop}
+                resetCrop={resetCrop}
+                previewCanvasRef={previewCanvasRef}
             />
         </>
     );

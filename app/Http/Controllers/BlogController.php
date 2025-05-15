@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBlogRequest;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -24,9 +27,57 @@ class BlogController extends Controller
      */
     public function show(Blog $blog): Response
     {
-        // return Inertia::render('Blog/Show', [
-        //     'blog' => $blog,
-        // ]);
+        $ogTags = [
+            'title' => $blog->title,
+            'description' => Str::limit(strip_tags($blog->excerpt), 200),
+            'image' => asset('storage/' . $blog->picture1),
+            'url' => route('blog.show', $blog),
+        ];
+        request()->attributes->set('og', $ogTags);
 
+        $kategory = ['News', 'Dakwah', 'Opini', 'The Story'];
+
+        $countKategory = [];
+        foreach ($kategory as $key => $value) {
+            $countKategory[] = Blog::where('category', $value)->count();
+        }
+
+        $data = [
+            'article' => $blog->load('author'),
+            'relatedPosts' => Blog::select('title', 'slug', 'picture1', 'category', 'created_at')->whereNot('slug', $blog->slug)->latest()->take(4)->get(),
+            'kategory' =>  $kategory,
+            'countKategory' => $countKategory,
+            'tagsRandom' =>  Blog::inRandomOrder()->limit(2)->pluck('tags')
+        ];
+        return Inertia::render('ponpes/blog/detail', $data);
+    }
+
+
+    public function store(StoreBlogRequest $request)
+    {
+        $base64Image = $request->mainImage;
+        [$type, $data] = explode(';', $base64Image);
+        [, $extension] = explode('/', $type); // jpeg, png
+        [, $base64Data] = explode(',', $data);
+
+        $filename = uniqid() . '-' . Str::slug($request->nama) . '.' . $extension;
+
+        Storage::disk('public')->put("image/blog/{$filename}", base64_decode($base64Data));
+
+        $imagePath = "image/blog/{$filename}";
+
+        Blog::create([
+            'user_id' => Auth::id(),
+            'slug' => Str::slug($request->title, '-'),
+            'title' => $request->title,
+            'excerpt' => $request->description,
+            'body1' => $request->body1,
+            'body2' => $request->body2,
+            'picture1' => $imagePath,
+            'picture2' => $request->subImage1,
+            'picture3' => $request->subImage2,
+            'tags' => $request->tags,
+            'visit' => 50
+        ]);
     }
 }

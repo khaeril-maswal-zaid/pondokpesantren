@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('agendas', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('image');
             $table->date('date');
             $table->string('time');
             $table->string('location');
+            $table->string('image');
             $table->timestamps();
         });
     }

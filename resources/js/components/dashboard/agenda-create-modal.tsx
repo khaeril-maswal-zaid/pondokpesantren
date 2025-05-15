@@ -2,26 +2,27 @@
 
 import type React from 'react';
 
-import ImageCropper from '@/components/dashboard/image-cropper';
+// import ImageCropper from '@/components/dashboard/image-cropper';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
+import { router } from '@inertiajs/react';
 import { Calendar, CropIcon, Loader2, PlusCircle, Upload, X } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { z } from 'zod';
+import { CropDialog } from './crop-dialog';
 
 // Define validation schema
 const agendaSchema = z.object({
     nama_agenda: z.string().min(5, 'Nama agenda harus minimal 5 karakter'),
-    waktu: z.string().min(1, 'Waktu harus diisi'),
-    tempat: z.string().min(3, 'Tempat harus minimal 3 karakter'),
+    date: z.string().min(1, 'Tanggal harus diisi'),
+    time1: z.string().min(1, 'Waktu harus diisi'),
     lokasi: z.string().min(3, 'Lokasi harus minimal 3 karakter'),
-    deskripsi: z.string().min(10, 'Deskripsi harus minimal 10 karakter'),
-    status: z.enum(['Upcoming', 'Completed']),
-    foto: z.array(z.any()).min(1, 'Minimal satu foto harus diunggah'),
+    time2: z.string().min(1, 'Waktu harus diisi'),
+    // foto: z.array(z.any()).min(1, 'Minimal satu foto harus diunggah'),
+    foto: z.any().optional(),
 });
 
 type ValidationErrors = {
@@ -31,14 +32,12 @@ type ValidationErrors = {
 export default function AgendaCreateModal() {
     const [open, setOpen] = useState(false);
     const [nama_agenda, setNamaAgenda] = useState('');
-    const [waktu, setWaktu] = useState('');
-    const [tempat, setTempat] = useState('');
+    const [date, setDate] = useState('');
+    const [time1, setTime1] = useState('');
     const [lokasi, setLokasi] = useState('');
-    const [deskripsi, setDeskripsi] = useState('');
-    const [status, setStatus] = useState<'Upcoming' | 'Completed'>('Upcoming');
+    const [time2, setTime2] = useState('');
 
     // Image states
-    const [photos, setPhotos] = useState<File[]>([]);
     const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
 
     // Cropping states
@@ -60,47 +59,105 @@ export default function AgendaCreateModal() {
         }
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
+    const [errorsServer, setErrorsServer] = useState('');
 
-            reader.onload = () => {
-                setImageToCrop(reader.result as string);
-                setCropModalOpen(true);
-            };
+    //---------------------------------------------------
 
-            reader.readAsDataURL(file);
-        }
+    const [src, setSrc] = useState<string | null>(null);
+    const [isCropping, setIsCropping] = useState(false);
+    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+
+    const [cropDialogOpen, setCropDialogOpen] = useState(false);
+    const [foto, setFoto] = useState('');
+    const [completedCrop, setCompletedCrop] = useState(null);
+
+    const imgRef = useRef<HTMLImageElement | null>(null);
+    const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    const onImageLoad = useCallback((img: HTMLImageElement) => {
+        imgRef.current = img;
+        const width = img.width * 0.75;
+        const height = width * (4 / 3);
+        setCrop({
+            unit: 'px',
+            width,
+            height,
+            x: (img.width - width) / 2,
+            y: (img.height - height) / 2,
+            aspect: 3 / 4,
+        });
+        return false;
+    }, []);
+
+    const generateCrop = useCallback(() => {
+        if (!completedCrop || !imgRef.current || !previewCanvasRef.current) return;
+        const image = imgRef.current;
+        const canvas = previewCanvasRef.current;
+        const { width, height, x, y } = completedCrop;
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        canvas.width = width * scaleX;
+        canvas.height = height * scaleY;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width * scaleX, height * scaleY);
+        let base64 = canvas.toDataURL('image/jpeg', 1.0);
+        if (base64.length > 700000) base64 = canvas.toDataURL('image/jpeg', 0.8);
+        setCroppedImage(base64);
+        setFoto(base64);
+        setIsCropping(false);
+    }, [completedCrop]);
+
+    const resetCrop = () => {
+        setSrc(null);
+        setCroppedImage(null);
+        setIsCropping(false);
+        setFoto('');
     };
 
-    const handleCroppedImage = (croppedImage: string, file: File) => {
-        if (currentPhotoIndex !== null) {
-            // Replace existing photo
-            const newPhotos = [...photos];
-            const newPreviews = [...photosPreviews];
-            newPhotos[currentPhotoIndex] = file;
-            newPreviews[currentPhotoIndex] = croppedImage;
-            setPhotos(newPhotos);
-            setPhotosPreviews(newPreviews);
-        } else {
-            // Add new photo
-            setPhotos([...photos, file]);
-            setPhotosPreviews([...photosPreviews, croppedImage]);
-        }
+    const [crop, setCrop] = useState({
+        unit: '%',
+        width: 75,
+        height: 100,
+        x: 12.5,
+        y: 0,
+        aspect: 3 / 4,
+    });
 
-        setCropModalOpen(false);
-        setCurrentPhotoIndex(null);
-        setImageToCrop(null);
-        clearError('foto');
+    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.[0]) return;
+
+        const file = e.target.files[0];
+        if (file.size > 510 * 1024) {
+            toast({
+                title: `Gagal Upload Foto`,
+                description: `Ukuran foto tidak boleh melebihi 510 KB`,
+            });
+
+            e.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSrc(reader.result as string);
+            setIsCropping(true);
+            setCroppedImage(null);
+        };
+        reader.readAsDataURL(file);
+
+        setCropDialogOpen(true);
     };
+
+    //----------------------------------------------------
 
     const removePhoto = (index: number) => {
-        const newPhotos = [...photos];
+        const newPhotos = [...foto];
         const newPreviews = [...photosPreviews];
         newPhotos.splice(index, 1);
         newPreviews.splice(index, 1);
-        setPhotos(newPhotos);
+        setFoto('');
         setPhotosPreviews(newPreviews);
 
         if (newPhotos.length === 0) {
@@ -109,14 +166,14 @@ export default function AgendaCreateModal() {
     };
 
     const editPhoto = (index: number) => {
-        if (photos[index]) {
+        if (foto[index]) {
             setCurrentPhotoIndex(index);
             const reader = new FileReader();
             reader.onload = () => {
                 setImageToCrop(reader.result as string);
                 setCropModalOpen(true);
             };
-            reader.readAsDataURL(photos[index]);
+            reader.readAsDataURL(foto[index]);
         } else if (photosPreviews[index]) {
             setCurrentPhotoIndex(index);
             setImageToCrop(photosPreviews[index]);
@@ -128,12 +185,11 @@ export default function AgendaCreateModal() {
         try {
             agendaSchema.parse({
                 nama_agenda,
-                waktu,
-                tempat,
+                date,
+                time1,
                 lokasi,
-                deskripsi,
-                status,
-                foto: photos,
+                time2,
+                foto: foto,
             });
             return true;
         } catch (error) {
@@ -177,42 +233,41 @@ export default function AgendaCreateModal() {
             return;
         }
 
-        // Create form data object with all fields
-        const formData = {
-            nama_agenda,
-            waktu,
-            tempat,
-            lokasi,
-            deskripsi,
-            status,
-            foto: photos,
-        };
-
-        console.log('Form submitted:', formData);
-
-        // Simulate API call
-        setTimeout(() => {
-            // Simulate successful API response
-            toast({
-                title: 'Berhasil!',
-                description: 'Agenda berhasil dibuat',
-            });
-
-            // Reset form and close modal
-            resetForm();
-            setOpen(false);
-            setIsSubmitting(false);
-        }, 2000); // 2 second delay to simulate network request
+        router.post(
+            route('agenda.store'),
+            {
+                nama_agenda,
+                date,
+                time1,
+                lokasi,
+                time2,
+                foto,
+            },
+            {
+                onError: (e) => {
+                    setErrorsServer(e);
+                    setIsSubmitting(false);
+                },
+                onSuccess: () => {
+                    toast({
+                        title: 'Berhasil!',
+                        description: 'Agenda berhasil dibuat',
+                    });
+                    resetForm();
+                    setOpen(false);
+                    setIsSubmitting(false);
+                },
+            },
+        );
     };
 
     const resetForm = () => {
         setNamaAgenda('');
-        setWaktu('');
-        setTempat('');
+        setDate('');
+        setTime1('');
         setLokasi('');
-        setDeskripsi('');
-        setStatus('Upcoming');
-        setPhotos([]);
+        setTime2('');
+        setFoto('');
         setPhotosPreviews([]);
         setErrors({});
     };
@@ -233,10 +288,21 @@ export default function AgendaCreateModal() {
                     }
                 }}
             >
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="h-[90vh] max-w-md overflow-y-auto sm:max-w-[600px]">
                     <DialogHeader>
                         <DialogTitle>Tambah Agenda Baru</DialogTitle>
                         <DialogDescription>Isi detail agenda baru. Klik simpan setelah selesai.</DialogDescription>
+
+                        {/* Menampilkan list error */}
+                        {Object.keys(errorsServer).length > 0 && (
+                            <div className="mb-4 rounded bg-red-100 p-4 text-red-700">
+                                <ul className="list-inside list-disc">
+                                    {Object.values(errorsServer).map((error, index) => (
+                                        <li key={index}>{error}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -259,57 +325,23 @@ export default function AgendaCreateModal() {
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className="space-y-2">
-                                <Label htmlFor="waktu" className={`text-sm font-medium ${errors.waktu ? 'text-destructive' : ''}`}>
+                                <Label htmlFor="date" className={`text-sm font-medium ${errors.date ? 'text-destructive' : ''}`}>
                                     Waktu <span className="text-red-500">*</span>
                                 </Label>
                                 <div className="relative">
                                     <Calendar className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
                                     <Input
-                                        id="waktu"
-                                        type="datetime-local"
-                                        value={waktu}
+                                        id="date"
+                                        type="date"
+                                        value={date}
                                         onChange={(e) => {
-                                            setWaktu(e.target.value);
-                                            clearError('waktu');
+                                            setDate(e.target.value);
+                                            clearError('date');
                                         }}
-                                        className={`pl-8 ${errors.waktu ? 'border-destructive' : ''}`}
+                                        className={`pl-8 ${errors.date ? 'border-destructive' : ''}`}
                                     />
                                 </div>
-                                {errors.waktu && <p className="text-destructive text-xs">{errors.waktu}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="status" className="text-sm font-medium">
-                                    Status
-                                </Label>
-                                <select
-                                    id="status"
-                                    value={status}
-                                    onChange={(e) => setStatus(e.target.value as 'Upcoming' | 'Completed')}
-                                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    <option value="Upcoming">Upcoming</option>
-                                    <option value="Completed">Completed</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                                <Label htmlFor="tempat" className={`text-sm font-medium ${errors.tempat ? 'text-destructive' : ''}`}>
-                                    Tempat <span className="text-red-500">*</span>
-                                </Label>
-                                <Input
-                                    id="tempat"
-                                    value={tempat}
-                                    onChange={(e) => {
-                                        setTempat(e.target.value);
-                                        clearError('tempat');
-                                    }}
-                                    placeholder="Masukkan tempat"
-                                    className={errors.tempat ? 'border-destructive' : ''}
-                                />
-                                {errors.tempat && <p className="text-destructive text-xs">{errors.tempat}</p>}
+                                {errors.date && <p className="text-destructive text-xs">{errors.date}</p>}
                             </div>
 
                             <div className="space-y-2">
@@ -330,21 +362,42 @@ export default function AgendaCreateModal() {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="deskripsi" className={`text-sm font-medium ${errors.deskripsi ? 'text-destructive' : ''}`}>
-                                Deskripsi <span className="text-red-500">*</span>
-                            </Label>
-                            <Textarea
-                                id="deskripsi"
-                                value={deskripsi}
-                                onChange={(e) => {
-                                    setDeskripsi(e.target.value);
-                                    clearError('deskripsi');
-                                }}
-                                placeholder="Masukkan deskripsi agenda"
-                                className={`min-h-[100px] ${errors.deskripsi ? 'border-destructive' : ''}`}
-                            />
-                            {errors.deskripsi && <p className="text-destructive text-xs">{errors.deskripsi}</p>}
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="time1" className={`text-sm font-medium ${errors.time1 ? 'text-destructive' : ''}`}>
+                                    Waktu Mulai <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    type="time"
+                                    id="time1"
+                                    value={time1}
+                                    onChange={(e) => {
+                                        setTime1(e.target.value);
+                                        clearError('time1');
+                                    }}
+                                    placeholder="Masukkan waktu mulai"
+                                    className={errors.time1 ? 'border-destructive' : ''}
+                                />
+                                {errors.time1 && <p className="text-destructive text-xs">{errors.time1}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="time2" className={`text-sm font-medium ${errors.time2 ? 'text-destructive' : ''}`}>
+                                    Waktu berakhir <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    type="time"
+                                    id="time2"
+                                    value={time2}
+                                    onChange={(e) => {
+                                        setTime2(e.target.value);
+                                        clearError('time2');
+                                    }}
+                                    placeholder="Masukkan waktu bearkhir"
+                                    className={errors.time2 ? 'border-destructive' : ''}
+                                />
+                                {errors.time2 && <p className="text-destructive text-xs">{errors.time2}</p>}
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -391,7 +444,7 @@ export default function AgendaCreateModal() {
                                     >
                                         <Upload className="mb-1 h-6 w-6 text-gray-400" />
                                         <p className="text-xs text-gray-500">Tambah Foto</p>
-                                        <Input id="add-photo" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                                        <Input id="add-photo" type="file" accept="image/*" onChange={onSelectFile} className="hidden" />
                                     </div>
                                 </div>
                                 {errors.foto && <p className="text-destructive text-xs">{errors.foto}</p>}
@@ -417,13 +470,24 @@ export default function AgendaCreateModal() {
                 </DialogContent>
             </Dialog>
 
-            {/* Image Cropper Modal */}
-            <ImageCropper
-                open={cropModalOpen}
-                onOpenChange={setCropModalOpen}
-                imageUrl={imageToCrop}
-                onCropComplete={handleCroppedImage}
-                aspectRatio={aspectRatio}
+            <CropDialog
+                open={cropDialogOpen}
+                onClose={() => {
+                    setCropDialogOpen(false);
+                }}
+                onCropDone={(base64) => {
+                    setCroppedImage(base64);
+                    setFoto(base64);
+                }}
+                src={src!}
+                crop={crop}
+                setCrop={setCrop}
+                completedCrop={completedCrop}
+                setCompletedCrop={setCompletedCrop}
+                onImageLoad={onImageLoad}
+                generateCrop={generateCrop}
+                resetCrop={resetCrop}
+                previewCanvasRef={previewCanvasRef}
             />
         </>
     );

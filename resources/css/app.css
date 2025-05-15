@@ -247,3 +247,8 @@
     background-repeat: no-repeat;
     background-position: top;
 }
+
+.ProseMirror {
+    min-height: 300px !important;
+    padding: 1rem;
+}

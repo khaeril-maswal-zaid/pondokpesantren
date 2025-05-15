@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
+import { router } from '@inertiajs/react';
 import { Loader2, Phone, PlusCircle, Upload, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { z } from 'zod';
@@ -16,8 +17,8 @@ import { z } from 'zod';
 // Define validation schema
 const strukturSchema = z.object({
     nama: z.string().min(3, 'Nama harus minimal 3 karakter'),
-    posisi: z.string().min(3, 'Posisi harus minimal 3 karakter'),
-    departemen: z.string().min(3, 'Departemen harus minimal 3 karakter'),
+    role: z.string().min(3, 'Role harus minimal 3 karakter'),
+    keterangan: z.string().min(3, 'Keterangan harus minimal 3 karakter'),
     no_hp: z.string().min(10, 'Nomor HP harus minimal 10 karakter').max(15, 'Nomor HP maksimal 15 karakter'),
     foto: z.any().optional(),
 });
@@ -31,8 +32,8 @@ export default function StrukturCreateModal() {
 
     const [open, setOpen] = useState(false);
     const [nama, setNama] = useState('');
-    const [posisi, setPosisi] = useState('');
-    const [departemen, setDepartemen] = useState('');
+    const [role, setRole] = useState('');
+    const [keterangan, setKeterangan] = useState('');
     const [no_hp, setNoHp] = useState('');
     const [foto, setFoto] = useState('');
 
@@ -122,6 +123,7 @@ export default function StrukturCreateModal() {
     };
 
     const [errors, setErrors] = useState<ValidationErrors>({});
+    const [errorsServer, setErrorsServer] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const clearError = (field: string) => {
@@ -141,7 +143,7 @@ export default function StrukturCreateModal() {
 
     const validateForm = () => {
         try {
-            strukturSchema.parse({ nama, posisi, departemen, no_hp, foto });
+            strukturSchema.parse({ nama, role, keterangan, no_hp, foto });
             return true;
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -172,6 +174,7 @@ export default function StrukturCreateModal() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
         setIsSubmitting(true);
         const isValid = validateForm();
         if (!isValid) {
@@ -179,24 +182,44 @@ export default function StrukturCreateModal() {
             return;
         }
 
-        const formData = { nama, posisi, departemen, no_hp, foto };
-        console.log('Form submitted:', formData);
+        router.post(
+            route('struktur.store'),
+            {
+                nama: nama,
+                role: role,
+                keterangan: keterangan,
+                no_hp: no_hp,
+                foto: foto,
+            },
+            {
+                onError: (e) => {
+                    setErrorsServer(e);
+                    setIsSubmitting(false);
+                },
+                onSuccess: () => {
+                    toast({
+                        title: 'Berhasil!',
+                        description: 'Data pengurus berhasil ditambahkan',
+                    });
+                    resetForm();
+                    setOpen(false);
+                    setIsSubmitting(false);
+                },
+            },
+        );
+    };
 
-        setTimeout(() => {
-            toast({
-                title: 'Berhasil!',
-                description: 'Data pengurus berhasil ditambahkan',
-            });
-            resetForm();
-            setOpen(false);
-            setIsSubmitting(false);
-        }, 2000);
+    const batalButton = () => {
+        setOpen(false);
+        resetForm();
+        setIsSubmitting(false);
+        setErrorsServer('');
     };
 
     const resetForm = () => {
         setNama('');
-        setPosisi('');
-        setDepartemen('');
+        setRole('');
+        setKeterangan('');
         setNoHp('');
         setFoto('');
         setErrors({});
@@ -228,10 +251,21 @@ export default function StrukturCreateModal() {
                     }
                 }}
             >
-                <DialogContent className="sm:max-w-[500px]">
+                <DialogContent className="h-[90vh] max-w-md overflow-y-auto sm:max-w-[500px]">
                     <DialogHeader>
                         <DialogTitle>Tambah Pengurus Baru</DialogTitle>
-                        <DialogDescription>Isi detail pengurus baru. Klik simpan setelah selesai.</DialogDescription>
+                        <DialogDescription className="mb-3">Isi detail pengurus baru. Klik simpan setelah selesai.</DialogDescription>
+
+                        {/* Menampilkan list error */}
+                        {Object.keys(errorsServer).length > 0 && (
+                            <div className="mb-4 rounded bg-red-100 p-4 text-red-700">
+                                <ul className="list-inside list-disc">
+                                    {Object.values(errorsServer).map((error, index) => (
+                                        <li key={index}>{error}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -278,20 +312,20 @@ export default function StrukturCreateModal() {
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className="space-y-2">
-                                <Label htmlFor="posisi" className={`text-sm font-medium ${errors.posisi ? 'text-destructive' : ''}`}>
+                                <Label htmlFor="role" className={`text-sm font-medium ${errors.role ? 'text-destructive' : ''}`}>
                                     Role <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
-                                    id="posisi"
-                                    value={posisi}
+                                    id="role"
+                                    value={role}
                                     onChange={(e) => {
-                                        setPosisi(e.target.value);
-                                        clearError('posisi');
+                                        setRole(e.target.value);
+                                        clearError('role');
                                     }}
-                                    placeholder="Masukkan posisi"
-                                    className={errors.posisi ? 'border-destructive' : ''}
+                                    placeholder="Masukkan role"
+                                    className={errors.role ? 'border-destructive' : ''}
                                 />
-                                {errors.posisi && <p className="text-destructive text-xs">{errors.posisi}</p>}
+                                {errors.role && <p className="text-destructive text-xs">{errors.role}</p>}
                             </div>
 
                             <div className="space-y-2">
@@ -314,25 +348,25 @@ export default function StrukturCreateModal() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="departemen" className={`text-sm font-medium ${errors.departemen ? 'text-destructive' : ''}`}>
+                            <Label htmlFor="keterangan" className={`text-sm font-medium ${errors.keterangan ? 'text-destructive' : ''}`}>
                                 Keterangan <span className="text-red-500">*</span>
                             </Label>
                             <textarea
-                                id="departemen"
-                                value={departemen}
+                                id="keterangan"
+                                value={keterangan}
                                 onChange={(e) => {
-                                    setDepartemen(e.target.value);
-                                    clearError('departemen');
+                                    setKeterangan(e.target.value);
+                                    clearError('keterangan');
                                 }}
                                 className={`focus:ring-primary min-h-[100px] w-full resize-none rounded-md border px-3 py-2 text-sm shadow-sm focus:border-transparent focus:ring-2 focus:outline-none ${
-                                    errors.departemen ? 'border-destructive focus:ring-destructive' : 'border-gray-300'
+                                    errors.keterangan ? 'border-destructive focus:ring-destructive' : 'border-gray-300'
                                 }`}
                             />
-                            {errors.departemen && <p className="text-destructive text-xs">{errors.departemen}</p>}
+                            {errors.keterangan && <p className="text-destructive text-xs">{errors.keterangan}</p>}
                         </div>
 
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                            <Button type="button" variant="outline" onClick={() => batalButton()}>
                                 Batal
                             </Button>
                             <Button type="submit" disabled={isSubmitting}>

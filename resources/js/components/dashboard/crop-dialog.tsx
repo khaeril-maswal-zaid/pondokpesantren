@@ -49,7 +49,7 @@ export function CropDialog({
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="h-[90vh] max-w-md overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Potong Foto</DialogTitle>
                 </DialogHeader>

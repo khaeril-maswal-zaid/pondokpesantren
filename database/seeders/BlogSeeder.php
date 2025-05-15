@@ -16,7 +16,6 @@ class BlogSeeder extends Seeder
         $datas = [
             [
                 'user_id' => 1,
-                'oleh' => 'Admin Ubay Bin Ka\'ab',
                 'slug' => 'momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang',
                 'title' => 'Momentum Wisuda Santri Ubay Bin Ka\'ab: Mengukir Langkah Menuju Masa Depan Gemilang',
                 'excerpt' => 'Wisuda santri di Ubay Bin Ka\'ab berlangsung khidmat, menjadi simbol keberhasilan dalam menempuh perjalanan menghafal Al-Qur\'an.',
@@ -26,12 +25,12 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang-2.jpg',
                 'picture3' => 'image/blog/momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang-3.jpg',
                 'tags' => 'wisuda, santri, hafalan, ubay bin kaab',
+                'category' => 'news'
                 'visit' => 0,
             ],
 
             [
                 'user_id' => 1,
-                'oleh' => 'Tim Akademi Tahsin',
                 'slug' => 'akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat',
                 'title' => 'Akademi Tahsin dan Tajwid Gelar Wisuda Perdana dengan Khidmat',
                 'excerpt' => 'Akademi Tahsin dan Tajwid Ubay Bin Ka’ab sukses menggelar wisuda perdana yang diikuti oleh puluhan santri.',
@@ -41,11 +40,11 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat-2.jpg',
                 'picture3' => 'image/blog/akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat-3.jpg',
                 'tags' => ['wisuda, tahsin, tajwid'],
+                'category' => 'news'
                 'visit' => 0
             ],
             [
                 'user_id' => 1,
-                'oleh' => 'Pembina Santri',
                 'slug' => 'perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan',
                 'title' => 'Perkemahan Bersama Komunitas PASKAS Indonesia Timur.',
                 'excerpt' => 'Kegiatan perkemahan tahunan kembali digelar sebagai bagian dari pembentukan karakter santri Ubay Bin Ka’ab.',
@@ -55,11 +54,11 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan-2.jpg',
                 'picture3' => 'image/blog/perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan-3.jpg',
                 'tags' => ['perkemahan, santri, karakter'],
+                'category' => 'news'
                 'visit' => 0
             ],
             [
                 'user_id' => 1,
-                'oleh' => 'Panitia HSN',
                 'slug' => 'ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2024',
                 'title' => 'Ubay Bin Ka’ab Ditunjuk sebagai Tuan Rumah Peringatan Hari Santri Nasional 2024',
                 'excerpt' => 'Yayasan Ubay Bin Ka’ab dipercaya menjadi tuan rumah dalam penyelenggaraan HSN tingkat kabupaten tahun ini.',
@@ -69,11 +68,11 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2025-2.jpg',
                 'picture3' => 'image/blog/ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2025-3.jpg',
                 'tags' => ['hsn, hari santri, tuan rumah'],
+                'category' => 'news'
                 'visit' => 0
             ],
             [
                 'user_id' => 1,
-                'oleh' => 'Admin Ubay Bin Ka\'ab',
                 'slug' => 'progres-pembangunan-masjid-kampus-2-ubay-bin-kaab-terus-berjalan',
                 'title' => 'Progres Pembangunan Masjid Kampus 2 Ubay Bin Ka’ab Terus Berjalan',
                 'excerpt' => 'Pembangunan Masjid Kampus 2 terus berlanjut dengan dukungan penuh dari para donatur dan warga sekitar.',
@@ -83,6 +82,7 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/progres-pembangunan-masjid-kampus-2-ubay-bin-kaab-terus-berjalan-2.jpg',
                 'picture3' => 'image/blog/progres-pembangunan-masjid-kampus-2-ubay-bin-kaab-terus-berjalan-3.jpg',
                 'tags' => ['masjid, kampus, pembangunan'],
+                'category' => 'news',
                 'visit' => 0
             ],
         ];
@@ -90,7 +90,6 @@ class BlogSeeder extends Seeder
         foreach ($datas as $data) {
             Blog::create([
                 'user_id' => $data['user_id'],
-                'oleh' => $data['oleh'],
                 'slug' => $data['slug'],
                 'title' => $data['title'],
                 'excerpt' => $data['excerpt'],
@@ -100,6 +99,7 @@ class BlogSeeder extends Seeder
                 'picture2' => $data['picture2'],
                 'picture3' => $data['picture3'],
                 'tags' => $data['tags'],
+                'category' => $data['news'],
                 'visit' => $data['visit'],
             ]);
         }

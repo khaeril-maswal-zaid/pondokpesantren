@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('oleh'); //writier
             $table->string('slug')->unique();
             $table->string('title');
             $table->string('excerpt');
@@ -24,6 +23,7 @@ return new class extends Migration
             $table->string('picture2')->nullable();
             $table->string('picture3')->nullable();
             $table->json('tags')->nullable();
+            $table->string('category')->nullable();
             $table->integer('visit')->default(50);
             $table->timestamps();
         });

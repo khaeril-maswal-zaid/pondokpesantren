@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStrukturRequest;
 use App\Models\Struktur;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
 
 class StrukturController extends Controller
 {
@@ -31,9 +35,26 @@ class StrukturController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreStrukturRequest $request)
     {
-        //
+        $base64Image = $request->foto;
+        [$type, $data] = explode(';', $base64Image);
+        [, $extension] = explode('/', $type); // jpeg, png
+        [, $base64Data] = explode(',', $data);
+
+        $filename = uniqid() . '-' . Str::slug($request->nama) . '.' . $extension;
+
+        Storage::disk('public')->put("image/structure/{$filename}", base64_decode($base64Data));
+
+        $imagePath = "image/structure/{$filename}";
+
+        Struktur::create([
+            "name" => $request->nama,
+            "role" => $request->role,
+            "keterangan" => $request->keterangan,
+            "no_hp" => $request->no_hp,
+            "image" => $imagePath,
+        ]);
     }
 
     /**
