@@ -45,7 +45,7 @@ export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
                                 <TableCell className="font-medium">{post.title}</TableCell>
                                 <TableCell>News</TableCell>
                                 <TableCell>{post.created_at}</TableCell>
-                                <TableCell>{post.athor.name}</TableCell>
+                                <TableCell>{post.author.name}</TableCell>
                                 <TableCell>{post.visit}</TableCell>
                                 <TableCell>
                                     <DropdownMenu>

@@ -51,7 +51,10 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
     }
 
     // Gabungkan alamat
-    const getAlamat = (pendaftar: any) => {
+    const getAlamat = (pendaftar) => {
+        console.log(pendaftar);
+        return;
+
         const [provinsiName, setProvinsiName] = useState('');
         const [kabupatenName, setKabupatenName] = useState('');
         const [kecamatanName, setKecamatanName] = useState('');
@@ -172,9 +175,9 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredPendaftar.map((pendaftar) => (
+                                {filteredPendaftar.map((pendaftar, i) => (
                                     <TableRow key={pendaftar.nik}>
-                                        <TableCell>{}</TableCell>
+                                        <TableCell>{i + 1}</TableCell>
                                         <TableCell className="font-medium whitespace-nowrap">{pendaftar.nama_lengkap}</TableCell>
                                         <TableCell>
                                             {pendaftar.tempat_lahir}, {formatTanggalLahir(pendaftar.tanggal_lahir)}
@@ -250,7 +253,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
 
                     {/* Detail Modal */}
                     <Dialog open={detailModalOpen} onOpenChange={setDetailModalOpen}>
-                        <DialogContent className="sm:max-w-[700px]">
+                        <DialogContent className="h-[90vh] max-w-md overflow-y-auto sm:max-w-[600px]">
                             <DialogHeader>
                                 <DialogTitle>Detail Pendaftar</DialogTitle>
                                 <DialogDescription>
@@ -263,7 +266,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                     <div className="md:col-span-1">
                                         <div className="flex flex-col items-center">
                                             <img
-                                                src={`storage/image/santribaru/${selectedPendaftar.foto}` || '/placeholder.svg'}
+                                                src={`/storage/image/santribaru/${selectedPendaftar.foto}` || '/placeholder.svg'}
                                                 alt={selectedPendaftar.nama_lengkap}
                                                 className="h-auto w-full max-w-[200px] rounded-md border"
                                             />
@@ -293,7 +296,7 @@ export default function PendaftaranPage({ pendaftarData }: { pendaftarData: any[
                                                     </div>
                                                     <div>
                                                         <p className="text-xs text-gray-500">Alamat</p>
-                                                        <p className="text-sm">{getAlamat(selectedPendaftar)}</p>
+                                                        <p className="text-sm">{/* {getAlamat(selectedPendaftar)} */}</p>
                                                     </div>
                                                 </div>
                                             </div>

@@ -61,7 +61,7 @@ export default function AboutSection({ about }) {
                         style={{ transform: `translateY(${scrollY * 0.03}px)` }}
                     >
                         <img
-                            src={`/storage/${about?.image}?v=${new Date().getTime()})`}
+                            src={`/storage/${about?.picture1}?v=${new Date().getTime()})`}
                             alt="Pondok Pesantren Al-Zaid"
                             className="h-full object-cover"
                         />
@@ -71,7 +71,7 @@ export default function AboutSection({ about }) {
                     <div className="col-span-1 rounded-lg bg-white p-6 shadow-md md:col-span-7">
                         <h3 className="mb-4 text-xl font-bold">{about?.title}</h3>
                         <div dangerouslySetInnerHTML={{ __html: about?.body1 }} className="mb-3 line-clamp-9" />
-                        <Link href={route('blog.show', { slug: 'tentang-kami' })} className="col-span-1">
+                        <Link href={`blog/${about.slug}`} className="col-span-1">
                             <Button variant={'default'}>Lihat selengkapnya</Button>
                         </Link>
                     </div>

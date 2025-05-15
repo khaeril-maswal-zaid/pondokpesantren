@@ -17,18 +17,17 @@ class BlogSeeder extends Seeder
             [
                 'user_id' => 1,
                 'slug' => 'momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang',
-                'title' => 'Momentum Wisuda Santri Ubay Bin Ka\'ab: Mengukir Langkah Menuju Masa Depan Gemilang',
-                'excerpt' => 'Wisuda santri di Ubay Bin Ka\'ab berlangsung khidmat, menjadi simbol keberhasilan dalam menempuh perjalanan menghafal Al-Qur\'an.',
-                'body1' => 'Acara wisuda santri Ubay Bin Ka\'ab digelar dengan penuh khidmat dan haru. Puluhan santri diwisuda setelah menyelesaikan target hafalan mereka. Kegiatan ini menjadi puncak dari proses pembinaan yang panjang dan penuh semangat.',
-                'body2' => 'Para orang tua, guru, dan tamu undangan tampak hadir memberi doa dan dukungan. Wisuda ini diharapkan menjadi motivasi bagi santri lain untuk terus berjuang dalam menuntut ilmu dan menghafal Al-Qur\'an.',
+                'title' => "Momentum Wisuda Santri Ubay Bin Ka\'ab: Mengukir Langkah Menuju Masa Depan Gemilang",
+                'excerpt' => "Wisuda santri di Ubay Bin Ka\'ab berlangsung khidmat, menjadi simbol keberhasilan dalam menempuh perjalanan menghafal Al-Qur\'an.",
+                'body1' => "Acara wisuda santri Ubay Bin Ka\'ab digelar dengan penuh khidmat dan haru. Puluhan santri diwisuda setelah menyelesaikan target hafalan mereka. Kegiatan ini menjadi puncak dari proses pembinaan yang panjang dan penuh semangat.",
+                'body2' => "Para orang tua, guru, dan tamu undangan tampak hadir memberi doa dan dukungan. Wisuda ini diharapkan menjadi motivasi bagi santri lain untuk terus berjuang dalam menuntut ilmu dan menghafal Al-Qur'an.",
                 'picture1' => 'image/blog/momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang.jpg',
                 'picture2' => 'image/blog/momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang-2.jpg',
                 'picture3' => 'image/blog/momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang-3.jpg',
-                'tags' => 'wisuda, santri, hafalan, ubay bin kaab',
+                'tags' => ["wisuda", "santri", "hafalan", "ubay bin kaab"],
                 'category' => 'news',
                 'visit' => 0,
             ],
-
             [
                 'user_id' => 1,
                 'slug' => 'akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat',
@@ -39,7 +38,7 @@ class BlogSeeder extends Seeder
                 'picture1' => 'image/blog/akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat.jpg',
                 'picture2' => 'image/blog/akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat-2.jpg',
                 'picture3' => 'image/blog/akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat-3.jpg',
-                'tags' => ['wisuda, tahsin, tajwid'],
+                'tags' => ["wisuda", "tahsin", "tajwid"],
                 'category' => 'news',
                 'visit' => 0
             ],
@@ -53,7 +52,7 @@ class BlogSeeder extends Seeder
                 'picture1' => 'image/blog/perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan.jpg',
                 'picture2' => 'image/blog/perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan-2.jpg',
                 'picture3' => 'image/blog/perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan-3.jpg',
-                'tags' => ['perkemahan, santri, karakter'],
+                'tags' => ["perkemahan", "santri", "karakter"],
                 'category' => 'news',
                 'visit' => 0
             ],
@@ -67,7 +66,7 @@ class BlogSeeder extends Seeder
                 'picture1' => 'image/blog/ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2025.jpg',
                 'picture2' => 'image/blog/ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2025-2.jpg',
                 'picture3' => 'image/blog/ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2025-3.jpg',
-                'tags' => ['hsn, hari santri, tuan rumah'],
+                'tags' => ["hsn", "hari santri", "tuan rumah"],
                 'category' => 'news',
                 'visit' => 0
             ],
@@ -81,7 +80,22 @@ class BlogSeeder extends Seeder
                 'picture1' => 'image/blog/progres-pembangunan-masjid-kampus-2-ubay-bin-kaab-terus-berjalan.jpg',
                 'picture2' => 'image/blog/progres-pembangunan-masjid-kampus-2-ubay-bin-kaab-terus-berjalan-2.jpg',
                 'picture3' => 'image/blog/progres-pembangunan-masjid-kampus-2-ubay-bin-kaab-terus-berjalan-3.jpg',
-                'tags' => ['masjid, kampus, pembangunan'],
+                'tags' => ["masjid", "kampus", "pembangunan"],
+                'category' => 'news',
+                'visit' => 0
+            ],
+            [
+                'user_id' => 1,
+                'slug' => 'sejarah-pendirian-pondok-pesantren-ubay-bin-ka’ab-bulukumba',
+                'title' => 'Sejarah Pendirian Pondok Pesantren Ubay Bin Ka’ab Bulukumba',
+                'excerpt' => 'Pembangunan Masjid Kampus 2 terus berlanjut dengan dukungan penuh dari para donatur dan warga sekitar.',
+                'body1' => '<p class="mb-2 text-gray-800">Pondok Pesantren Ubay Bin Ka’ab Bulukumba dirintis pada bulan Juli tahun 2020 dan berlokasi di Lajae, Jawi-Jawi, Kabupaten Bulukumba. Lahan tempat berdirinya pesantren ini merupakan wakaf dari almarhumah Ibu Hj. Darniati, istri dari Bapak H. Rais Sanusi, seluas 50 x 50 meter persegi.</p><p class="mb-2 text-gray-800">Awalnya, tanah wakaf ini diamanahkan kepada Pondok Pesantren Darul Istiqamah Ponci. Namun, kemudian dialihkan dan dipindahwakafkan secara resmi kepada Yayasan Ubay Bin Ka’ab. Proses serah terima ini dilangsungkan langsung oleh Bapak H. Rais Sanusi kepada pihak yayasan, dengan disaksikan oleh Dr. Muzakkir Arif, Lc., M.A., Bapak Muh. Nasir, S.Pd., M.Pd., serta seluruh ahli waris.</p><p class="mb-2 text-gray-800">Untuk memenuhi kebutuhan pendidikan dan tempat belajar para santri, dibangun ruang kelas dan asrama dua lantai berukuran 7 x 21 meter di samping masjid. Alhamdulillah, pada tahun 2021 pembangunan tersebut telah rampung dan mulai dimanfaatkan oleh para santri.</p><p class="mb-2 text-gray-800">Seiring dengan perkembangan, Pondok Pesantren Ubay Bin Ka’ab Bulukumba kini telah membuka beberapa cabang:</p><ul class="list-disc list-inside ml-4 text-gray-700"><li><strong>Kampus 2</strong> di Desa Manyampa, Kecamatan Ujung Loe, di atas lahan hibah seluas 1 hektar dari Bapak Amiruddin, seorang pengusaha dan warga Manyampa.</li><li><strong>Kampus khusus santri putri</strong> di Ujung Bulu, Kota Bulukumba, tepatnya di Jalan Jati, yang merupakan wakaf dari Bapak H. Hendra, juga seorang pengusaha.</li></ul><p class="mb-2 text-gray-800">Pada tahun 2023, Yayasan Ubay Bin Ka’ab Bulukumba telah mengelola berbagai jenjang pendidikan formal, mulai dari Sekolah Dasar (SD), Madrasah Tsanawiyah/Sekolah Menengah Pertama (MTs/SMP), hingga Madrasah Aliyah/Sekolah Menengah Atas (MA/SMA). Selain itu, tersedia pula program pendidikan non-formal seperti <em>Tahfidz Day</em> dan <em>Tahfidz Weekend</em> untuk tingkat SD dan SMP.</p><p class="mb-2 text-gray-800">Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip <strong>menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah</strong>, berlandaskan dalil yang sahih. Pesantren ini juga secara tegas menolak segala bentuk kesyirikan, khurafat, tahayul, tathayyur, bid’ah, serta praktik-praktik yang bertentangan dengan syariat Islam.</p><p>Dengan semangat keikhlasan dan dakwah yang berlandaskan ilmu, Pondok Pesantren Ubay Bin Ka’ab Bulukumba berkomitmen menjadi pelita ilmu dan keimanan bagi generasi Muslim masa depan.</p>',
+
+                'body2' => '',
+                'picture1' => 'image/assets/about.jpg',
+                'picture2' => '',
+                'picture3' => '',
+                'tags' => ["masjid", "kampus", "pembangunan"],
                 'category' => 'news',
                 'visit' => 0
             ],

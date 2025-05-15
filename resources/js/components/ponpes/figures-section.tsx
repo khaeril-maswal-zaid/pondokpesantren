@@ -63,7 +63,7 @@ export default function FiguresSection({ figures }) {
                 </div>
                 <div className="mt-10 text-center">
                     <Link
-                        href="/struktur"
+                        href={route('struktur.cards')}
                         className="bg-primary hover:bg-primary/90 inline-flex items-center justify-center rounded-md border border-transparent px-6 py-3 text-base font-medium text-white transition-colors"
                     >
                         Lihat Semua Struktur

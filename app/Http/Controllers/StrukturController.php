@@ -88,4 +88,10 @@ class StrukturController extends Controller
     {
         //
     }
+
+    public function cards()
+    {
+        $data = [];
+        return Inertia::render('ponpes/struktur/page', $data);
+    }
 }

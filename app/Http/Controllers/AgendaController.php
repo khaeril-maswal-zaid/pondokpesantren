@@ -88,4 +88,10 @@ class AgendaController extends Controller
     {
         //
     }
+
+    public function cards()
+    {
+        $data = [];
+        return Inertia::render('ponpes/agenda/page', $data);
+    }
 }

@@ -66,10 +66,7 @@ export default function BlogSection({ blogPosts }) {
                                 </div>
                                 <h3 className="mb-2 text-lg font-bold">{post.title}</h3>
                                 <p className="mb-4 line-clamp-3 text-sm text-gray-600">{post.excerpt}</p>
-                                <Link
-                                    href={`/blog/${post.title.toLowerCase().replace(/\s+/g, '-')}`}
-                                    className="text-primary flex items-center text-sm font-medium hover:underline"
-                                >
+                                <Link href={`/blog/${post.slug}`} className="text-primary flex items-center text-sm font-medium hover:underline">
                                     Baca selengkapnya <ArrowRight className="ml-1 h-4 w-4" />
                                 </Link>
                             </div>

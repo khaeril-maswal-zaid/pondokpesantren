@@ -80,4 +80,10 @@ class BlogController extends Controller
             'visit' => 50
         ]);
     }
+
+    public function cards()
+    {
+        $data = [];
+        // return Inertia::render('ponpes/agenda/page', $data);
+    }
 }

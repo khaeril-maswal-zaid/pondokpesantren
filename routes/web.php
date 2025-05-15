@@ -15,7 +15,9 @@ Route::get('/penerimaan-santri-baru/pendaftaran', [SantriBaruController::class, 
 Route::post('/penerimaan-santri-baru/store', [SantriBaruController::class, 'store'])->name('santri-baru.store');
 
 Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.show');
-
+Route::get('/blog-pesantren', [BlogController::class, 'cards'])->name('blog.cards');
+Route::get('/agenda-pesantren', [AgendaController::class, 'cards'])->name('agenda.cards');
+Route::get('/struktur-pesantren', [StrukturController::class, 'cards'])->name('struktur.cards');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
