@@ -16,7 +16,7 @@ class BlogController extends Controller
     public function index(): Response
     {
         $data = [
-            'blogs' => Blog::select(['title', 'slug', 'user_id', 'visit', 'created_at'])->with('athor')->latest()->paginate(10),
+            'blogs' => Blog::select(['title', 'slug', 'user_id', 'visit', 'created_at'])->load('author')->latest()->paginate(10),
         ];
 
         return Inertia::render('dashboard/blog/page', $data);
