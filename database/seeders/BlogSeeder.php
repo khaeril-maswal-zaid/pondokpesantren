@@ -99,7 +99,7 @@ class BlogSeeder extends Seeder
                 'picture2' => $data['picture2'],
                 'picture3' => $data['picture3'],
                 'tags' => $data['tags'],
-                'category' => $data['news'],
+                'category' => $data['category'],
                 'visit' => $data['visit'],
             ]);
         }
