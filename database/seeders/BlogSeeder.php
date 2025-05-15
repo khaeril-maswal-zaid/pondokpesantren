@@ -25,7 +25,7 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang-2.jpg',
                 'picture3' => 'image/blog/momentum-wisuda-santri-ubay-bin-kaab-mengukir-langkah-menuju-masa-depan-gemilang-3.jpg',
                 'tags' => 'wisuda, santri, hafalan, ubay bin kaab',
-                'category' => 'news'
+                'category' => 'news',
                 'visit' => 0,
             ],
 
@@ -40,7 +40,7 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat-2.jpg',
                 'picture3' => 'image/blog/akademi-tahsin-dan-tajwid-gelar-wisuda-perdana-dengan-khidmat-3.jpg',
                 'tags' => ['wisuda, tahsin, tajwid'],
-                'category' => 'news'
+                'category' => 'news',
                 'visit' => 0
             ],
             [
@@ -54,7 +54,7 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan-2.jpg',
                 'picture3' => 'image/blog/perkemahan-santri-ubay-mengasah-kemandirian-dan-kebersamaan-3.jpg',
                 'tags' => ['perkemahan, santri, karakter'],
-                'category' => 'news'
+                'category' => 'news',
                 'visit' => 0
             ],
             [
@@ -68,7 +68,7 @@ class BlogSeeder extends Seeder
                 'picture2' => 'image/blog/ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2025-2.jpg',
                 'picture3' => 'image/blog/ubay-bin-kaab-ditunjuk-sebagai-tuan-rumah-peringatan-hari-santri-nasional-2025-3.jpg',
                 'tags' => ['hsn, hari santri, tuan rumah'],
-                'category' => 'news'
+                'category' => 'news',
                 'visit' => 0
             ],
             [
