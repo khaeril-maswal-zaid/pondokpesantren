@@ -18,7 +18,7 @@ class StrukturController extends Controller
     public function index()
     {
         $data = [
-            'figures' => Struktur::select(['name', 'no_hp', 'role', 'image', 'keterangan'])->latest()->get(),
+            'figures' => Struktur::select(['id', 'name', 'no_hp', 'role', 'image', 'keterangan'])->latest()->get(),
         ];
 
         return Inertia::render('dashboard/struktur/page', $data);
@@ -76,9 +76,34 @@ class StrukturController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Struktur $struktur)
+    public function update(StoreStrukturRequest $request, Struktur $struktur) // StoreStrukturRequest => sama ji update doh
     {
-        //
+        $fotoInput = $request->input('foto');
+
+        // Cek apakah $fotoInput ini Base64 (diawali "data:image/…;base64,")
+        if (preg_match('/^data:image\/(\w+);base64,/', $fotoInput, $matches)) {
+            $base64Image = $request->foto;
+            [$type, $data] = explode(';', $base64Image);
+            [, $extension] = explode('/', $type); // jpeg, png
+            [, $base64Data] = explode(',', $data);
+
+            $filename = uniqid() . '-' . Str::slug($request->nama) . '.' . $extension;
+
+            Storage::disk('public')->put("image/structure/{$filename}", base64_decode($base64Data));
+
+            $imagePath = "image/structure/{$filename}";
+        } else {
+            // bukan Base64 → kemungkinan path lama yang tidak diubah
+            $imagePath = $fotoInput;
+        }
+
+        $struktur->update([
+            "name" => $request->nama,
+            "role" => $request->role,
+            "keterangan" => $request->keterangan,
+            "no_hp" => $request->no_hp,
+            "image" => $imagePath,
+        ]);
     }
 
     /**
@@ -86,7 +111,12 @@ class StrukturController extends Controller
      */
     public function destroy(Struktur $struktur)
     {
-        //
+        // Hapus file gambar jika ada
+        if ($struktur->image && Storage::disk('public')->exists($struktur->image)) {
+            Storage::disk('public')->delete($struktur->image);
+        }
+
+        // $struktur->delete();
     }
 
     public function cards()

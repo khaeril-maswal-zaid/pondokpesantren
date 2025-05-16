@@ -1,14 +1,28 @@
 'use client';
 
 import StrukturCreateModal from '@/components/dashboard/struktur-create-modal';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
-import { Phone, Search } from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { Eye, MoreVertical, Pencil, Phone, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
+import StrukturUpdateModal from '@/components/dashboard/struktur-update-modal';
+import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -20,6 +34,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function StrukturPage({ figures }) {
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedStruktur, setSelectedStruktur] = useState<any>(null);
+    const [editModalOpen, setEditModalOpen] = useState(false);
 
     // Filter struktur berdasarkan nama
     const filteredStruktur = figures.filter((struktur) => struktur.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -37,6 +53,33 @@ export default function StrukturPage({ figures }) {
             .join('')
             .toUpperCase()
             .substring(0, 2);
+    };
+
+    const setEditModal = (pendaftar: any) => {
+        setSelectedStruktur(pendaftar);
+        setEditModalOpen(true);
+    };
+
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const setDeleteModal = (pendaftar: any | null) => {
+        if (!pendaftar.id) return;
+        setSelectedStruktur(pendaftar);
+        setDeleteModalOpen(true);
+    };
+
+    const confirmDelete = (id: string) => {
+        router.delete(route('struktur.destroy', id), {
+            onSuccess: () => {
+                toast({
+                    title: 'Berhasil!',
+                    description: 'Data pengurus berhasil diedit',
+                });
+                // setOpen(false);
+                setIsSubmitting(false);
+            },
+        });
     };
 
     return (
@@ -71,6 +114,7 @@ export default function StrukturPage({ figures }) {
                                     <TableHead>Posisi</TableHead>
                                     <TableHead>Keterangan</TableHead>
                                     <TableHead>Nomor HP</TableHead>
+                                    <TableHead>Nomor HP</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -93,10 +137,74 @@ export default function StrukturPage({ figures }) {
                                                 </a>
                                             </div>
                                         </TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                        <MoreVertical className="h-4 w-4" />
+                                                        <span className="sr-only">Open menu</span>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem>
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        View
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        onClick={() => {
+                                                            setTimeout(() => {
+                                                                setEditModal(struktur);
+                                                            }, 0);
+                                                        }}
+                                                    >
+                                                        <Pencil className="mr-2 h-4 w-4" />
+                                                        Edit
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem
+                                                        onClick={() => {
+                                                            setTimeout(() => {
+                                                                setDeleteModal(struktur);
+                                                            }, 0);
+                                                        }}
+                                                        className="text-red-600"
+                                                    >
+                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
+                        {editModalOpen && (
+                            <StrukturUpdateModal onOpenChange={setEditModalOpen} selectedUpdate={selectedStruktur} isOpen={editModalOpen} />
+                        )}
+
+                        {/* // DI LUAR LOOP (sekali saja) */}
+                        <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Apakah Anda yakin ingin menghapus data struktur {selectedStruktur?.name}?
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel onClick={() => setDeleteModalOpen(false)}>Batal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        className="bg-red-600 hover:bg-red-700"
+                                        onClick={() => {
+                                            confirmDelete(selectedStruktur?.id);
+                                        }}
+                                    >
+                                        {isSubmitting ? 'Menghapus' : 'Hapus'}
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </div>
             </div>

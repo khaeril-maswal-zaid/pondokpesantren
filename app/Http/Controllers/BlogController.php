@@ -86,4 +86,13 @@ class BlogController extends Controller
         $data = [];
         // return Inertia::render('ponpes/agenda/page', $data);
     }
+
+    public function edit(): Response
+    {
+        $data = [
+            'blogs' => Blog::select(['title', 'slug', 'user_id', 'visit', 'created_at'])->with('author')->latest()->paginate(10),
+        ];
+
+        return Inertia::render('dashboard/blog/edit', $data);
+    }
 }

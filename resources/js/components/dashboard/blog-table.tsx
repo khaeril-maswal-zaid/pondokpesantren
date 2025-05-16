@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { router } from '@inertiajs/react';
 import { Eye, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -31,12 +32,12 @@ export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Author</TableHead>
+                            <TableHead>Judul</TableHead>
+                            <TableHead>Kategori</TableHead>
+                            <TableHead>Tanggal</TableHead>
+                            <TableHead>Publish oleh</TableHead>
                             <TableHead>Visit</TableHead>
-                            <TableHead className="w-[80px]">Actions</TableHead>
+                            <TableHead className="w-[80px]">Aksi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -56,11 +57,19 @@ export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() => {
+                                                    router.get(`/blog/${post.slug}`);
+                                                }}
+                                            >
                                                 <Eye className="mr-2 h-4 w-4" />
                                                 View
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() => {
+                                                    // router.get(route('blog.edit'));
+                                                }}
+                                            >
                                                 <Pencil className="mr-2 h-4 w-4" />
                                                 Edit
                                             </DropdownMenuItem>

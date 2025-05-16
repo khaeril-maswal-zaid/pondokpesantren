@@ -1,0 +1,702 @@
+'use client';
+
+import type React from 'react';
+
+import ImageCropper from '@/components/dashboard/image-cropper';
+import RichTextEditor from '@/components/dashboard/rich-text-editor';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/hooks/use-toast';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
+import { CropIcon, Loader2, Upload, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+];
+
+// Define validation schema
+const blogPostSchema = z.object({
+    title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title must be less than 100 characters'),
+    description: z.string().min(10, 'Description must be at least 10 characters').max(500, 'Description must be less than 500 characters'),
+    body1: z.string().min(20, 'Main content must be at least 20 characters'),
+    body2: z.string().optional(),
+    tags: z.array(z.string()).min(1, 'At least one tag is required').max(5, 'Maximum 5 tags allowed'),
+    mainImage: z.any().refine((file) => file instanceof File, { message: 'Main image is required' }),
+    subImage1: z.any().optional(),
+    subImage2: z.any().optional(),
+});
+
+type ValidationErrors = {
+    [key: string]: string | undefined;
+};
+
+// Sample data for edit
+const samplePost = {
+    id: '1',
+    title: 'Getting Started with Next.js',
+    description: 'Learn the basics of Next.js and how to build modern web applications.',
+    body1: "<h2>Introduction to Next.js</h2><p>Next.js is a React framework that enables server-side rendering and generating static websites. It's a great choice for building modern web applications.</p><p>In this tutorial, we'll cover the basics of Next.js and how to get started with it.</p>",
+    body2: '<h2>Key Features</h2><p>Next.js provides a great developer experience with features like:</p><ul><li>Server-side rendering</li><li>Static site generation</li><li>API routes</li><li>File-based routing</li></ul>',
+    tags: ['Next.js', 'React', 'Web Development'],
+    mainImage: null,
+    mainImageUrl: '/placeholder.svg?height=400&width=600',
+    subImage1Url: '/placeholder.svg?height=300&width=400',
+    subImage2Url: null,
+};
+
+export default function EditBlogPage({ params }: { params: { id: string } }) {
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [body1, setBody1] = useState('');
+    const [body2, setBody2] = useState('');
+
+    // Image states
+    const [mainImage, setMainImage] = useState<File | null>(null);
+    const [subImage1, setSubImage1] = useState<File | null>(null);
+    const [subImage2, setSubImage2] = useState<File | null>(null);
+    const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
+    const [subImage1Preview, setSubImage1Preview] = useState<string | null>(null);
+    const [subImage2Preview, setSubImage2Preview] = useState<string | null>(null);
+
+    // Cropping states
+    const [cropModalOpen, setCropModalOpen] = useState(false);
+    const [currentImageType, setCurrentImageType] = useState<'main' | 'sub1' | 'sub2' | null>(null);
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+
+    const [tagInput, setTagInput] = useState('');
+    const [tags, setTags] = useState<string[]>([]);
+    const [activeTab, setActiveTab] = useState('content');
+
+    // Validation states
+    const [errors, setErrors] = useState<ValidationErrors>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Landscape aspect ratio (4:3)
+    const aspectRatio = 4 / 3;
+
+    // Simulated admin user
+    const currentUser = {
+        name: 'Admin User',
+        email: 'admin@example.com',
+    };
+
+    // Load post data
+    useEffect(() => {
+        // In a real app, you would fetch the post data based on the ID
+        setTitle(samplePost.title);
+        setDescription(samplePost.description);
+        setBody1(samplePost.body1);
+        setBody2(samplePost.body2 || '');
+        setTags(samplePost.tags);
+        setMainImagePreview(samplePost.mainImageUrl);
+        setSubImage1Preview(samplePost.subImage1Url);
+        setSubImage2Preview(samplePost.subImage2Url);
+    }, []);
+
+    // Reset errors when inputs change
+    useEffect(() => {
+        if (errors.title && title.length >= 5) {
+            setErrors((prev) => ({ ...prev, title: undefined }));
+        }
+        if (errors.description && description.length >= 10) {
+            setErrors((prev) => ({ ...prev, description: undefined }));
+        }
+        if (errors.body1 && body1.length >= 20) {
+            setErrors((prev) => ({ ...prev, body1: undefined }));
+        }
+        if (errors.mainImage && mainImage) {
+            setErrors((prev) => ({ ...prev, mainImage: undefined }));
+        }
+        if (errors.tags && tags.length >= 1) {
+            setErrors((prev) => ({ ...prev, tags: undefined }));
+        }
+    }, [title, description, body1, mainImage, tags, errors]);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'sub1' | 'sub2') => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                setImageToCrop(reader.result as string);
+                setCurrentImageType(type);
+                setCropModalOpen(true);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleCroppedImage = (croppedImage: string, file: File) => {
+        if (currentImageType === 'main') {
+            setMainImage(file);
+            setMainImagePreview(croppedImage);
+            if (errors.mainImage) {
+                setErrors((prev) => ({ ...prev, mainImage: undefined }));
+            }
+        } else if (currentImageType === 'sub1') {
+            setSubImage1(file);
+            setSubImage1Preview(croppedImage);
+        } else if (currentImageType === 'sub2') {
+            setSubImage2(file);
+            setSubImage2Preview(croppedImage);
+        }
+
+        setCropModalOpen(false);
+        setCurrentImageType(null);
+        setImageToCrop(null);
+    };
+
+    const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Create tag when semicolon is pressed
+        if (e.key === ';' && tagInput.trim() !== '') {
+            e.preventDefault();
+            const newTag = tagInput.trim().replace(';', '');
+            if (newTag && !tags.includes(newTag)) {
+                // Check if adding this tag would exceed the limit
+                if (tags.length >= 5) {
+                    setErrors((prev) => ({ ...prev, tags: 'Maximum 5 tags allowed' }));
+                    return;
+                }
+                setTags([...tags, newTag]);
+                if (errors.tags) {
+                    setErrors((prev) => ({ ...prev, tags: undefined }));
+                }
+            }
+            setTagInput('');
+        }
+    };
+
+    const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setTagInput(value);
+
+        // Check if the input ends with a semicolon
+        if (value.endsWith(';')) {
+            const newTag = value.slice(0, -1).trim();
+            if (newTag && !tags.includes(newTag)) {
+                // Check if adding this tag would exceed the limit
+                if (tags.length >= 5) {
+                    setErrors((prev) => ({ ...prev, tags: 'Maximum 5 tags allowed' }));
+                    return;
+                }
+                setTags([...tags, newTag]);
+                if (errors.tags) {
+                    setErrors((prev) => ({ ...prev, tags: undefined }));
+                }
+            }
+            setTagInput('');
+        }
+    };
+
+    const removeTag = (tagToRemove: string) => {
+        setTags(tags.filter((tag) => tag !== tagToRemove));
+        // If we're removing a tag and now have none, show the error
+        if (tags.length <= 1) {
+            setErrors((prev) => ({ ...prev, tags: 'At least one tag is required' }));
+        }
+    };
+
+    const validateForm = () => {
+        try {
+            blogPostSchema.parse({
+                title,
+                description,
+                body1,
+                body2,
+                tags,
+                mainImage: mainImage || mainImagePreview, // Allow existing image URL
+                subImage1,
+                subImage2,
+            });
+            return true;
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const newErrors: ValidationErrors = {};
+                error.errors.forEach((err) => {
+                    const path = err.path[0] as string;
+                    newErrors[path] = err.message;
+                });
+                setErrors(newErrors);
+
+                // Show toast for the first error
+                const firstError = error.errors[0];
+                if (firstError) {
+                    toast({
+                        title: 'Validation Error',
+                        description: firstError.message,
+                        variant: 'destructive',
+                    });
+                }
+            } else {
+                // Handle unexpected errors
+                console.error('Validation error:', error);
+                toast({
+                    title: 'Error',
+                    description: 'An unexpected error occurred. Please try again.',
+                    variant: 'destructive',
+                });
+            }
+            return false;
+        }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        // Validate form
+        const isValid = validateForm();
+        if (!isValid) {
+            setIsSubmitting(false);
+            return;
+        }
+
+        // Create form data object with all fields
+        const formData = {
+            id: params.id,
+            title,
+            description,
+            body1, // This will contain HTML from the rich text editor
+            body2, // This will contain HTML from the rich text editor
+            author: currentUser.name,
+            mainImage: mainImage || mainImagePreview,
+            subImage1: subImage1 || subImage1Preview,
+            subImage2: subImage2 || subImage2Preview,
+            tags,
+        };
+
+        console.log('Form submitted:', formData);
+
+        // Simulate API call
+        setTimeout(() => {
+            // Simulate successful API response
+            toast({
+                title: 'Success!',
+                description: 'Blog post updated successfully',
+            });
+
+            setIsSubmitting(false);
+            // In a real app, you might redirect to the blog list or view page
+        }, 2000); // 2 second delay to simulate network request
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs} button={''}>
+            <Head title="Dashboard" />
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        <div className="px-6 pt-6">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="content">Content</TabsTrigger>
+                                <TabsTrigger value="media">Media & Metadata</TabsTrigger>
+                            </TabsList>
+                        </div>
+
+                        <div className="p-6">
+                            <TabsContent value="content" className="mt-0 space-y-6">
+                                <div className="grid grid-cols-12 gap-6">
+                                    {/* Left sidebar - Tags */}
+                                    <div className="col-span-12 space-y-6 md:col-span-3">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="tags" className={`text-sm font-medium ${errors.tags ? 'text-destructive' : ''}`}>
+                                                Tags <span className="text-red-500">*</span> (max 5, type and press ; to add)
+                                            </Label>
+                                            <div className="flex flex-col space-y-2">
+                                                <Input
+                                                    id="tags"
+                                                    value={tagInput}
+                                                    onChange={handleTagInputChange}
+                                                    onKeyDown={handleTagKeyDown}
+                                                    placeholder="Type a tag and press ; (semicolon)"
+                                                    className={errors.tags ? 'border-destructive' : ''}
+                                                    disabled={tags.length >= 5}
+                                                />
+                                                {errors.tags && <p className="text-destructive text-xs">{errors.tags}</p>}
+                                                <div
+                                                    className={`min-h-[200px] overflow-auto rounded-md border p-3 ${
+                                                        errors.tags && tags.length === 0 ? 'border-destructive' : ''
+                                                    }`}
+                                                >
+                                                    {tags.length > 0 ? (
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {tags.map((tag) => (
+                                                                <Badge key={tag} variant="secondary" className="px-2 py-1 text-xs">
+                                                                    {tag}
+                                                                    <X className="ml-1 h-3 w-3 cursor-pointer" onClick={() => removeTag(tag)} />
+                                                                </Badge>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-sm text-gray-400">No tags added yet</p>
+                                                    )}
+                                                </div>
+                                                <p className="text-muted-foreground text-xs">
+                                                    {tags.length}/5 tags used {tags.length === 0 && '(at least one tag required)'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right content area - Rich Text Editors */}
+                                    <div className="col-span-12 space-y-6 md:col-span-9">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="body1" className={`text-sm font-medium ${errors.body1 ? 'text-destructive' : ''}`}>
+                                                Body 1 <span className="text-red-500">*</span>
+                                            </Label>
+                                            <div className={`min-h-[300px] rounded-md border ${errors.body1 ? 'border-destructive' : ''}`}>
+                                                <RichTextEditor value={body1} onChange={setBody1} placeholder="Enter the main content" />
+                                            </div>
+                                            {errors.body1 && <p className="text-destructive text-xs">{errors.body1}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="body2" className="text-sm font-medium">
+                                                Body 2
+                                            </Label>
+                                            <div className="min-h-[300px] rounded-md border">
+                                                <RichTextEditor value={body2} onChange={setBody2} placeholder="Enter additional content (optional)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="media" className="mt-0">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    {/* Left column - Title and Description */}
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="title" className={`text-sm font-medium ${errors.title ? 'text-destructive' : ''}`}>
+                                                Title <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Input
+                                                id="title"
+                                                value={title}
+                                                onChange={(e) => setTitle(e.target.value)}
+                                                placeholder="Enter blog post title"
+                                                required
+                                                className={errors.title ? 'border-destructive' : ''}
+                                            />
+                                            {errors.title && <p className="text-destructive text-xs">{errors.title}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label
+                                                htmlFor="description"
+                                                className={`text-sm font-medium ${errors.description ? 'text-destructive' : ''}`}
+                                            >
+                                                Description <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Textarea
+                                                id="description"
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
+                                                placeholder="Enter a short description"
+                                                required
+                                                className={`min-h-[150px] ${errors.description ? 'border-destructive' : ''}`}
+                                            />
+                                            {errors.description && <p className="text-destructive text-xs">{errors.description}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="author" className="text-sm font-medium">
+                                                Author
+                                            </Label>
+                                            <Input id="author" value={currentUser.name} disabled />
+                                        </div>
+                                    </div>
+
+                                    {/* Right column - Images */}
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <Label className="text-sm font-medium">Images (4:3 landscape ratio)</Label>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label
+                                                        htmlFor="mainImage"
+                                                        className={`text-xs text-gray-500 ${errors.mainImage ? 'text-destructive' : ''}`}
+                                                    >
+                                                        Main Image <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <div className="flex flex-col items-center">
+                                                        <div
+                                                            className={`hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors ${
+                                                                mainImagePreview ? 'border-primary' : 'border-gray-300'
+                                                            } ${errors.mainImage && !mainImagePreview ? 'border-destructive' : ''}`}
+                                                            style={{ height: '180px' }}
+                                                            onClick={() => document.getElementById('mainImage')?.click()}
+                                                        >
+                                                            {mainImagePreview ? (
+                                                                <div className="relative h-full w-full">
+                                                                    <img
+                                                                        src={mainImagePreview || '/placeholder.svg'}
+                                                                        alt="Main preview"
+                                                                        className="h-full w-full rounded-md object-cover"
+                                                                        style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
+                                                                    />
+                                                                    <div className="absolute top-1 right-1 flex gap-1">
+                                                                        <Button
+                                                                            type="button"
+                                                                            variant="secondary"
+                                                                            size="icon"
+                                                                            className="h-6 w-6 bg-white"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                if (mainImage) {
+                                                                                    const reader = new FileReader();
+                                                                                    reader.onload = () => {
+                                                                                        setImageToCrop(reader.result as string);
+                                                                                        setCurrentImageType('main');
+                                                                                        setCropModalOpen(true);
+                                                                                    };
+                                                                                    reader.readAsDataURL(mainImage);
+                                                                                } else if (mainImagePreview) {
+                                                                                    setImageToCrop(mainImagePreview);
+                                                                                    setCurrentImageType('main');
+                                                                                    setCropModalOpen(true);
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            <CropIcon className="h-3 w-3" />
+                                                                        </Button>
+                                                                        <Button
+                                                                            type="button"
+                                                                            variant="destructive"
+                                                                            size="icon"
+                                                                            className="h-6 w-6"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setMainImage(null);
+                                                                                setMainImagePreview(null);
+                                                                            }}
+                                                                        >
+                                                                            <X className="h-3 w-3" />
+                                                                        </Button>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <Upload className="mb-2 h-8 w-8 text-gray-400" />
+                                                                    <p className="text-xs text-gray-500">Upload main image (required)</p>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                        <Input
+                                                            id="mainImage"
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={(e) => handleImageChange(e, 'main')}
+                                                            required
+                                                            className="hidden"
+                                                        />
+                                                        {errors.mainImage && !mainImagePreview && (
+                                                            <p className="text-destructive mt-1 text-xs">{errors.mainImage}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="subImage1" className="text-xs text-gray-500">
+                                                            Sub Image 1 (optional)
+                                                        </Label>
+                                                        <div className="flex flex-col items-center">
+                                                            <div
+                                                                className={`hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors ${
+                                                                    subImage1Preview ? 'border-primary' : 'border-gray-300'
+                                                                }`}
+                                                                style={{ height: '120px' }}
+                                                                onClick={() => document.getElementById('subImage1')?.click()}
+                                                            >
+                                                                {subImage1Preview ? (
+                                                                    <div className="relative h-full w-full">
+                                                                        <img
+                                                                            src={subImage1Preview || '/placeholder.svg'}
+                                                                            alt="Sub image 1 preview"
+                                                                            className="h-full w-full rounded-md object-cover"
+                                                                            style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
+                                                                        />
+                                                                        <div className="absolute top-1 right-1 flex gap-1">
+                                                                            <Button
+                                                                                type="button"
+                                                                                variant="secondary"
+                                                                                size="icon"
+                                                                                className="h-6 w-6 bg-white"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    if (subImage1) {
+                                                                                        const reader = new FileReader();
+                                                                                        reader.onload = () => {
+                                                                                            setImageToCrop(reader.result as string);
+                                                                                            setCurrentImageType('sub1');
+                                                                                            setCropModalOpen(true);
+                                                                                        };
+                                                                                        reader.readAsDataURL(subImage1);
+                                                                                    } else if (subImage1Preview) {
+                                                                                        setImageToCrop(subImage1Preview);
+                                                                                        setCurrentImageType('sub1');
+                                                                                        setCropModalOpen(true);
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                <CropIcon className="h-3 w-3" />
+                                                                            </Button>
+                                                                            <Button
+                                                                                type="button"
+                                                                                variant="destructive"
+                                                                                size="icon"
+                                                                                className="h-6 w-6"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setSubImage1(null);
+                                                                                    setSubImage1Preview(null);
+                                                                                }}
+                                                                            >
+                                                                                <X className="h-3 w-3" />
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <>
+                                                                        <Upload className="mb-1 h-6 w-6 text-gray-400" />
+                                                                        <p className="text-xs text-gray-500">Upload sub image 1</p>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                            <Input
+                                                                id="subImage1"
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => handleImageChange(e, 'sub1')}
+                                                                className="hidden"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="subImage2" className="text-xs text-gray-500">
+                                                            Sub Image 2 (optional)
+                                                        </Label>
+                                                        <div className="flex flex-col items-center">
+                                                            <div
+                                                                className={`hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors ${
+                                                                    subImage2Preview ? 'border-primary' : 'border-gray-300'
+                                                                }`}
+                                                                style={{ height: '120px' }}
+                                                                onClick={() => document.getElementById('subImage2')?.click()}
+                                                            >
+                                                                {subImage2Preview ? (
+                                                                    <div className="relative h-full w-full">
+                                                                        <img
+                                                                            src={subImage2Preview || '/placeholder.svg'}
+                                                                            alt="Sub image 2 preview"
+                                                                            className="h-full w-full rounded-md object-cover"
+                                                                            style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
+                                                                        />
+                                                                        <div className="absolute top-1 right-1 flex gap-1">
+                                                                            <Button
+                                                                                type="button"
+                                                                                variant="secondary"
+                                                                                size="icon"
+                                                                                className="h-6 w-6 bg-white"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    if (subImage2) {
+                                                                                        const reader = new FileReader();
+                                                                                        reader.onload = () => {
+                                                                                            setImageToCrop(reader.result as string);
+                                                                                            setCurrentImageType('sub2');
+                                                                                            setCropModalOpen(true);
+                                                                                        };
+                                                                                        reader.readAsDataURL(subImage2);
+                                                                                    } else if (subImage2Preview) {
+                                                                                        setImageToCrop(subImage2Preview);
+                                                                                        setCurrentImageType('sub2');
+                                                                                        setCropModalOpen(true);
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                <CropIcon className="h-3 w-3" />
+                                                                            </Button>
+                                                                            <Button
+                                                                                type="button"
+                                                                                variant="destructive"
+                                                                                size="icon"
+                                                                                className="h-6 w-6"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setSubImage2(null);
+                                                                                    setSubImage2Preview(null);
+                                                                                }}
+                                                                            >
+                                                                                <X className="h-3 w-3" />
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <>
+                                                                        <Upload className="mb-1 h-6 w-6 text-gray-400" />
+                                                                        <p className="text-xs text-gray-500">Upload sub image 2</p>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                            <Input
+                                                                id="subImage2"
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => handleImageChange(e, 'sub2')}
+                                                                className="hidden"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </div>
+                    </Tabs>
+
+                    <div className="flex justify-end gap-2 border-t p-6">
+                        <Button type="button" variant="outline" onClick={() => window.history.back()}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                'Update Post'
+                            )}
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Image Cropper Modal */}
+                <ImageCropper
+                    open={cropModalOpen}
+                    onOpenChange={setCropModalOpen}
+                    imageUrl={imageToCrop}
+                    onCropComplete={handleCroppedImage}
+                    aspectRatio={aspectRatio}
+                />
+            </div>
+        </AppLayout>
+    );
+}
