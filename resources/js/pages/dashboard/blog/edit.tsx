@@ -2,20 +2,23 @@
 
 import type React from 'react';
 
-import ImageCropper from '@/components/dashboard/image-cropper';
+import { CropDialog } from '@/components/dashboard/crop-dialog';
 import RichTextEditor from '@/components/dashboard/rich-text-editor';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { CropIcon, Loader2, Upload, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -26,13 +29,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Define validation schema
+// Definisikan skema validasi
 const blogPostSchema = z.object({
-    title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title must be less than 100 characters'),
-    description: z.string().min(10, 'Description must be at least 10 characters').max(500, 'Description must be less than 500 characters'),
-    body1: z.string().min(20, 'Main content must be at least 20 characters'),
+    title: z.string().min(5, 'Judul harus terdiri dari minimal 5 karakter').max(100, 'Judul tidak boleh lebih dari 100 karakter'),
+    description: z.string().min(10, 'Deskripsi harus terdiri dari minimal 10 karakter').max(500, 'Deskripsi tidak boleh lebih dari 500 karakter'),
+    body1: z.string().min(20, 'Konten utama harus terdiri dari minimal 20 karakter'),
     body2: z.string().optional(),
-    tags: z.array(z.string()).min(1, 'At least one tag is required').max(5, 'Maximum 5 tags allowed'),
-    mainImage: z.any().refine((file) => file instanceof File, { message: 'Main image is required' }),
+    tags: z.array(z.string()).min(1, 'Minimal 1 tag harus dipilih').max(5, 'Maksimal 5 tag yang diperbolehkan'),
+    category: z.string().nonempty('Kategori wajib dipilih'),
+
+    // Jika ingin menjadikan mainImage wajib diunggah, gunakan kode ini:// mainImage: z.any().refine((file) => file instanceof File, {//     message: 'Gambar utama wajib diunggah',// }),
+    mainImage: z.any().optional(),
     subImage1: z.any().optional(),
     subImage2: z.any().optional(),
 });
@@ -41,68 +48,112 @@ type ValidationErrors = {
     [key: string]: string | undefined;
 };
 
-// Sample data for edit
-const samplePost = {
-    id: '1',
-    title: 'Getting Started with Next.js',
-    description: 'Learn the basics of Next.js and how to build modern web applications.',
-    body1: "<h2>Introduction to Next.js</h2><p>Next.js is a React framework that enables server-side rendering and generating static websites. It's a great choice for building modern web applications.</p><p>In this tutorial, we'll cover the basics of Next.js and how to get started with it.</p>",
-    body2: '<h2>Key Features</h2><p>Next.js provides a great developer experience with features like:</p><ul><li>Server-side rendering</li><li>Static site generation</li><li>API routes</li><li>File-based routing</li></ul>',
-    tags: ['Next.js', 'React', 'Web Development'],
-    mainImage: null,
-    mainImageUrl: '/placeholder.svg?height=400&width=600',
-    subImage1Url: '/placeholder.svg?height=300&width=400',
-    subImage2Url: null,
-};
+export default function EditBlogPage({ blogs }) {
+    const { auth } = usePage().props;
 
-export default function EditBlogPage({ params }: { params: { id: string } }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [body1, setBody1] = useState('');
     const [body2, setBody2] = useState('');
 
     // Image states
-    const [mainImage, setMainImage] = useState<File | null>(null);
-    const [subImage1, setSubImage1] = useState<File | null>(null);
-    const [subImage2, setSubImage2] = useState<File | null>(null);
-    const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
-    const [subImage1Preview, setSubImage1Preview] = useState<string | null>(null);
-    const [subImage2Preview, setSubImage2Preview] = useState<string | null>(null);
+    const [mainImage, setMainImage] = useState('');
+    const [subImage1, setSubImage1] = useState('');
+    const [subImage2, setSubImage2] = useState('');
+    const [category, setCategory] = useState('');
 
     // Cropping states
-    const [cropModalOpen, setCropModalOpen] = useState(false);
-    const [currentImageType, setCurrentImageType] = useState<'main' | 'sub1' | 'sub2' | null>(null);
-    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-
     const [tagInput, setTagInput] = useState('');
     const [tags, setTags] = useState<string[]>([]);
-    const [activeTab, setActiveTab] = useState('content');
+    const [activeTab, setActiveTab] = useState('media');
 
     // Validation states
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Pulse effect state
+    const [pulse, setPulse] = useState(false);
+
+    const [errorsServer, setErrorsServer] = useState('');
+    //---------------------------------------------------
+
+    const [src, setSrc] = useState<string | null>(null);
+
+    const [cropDialogOpen, setCropDialogOpen] = useState(false);
+    const [completedCrop, setCompletedCrop] = useState(null);
+
+    const imgRef = useRef<HTMLImageElement | null>(null);
+    const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
     // Landscape aspect ratio (4:3)
     const aspectRatio = 4 / 3;
 
-    // Simulated admin user
-    const currentUser = {
-        name: 'Admin User',
-        email: 'admin@example.com',
+    const onImageLoad = useCallback((img: HTMLImageElement) => {
+        imgRef.current = img;
+        const width = img.width * 0.75;
+        const height = width * (3 / 4);
+        setCrop({
+            unit: 'px',
+            width,
+            height,
+            x: (img.width - width) / 2,
+            y: (img.height - height) / 2,
+            aspect: aspectRatio,
+        });
+        return false;
+    }, []);
+
+    const generateCrop = useCallback(() => {
+        if (!completedCrop || !imgRef.current || !previewCanvasRef.current) return;
+        const image = imgRef.current;
+        const canvas = previewCanvasRef.current;
+        const { width, height, x, y } = completedCrop;
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        canvas.width = width * scaleX;
+        canvas.height = height * scaleY;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width * scaleX, height * scaleY);
+        let base64 = canvas.toDataURL('image/jpeg', 1.0);
+        if (base64.length > 700000) base64 = canvas.toDataURL('image/jpeg', 0.8);
+        setMainImage(base64);
+    }, [completedCrop]);
+
+    const [crop, setCrop] = useState({
+        unit: '%',
+        width: 75,
+        height: 100,
+        x: 12.5,
+        y: 0,
+        aspect: aspectRatio,
+    });
+
+    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.[0]) return;
+
+        const file = e.target.files[0];
+        if (file.size > 510 * 1024) {
+            toast({
+                title: `Gagal Upload Foto`,
+                description: `Ukuran foto tidak boleh melebihi 510 KB`,
+            });
+
+            e.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSrc(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+
+        setCropDialogOpen(true);
     };
 
-    // Load post data
-    useEffect(() => {
-        // In a real app, you would fetch the post data based on the ID
-        setTitle(samplePost.title);
-        setDescription(samplePost.description);
-        setBody1(samplePost.body1);
-        setBody2(samplePost.body2 || '');
-        setTags(samplePost.tags);
-        setMainImagePreview(samplePost.mainImageUrl);
-        setSubImage1Preview(samplePost.subImage1Url);
-        setSubImage2Preview(samplePost.subImage2Url);
-    }, []);
+    //----------------------------------------------------
 
     // Reset errors when inputs change
     useEffect(() => {
@@ -123,40 +174,15 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
         }
     }, [title, description, body1, mainImage, tags, errors]);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'sub1' | 'sub2') => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                setImageToCrop(reader.result as string);
-                setCurrentImageType(type);
-                setCropModalOpen(true);
-            };
-
-            reader.readAsDataURL(file);
+    // Handle pulse effect
+    useEffect(() => {
+        if (pulse) {
+            const timer = setTimeout(() => {
+                setPulse(false);
+            }, 300);
+            return () => clearTimeout(timer);
         }
-    };
-
-    const handleCroppedImage = (croppedImage: string, file: File) => {
-        if (currentImageType === 'main') {
-            setMainImage(file);
-            setMainImagePreview(croppedImage);
-            if (errors.mainImage) {
-                setErrors((prev) => ({ ...prev, mainImage: undefined }));
-            }
-        } else if (currentImageType === 'sub1') {
-            setSubImage1(file);
-            setSubImage1Preview(croppedImage);
-        } else if (currentImageType === 'sub2') {
-            setSubImage2(file);
-            setSubImage2Preview(croppedImage);
-        }
-
-        setCropModalOpen(false);
-        setCurrentImageType(null);
-        setImageToCrop(null);
-    };
+    }, [pulse]);
 
     const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Create tag when semicolon is pressed
@@ -216,8 +242,9 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                 body1,
                 body2,
                 tags,
-                mainImage: mainImage || mainImagePreview, // Allow existing image URL
+                mainImage,
                 subImage1,
+                category,
                 subImage2,
             });
             return true;
@@ -252,6 +279,74 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
         }
     };
 
+    const resetForm = () => {
+        setTitle('');
+        setDescription('');
+        setBody1('');
+        setBody2('');
+        setMainImage('');
+        setSubImage1('');
+        setSubImage2('');
+        setTagInput('');
+        setTags([]);
+        setCategory('');
+        setActiveTab('media');
+        setErrors({});
+    };
+
+    //==================================================================
+
+    // Load post data
+    useEffect(() => {
+        // In a real app, you would fetch the post data based on the ID
+        setTitle(blogs.title);
+        setDescription(blogs.excerpt);
+        setBody1(blogs.body1);
+        setBody2(blogs.body2 || '');
+        setTags(blogs.tags);
+        setCategory(blogs.category);
+        setMainImage(blogs.picture1);
+        setSubImage1(blogs.picture2);
+        setSubImage2(blogs.picture3);
+    }, []);
+
+    // Reset errors when inputs change
+    useEffect(() => {
+        if (errors.title && title.length >= 5) {
+            setErrors((prev) => ({ ...prev, title: undefined }));
+        }
+        if (errors.description && description.length >= 10) {
+            setErrors((prev) => ({ ...prev, description: undefined }));
+        }
+        if (errors.body1 && body1.length >= 20) {
+            setErrors((prev) => ({ ...prev, body1: undefined }));
+        }
+        if (errors.mainImage && mainImage) {
+            setErrors((prev) => ({ ...prev, mainImage: undefined }));
+        }
+        if (errors.tags && tags.length >= 1) {
+            setErrors((prev) => ({ ...prev, tags: undefined }));
+        }
+        if (errors.category && category.length >= 1) {
+            setErrors((prev) => ({ ...prev, category: undefined }));
+        }
+    }, [title, description, body1, mainImage, tags, errors]);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'sub1' | 'sub2') => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                //
+            };
+
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const imageSrc = typeof mainImage === 'string' && mainImage.startsWith('data:image') ? mainImage : `/storage/${mainImage}`;
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -263,33 +358,34 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
             return;
         }
 
-        // Create form data object with all fields
-        const formData = {
-            id: params.id,
-            title,
-            description,
-            body1, // This will contain HTML from the rich text editor
-            body2, // This will contain HTML from the rich text editor
-            author: currentUser.name,
-            mainImage: mainImage || mainImagePreview,
-            subImage1: subImage1 || subImage1Preview,
-            subImage2: subImage2 || subImage2Preview,
-            tags,
-        };
-
-        console.log('Form submitted:', formData);
-
-        // Simulate API call
-        setTimeout(() => {
-            // Simulate successful API response
-            toast({
-                title: 'Success!',
-                description: 'Blog post updated successfully',
-            });
-
-            setIsSubmitting(false);
-            // In a real app, you might redirect to the blog list or view page
-        }, 2000); // 2 second delay to simulate network request
+        router.put(
+            route('blog.update', blogs.slug),
+            {
+                title,
+                description,
+                body1,
+                body2,
+                mainImage,
+                subImage1,
+                category,
+                subImage2,
+                tags,
+            },
+            {
+                onError: (es) => {
+                    setErrorsServer(es);
+                    setIsSubmitting(false);
+                },
+                onSuccess: () => {
+                    toast({
+                        title: 'Berhasil!',
+                        description: 'Blog berhasil diupdate',
+                    });
+                    resetForm();
+                    setIsSubmitting(false);
+                },
+            },
+        );
     };
 
     return (
@@ -297,11 +393,22 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                    {/* Menampilkan list error */}
+                    {Object.keys(errorsServer).length > 0 && (
+                        <div className="mb-4 rounded bg-red-100 p-4 text-red-700">
+                            <ul className="list-inside list-disc">
+                                {Object.values(errorsServer).map((error, index) => (
+                                    <li key={index}>{error}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <div className="px-6 pt-6">
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="content">Content</TabsTrigger>
-                                <TabsTrigger value="media">Media & Metadata</TabsTrigger>
+                                <TabsTrigger value="media">Step 2</TabsTrigger>
+                                <TabsTrigger value="content">Step 1</TabsTrigger>
                             </TabsList>
                         </div>
 
@@ -310,6 +417,29 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                 <div className="grid grid-cols-12 gap-6">
                                     {/* Left sidebar - Tags */}
                                     <div className="col-span-12 space-y-6 md:col-span-3">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="category7" className="text-sm font-medium">
+                                                Kategori Artikel <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Select value={category} onValueChange={setCategory}>
+                                                <SelectTrigger id="category7" className={cn(errors.category && 'border-destructive')}>
+                                                    <SelectValue placeholder="Pilih kategori" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem className="hover:bg-muted transition-none" value="News">
+                                                        News
+                                                    </SelectItem>
+                                                    <SelectItem className="hover:bg-muted transition-none" value="Dakwah">
+                                                        Dakwah
+                                                    </SelectItem>
+                                                    <SelectItem className="hover:bg-muted transition-none" value="The Story">
+                                                        The Story
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            {errors.category && <p className="text-destructive text-xs">{errors.category}</p>}
+                                        </div>
+
                                         <div className="space-y-2">
                                             <Label htmlFor="tags" className={`text-sm font-medium ${errors.tags ? 'text-destructive' : ''}`}>
                                                 Tags <span className="text-red-500">*</span> (max 5, type and press ; to add)
@@ -321,8 +451,8 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                     onChange={handleTagInputChange}
                                                     onKeyDown={handleTagKeyDown}
                                                     placeholder="Type a tag and press ; (semicolon)"
-                                                    className={errors.tags ? 'border-destructive' : ''}
                                                     disabled={tags.length >= 5}
+                                                    className={` ${errors.tags ? 'border-destructive' : ''} ${tags.length >= 5 ? 'cursor-not-allowed bg-gray-200 text-gray-500' : ''} `}
                                                 />
                                                 {errors.tags && <p className="text-destructive text-xs">{errors.tags}</p>}
                                                 <div
@@ -413,9 +543,9 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
 
                                         <div className="space-y-2">
                                             <Label htmlFor="author" className="text-sm font-medium">
-                                                Author
+                                                Penulis
                                             </Label>
-                                            <Input id="author" value={currentUser.name} disabled />
+                                            <Input id="author" value={auth?.user.name} disabled className="bg-gray-300" />
                                         </div>
                                     </div>
 
@@ -434,15 +564,14 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                     <div className="flex flex-col items-center">
                                                         <div
                                                             className={`hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors ${
-                                                                mainImagePreview ? 'border-primary' : 'border-gray-300'
-                                                            } ${errors.mainImage && !mainImagePreview ? 'border-destructive' : ''}`}
-                                                            style={{ height: '180px' }}
+                                                                mainImage ? 'border-primary' : 'border-gray-300'
+                                                            } ${errors.mainImage && !mainImage ? 'border-destructive' : ''}`}
                                                             onClick={() => document.getElementById('mainImage')?.click()}
                                                         >
-                                                            {mainImagePreview ? (
+                                                            {mainImage ? (
                                                                 <div className="relative h-full w-full">
                                                                     <img
-                                                                        src={mainImagePreview || '/placeholder.svg'}
+                                                                        src={imageSrc || '/placeholder.svg'}
                                                                         alt="Main preview"
                                                                         className="h-full w-full rounded-md object-cover"
                                                                         style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
@@ -453,22 +582,6 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                                             variant="secondary"
                                                                             size="icon"
                                                                             className="h-6 w-6 bg-white"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                if (mainImage) {
-                                                                                    const reader = new FileReader();
-                                                                                    reader.onload = () => {
-                                                                                        setImageToCrop(reader.result as string);
-                                                                                        setCurrentImageType('main');
-                                                                                        setCropModalOpen(true);
-                                                                                    };
-                                                                                    reader.readAsDataURL(mainImage);
-                                                                                } else if (mainImagePreview) {
-                                                                                    setImageToCrop(mainImagePreview);
-                                                                                    setCurrentImageType('main');
-                                                                                    setCropModalOpen(true);
-                                                                                }
-                                                                            }}
                                                                         >
                                                                             <CropIcon className="h-3 w-3" />
                                                                         </Button>
@@ -479,8 +592,7 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                                             className="h-6 w-6"
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
-                                                                                setMainImage(null);
-                                                                                setMainImagePreview(null);
+                                                                                setMainImage('');
                                                                             }}
                                                                         >
                                                                             <X className="h-3 w-3" />
@@ -498,11 +610,11 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                             id="mainImage"
                                                             type="file"
                                                             accept="image/*"
-                                                            onChange={(e) => handleImageChange(e, 'main')}
+                                                            onChange={(e) => onSelectFile(e)}
                                                             required
                                                             className="hidden"
                                                         />
-                                                        {errors.mainImage && !mainImagePreview && (
+                                                        {errors.mainImage && !mainImage && (
                                                             <p className="text-destructive mt-1 text-xs">{errors.mainImage}</p>
                                                         )}
                                                     </div>
@@ -516,15 +628,14 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                         <div className="flex flex-col items-center">
                                                             <div
                                                                 className={`hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors ${
-                                                                    subImage1Preview ? 'border-primary' : 'border-gray-300'
+                                                                    subImage1 ? 'border-primary' : 'border-gray-300'
                                                                 }`}
-                                                                style={{ height: '120px' }}
                                                                 onClick={() => document.getElementById('subImage1')?.click()}
                                                             >
-                                                                {subImage1Preview ? (
+                                                                {subImage1 ? (
                                                                     <div className="relative h-full w-full">
                                                                         <img
-                                                                            src={subImage1Preview || '/placeholder.svg'}
+                                                                            src={subImage1 || '/placeholder.svg'}
                                                                             alt="Sub image 1 preview"
                                                                             className="h-full w-full rounded-md object-cover"
                                                                             style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
@@ -535,22 +646,6 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                                                 variant="secondary"
                                                                                 size="icon"
                                                                                 className="h-6 w-6 bg-white"
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    if (subImage1) {
-                                                                                        const reader = new FileReader();
-                                                                                        reader.onload = () => {
-                                                                                            setImageToCrop(reader.result as string);
-                                                                                            setCurrentImageType('sub1');
-                                                                                            setCropModalOpen(true);
-                                                                                        };
-                                                                                        reader.readAsDataURL(subImage1);
-                                                                                    } else if (subImage1Preview) {
-                                                                                        setImageToCrop(subImage1Preview);
-                                                                                        setCurrentImageType('sub1');
-                                                                                        setCropModalOpen(true);
-                                                                                    }
-                                                                                }}
                                                                             >
                                                                                 <CropIcon className="h-3 w-3" />
                                                                             </Button>
@@ -561,8 +656,7 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                                                 className="h-6 w-6"
                                                                                 onClick={(e) => {
                                                                                     e.stopPropagation();
-                                                                                    setSubImage1(null);
-                                                                                    setSubImage1Preview(null);
+                                                                                    setSubImage1('');
                                                                                 }}
                                                                             >
                                                                                 <X className="h-3 w-3" />
@@ -593,15 +687,15 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                         <div className="flex flex-col items-center">
                                                             <div
                                                                 className={`hover:border-primary/50 flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-2 transition-colors ${
-                                                                    subImage2Preview ? 'border-primary' : 'border-gray-300'
+                                                                    subImage2 ? 'border-primary' : 'border-gray-300'
                                                                 }`}
                                                                 style={{ height: '120px' }}
                                                                 onClick={() => document.getElementById('subImage2')?.click()}
                                                             >
-                                                                {subImage2Preview ? (
+                                                                {subImage2 ? (
                                                                     <div className="relative h-full w-full">
                                                                         <img
-                                                                            src={subImage2Preview || '/placeholder.svg'}
+                                                                            src={subImage2 || '/placeholder.svg'}
                                                                             alt="Sub image 2 preview"
                                                                             className="h-full w-full rounded-md object-cover"
                                                                             style={{ aspectRatio: `${aspectRatio}`, objectFit: 'cover' }}
@@ -612,22 +706,6 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                                                 variant="secondary"
                                                                                 size="icon"
                                                                                 className="h-6 w-6 bg-white"
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    if (subImage2) {
-                                                                                        const reader = new FileReader();
-                                                                                        reader.onload = () => {
-                                                                                            setImageToCrop(reader.result as string);
-                                                                                            setCurrentImageType('sub2');
-                                                                                            setCropModalOpen(true);
-                                                                                        };
-                                                                                        reader.readAsDataURL(subImage2);
-                                                                                    } else if (subImage2Preview) {
-                                                                                        setImageToCrop(subImage2Preview);
-                                                                                        setCurrentImageType('sub2');
-                                                                                        setCropModalOpen(true);
-                                                                                    }
-                                                                                }}
                                                                             >
                                                                                 <CropIcon className="h-3 w-3" />
                                                                             </Button>
@@ -638,8 +716,6 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                                                                                 className="h-6 w-6"
                                                                                 onClick={(e) => {
                                                                                     e.stopPropagation();
-                                                                                    setSubImage2(null);
-                                                                                    setSubImage2Preview(null);
                                                                                 }}
                                                                             >
                                                                                 <X className="h-3 w-3" />
@@ -670,7 +746,6 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                             </TabsContent>
                         </div>
                     </Tabs>
-
                     <div className="flex justify-end gap-2 border-t p-6">
                         <Button type="button" variant="outline" onClick={() => window.history.back()}>
                             Cancel
@@ -688,12 +763,21 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
                     </div>
                 </div>
 
-                {/* Image Cropper Modal */}
-                <ImageCropper
-                    open={cropModalOpen}
-                    onOpenChange={setCropModalOpen}
-                    imageUrl={imageToCrop}
-                    onCropComplete={handleCroppedImage}
+                <CropDialog
+                    open={cropDialogOpen}
+                    onClose={() => {
+                        setCropDialogOpen(false);
+                    }}
+                    onCropDone={(base64) => {
+                        setMainImage(base64);
+                    }}
+                    src={src!}
+                    crop={crop}
+                    setCrop={setCrop}
+                    setCompletedCrop={setCompletedCrop}
+                    onImageLoad={onImageLoad}
+                    generateCrop={generateCrop}
+                    previewCanvasRef={previewCanvasRef}
                     aspectRatio={aspectRatio}
                 />
             </div>

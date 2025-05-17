@@ -51,7 +51,7 @@ class KontakSeeder extends Seeder
                 'name' => 'WhatsApp',
                 'value' => '+62 813-8125-0081',
                 'link' => 'https://wa.me/6281381250081',
-                'icon' => 'phone',
+                'icon' => 'Phone',
                 'status' => 'aktif',
             ],
             [
@@ -59,7 +59,7 @@ class KontakSeeder extends Seeder
                 'name' => 'Email',
                 'value' => 'official1@ubaybinkaab.ponpes.id',
                 'link' => 'official1@ubaybinkaab.ponpes.id',
-                'icon' => 'mail',
+                'icon' => 'Mail',
                 'status' => 'aktif',
             ],
             [

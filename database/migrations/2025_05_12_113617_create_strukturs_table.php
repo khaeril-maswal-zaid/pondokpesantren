@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('no_hp');
             $table->string('role');
             $table->string('keterangan');
-            $table->string('image');
+            $table->boolean('main');
+            $table->string('image')->default('image/structure/custom-struktur.jpg');
             $table->timestamps();
         });
     }

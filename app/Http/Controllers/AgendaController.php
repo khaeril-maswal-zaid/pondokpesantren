@@ -19,7 +19,7 @@ class AgendaController extends Controller
     public function index(): Response
     {
         $data = [
-            'agendaData' => Agenda::select(['title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
+            'agendaData' => Agenda::select(['id', 'title', 'image', 'location', 'time', 'date'])->latest()->paginate(10),
         ];
 
         return Inertia::render('dashboard/agenda/page', $data);
@@ -43,7 +43,7 @@ class AgendaController extends Controller
         [, $extension] = explode('/', $type); // jpeg, png
         [, $base64Data] = explode(',', $data);
 
-        $filename = uniqid() . '-' . Str::slug($request->nama) . '.' . $extension;
+        $filename = Str::slug($request->nama_agenda) .  '-' . uniqid() .  '.' . $extension;
 
         Storage::disk('public')->put("image/agenda/{$filename}", base64_decode($base64Data));
 
@@ -53,7 +53,7 @@ class AgendaController extends Controller
             'title' => $request->nama_agenda,
             'image' => $imagePath,
             'date' => $request->date,
-            'time' => $request->time1 . ' - ' . $request->time2,
+            'time' => $request->time1 . '-' . $request->time2,
             'location' => $request->lokasi,
         ]);
     }
@@ -79,7 +79,36 @@ class AgendaController extends Controller
      */
     public function update(UpdateAgendaRequest $request, Agenda $agenda)
     {
-        //
+        $fotoInput = $request->input('foto');
+
+        // Cek apakah $fotoInput ini Base64 (diawali "data:image/…;base64,")
+        if (preg_match('/^data:image\/(\w+);base64,/', $fotoInput, $matches)) {
+            $base64Image = $request->foto;
+            [$type, $data] = explode(';', $base64Image);
+            [, $extension] = explode('/', $type); // jpeg, png
+            [, $base64Data] = explode(',', $data);
+
+            $filename = Str::slug($request->nama_agenda) .  '-' . uniqid() .  '.' . $extension;
+
+            Storage::disk('public')->put("image/agenda/{$filename}", base64_decode($base64Data));
+
+            $imagePath = "image/agenda/{$filename}";
+
+            if ($agenda->image && Storage::disk('public')->exists($agenda->image)) {
+                Storage::disk('public')->delete($agenda->image);
+            }
+        } else {
+            // bukan Base64 → kemungkinan path lama yang tidak diubah
+            $imagePath = $fotoInput;
+        }
+
+        $agenda->update([
+            'title' => $request->nama_agenda,
+            'image' => $imagePath,
+            'date' => $request->date,
+            'time' => $request->time1 . '-' . $request->time2,
+            'location' => $request->lokasi,
+        ]);
     }
 
     /**
@@ -87,7 +116,12 @@ class AgendaController extends Controller
      */
     public function destroy(Agenda $agenda)
     {
-        //
+        // Hapus file gambar jika ada
+        if ($agenda->image && Storage::disk('public')->exists($agenda->image)) {
+            Storage::disk('public')->delete($agenda->image);
+        }
+
+        $agenda->delete();
     }
 
     public function cards()

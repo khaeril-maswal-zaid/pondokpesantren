@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/ponpes-layout';
-import { Head, usePage } from '@inertiajs/react';
-import { ArrowLeft, Link } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 // Data struktur pesantren (tanpa kategori)
@@ -182,7 +182,7 @@ export default function StrukturPage({ strukturData }) {
                                         >
                                             <div className="relative w-full">
                                                 <img
-                                                    src={`/storage/${member.image}` || '/placeholder.svg'}
+                                                    src={`/storage/${member.image}` || '/storage/image/assets/custom-struktur.jpg'}
                                                     alt={member.name}
                                                     className="object-cover"
                                                 />
@@ -200,10 +200,10 @@ export default function StrukturPage({ strukturData }) {
                             {/* Sidebar - Bagan Struktur */}
                             <div className="lg:col-span-1">
                                 <div className="sticky top-24 rounded-lg bg-white p-6 shadow-md">
-                                    <h3 className="mb-4 text-xl font-bold">Bagan Struktur Organisasi</h3>
-                                    <div className="relative h-[600px] w-full overflow-hidden rounded-lg border border-gray-200">
+                                    {/* <h3 className="mb-4 text-xl font-bold">Bagan Struktur Organisasi</h3> */}
+                                    <div className="relative w-full overflow-hidden rounded-lg border border-gray-200">
                                         <img
-                                            src="/placeholder.svg?height=800&width=600"
+                                            src="/storage/image/assets/bagan.jpg"
                                             alt="Bagan Struktur Organisasi Pesantren Al-Zaid"
                                             className="object-contain"
                                         />
@@ -214,19 +214,6 @@ export default function StrukturPage({ strukturData }) {
                                     </p>
                                     <div className="mt-6">
                                         <Button className="bg-primary hover:bg-primary/90 w-full">Unduh Bagan Struktur</Button>
-                                    </div>
-
-                                    <div className="mt-8 border-t border-gray-200 pt-6">
-                                        <h4 className="mb-3 font-bold">Informasi Kontak</h4>
-                                        <p className="mb-2 text-sm text-gray-600">
-                                            Untuk informasi lebih lanjut tentang struktur organisasi pesantren, silakan hubungi:
-                                        </p>
-                                        <p className="text-sm">
-                                            <span className="font-medium">Email:</span> info@pesantrenalzaid.ac.id
-                                        </p>
-                                        <p className="text-sm">
-                                            <span className="font-medium">Telepon:</span> (021) 1234-5678
-                                        </p>
                                     </div>
                                 </div>
                             </div>

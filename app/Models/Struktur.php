@@ -11,6 +11,7 @@ class Struktur extends Model
         'no_hp',
         'role',
         'keterangan',
+        'main',
         'image',
     ];
 }

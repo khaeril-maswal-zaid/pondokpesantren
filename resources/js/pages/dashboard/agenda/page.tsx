@@ -1,18 +1,31 @@
 'use client';
 
 import AgendaCreateModal from '@/components/dashboard/agenda-create-modal';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { Calendar, Eye, Filter, MapPin, Search } from 'lucide-react';
+import { Calendar, Eye, Filter, MapPin, MoreVertical, Pencil, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
+import AgendaUpdateModal from '@/components/dashboard/agenda-update-modal';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -25,7 +38,7 @@ export default function AgendaPage({ agendaData }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedAgenda, setSelectedAgenda] = useState<any>(null);
     const [fotoModalOpen, setFotoModalOpen] = useState(false);
-    const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+    const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
     // Filter agenda berdasarkan nama
     const filteredAgenda = agendaData.data.filter((agenda) => agenda.title.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -38,22 +51,34 @@ export default function AgendaPage({ agendaData }) {
     // Handle view photos
     const handleViewPhotos = (agenda: any) => {
         setSelectedAgenda(agenda);
-        setCurrentPhotoIndex(0);
         setFotoModalOpen(true);
     };
 
-    // Next photo
-    const nextPhoto = () => {
-        if (selectedAgenda && currentPhotoIndex < selectedAgenda.foto.length - 1) {
-            setCurrentPhotoIndex(currentPhotoIndex + 1);
-        }
+    const handleUpdate = (agenda: any) => {
+        setSelectedAgenda(agenda);
+        setUpdateModalOpen(true);
     };
 
-    // Previous photo
-    const prevPhoto = () => {
-        if (selectedAgenda && currentPhotoIndex > 0) {
-            setCurrentPhotoIndex(currentPhotoIndex - 1);
-        }
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const setDeleteModal = (agenda: any | null) => {
+        if (!agenda.id) return;
+        setSelectedAgenda(agenda);
+        setDeleteModalOpen(true);
+    };
+
+    const confirmDelete = (id: string) => {
+        router.delete(route('agenda.destroy', id), {
+            onSuccess: () => {
+                toast({
+                    title: 'Berhasil!',
+                    description: 'Data agenda berhasil dihapus',
+                });
+                setDeleteModalOpen(false);
+                setIsSubmitting(false);
+            },
+        });
     };
 
     return (
@@ -91,12 +116,13 @@ export default function AgendaPage({ agendaData }) {
                                     <TableHead>Waktu</TableHead>
                                     <TableHead>Tempat</TableHead>
                                     <TableHead className="w-[80px]">Foto</TableHead>
+                                    <TableHead className="w-[80px]">Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {filteredAgenda.length > 0 ? (
-                                    filteredAgenda.map((agenda) => (
-                                        <TableRow key={agenda.id}>
+                                    filteredAgenda.map((agenda, index) => (
+                                        <TableRow key={agenda.title + index}>
                                             <TableCell className="font-medium">{agenda.title}</TableCell>
                                             <TableCell>{formatWaktu(agenda.date)}</TableCell>
                                             <TableCell>{agenda.time} WITA</TableCell>
@@ -116,6 +142,48 @@ export default function AgendaPage({ agendaData }) {
                                                     <Eye className="h-3.5 w-3.5" />
                                                     <span className="sr-md:inline sr-only">Lihat</span>
                                                 </Button>
+                                            </TableCell>
+                                            <TableCell>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon">
+                                                            <MoreVertical className="h-4 w-4" />
+                                                            <span className="sr-only">Open menu</span>
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            onClick={() => {
+                                                                router.get(route('agenda.cards'));
+                                                            }}
+                                                        >
+                                                            <Eye className="mr-2 h-4 w-4" />
+                                                            View
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() => {
+                                                                setTimeout(() => {
+                                                                    handleUpdate(agenda);
+                                                                }, 0);
+                                                            }}
+                                                        >
+                                                            <Pencil className="mr-2 h-4 w-4" />
+                                                            Edit
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem
+                                                            onClick={() => {
+                                                                setTimeout(() => {
+                                                                    setDeleteModal(agenda);
+                                                                }, 0);
+                                                            }}
+                                                            className="text-red-600"
+                                                        >
+                                                            <Trash2 className="mr-2 h-4 w-4" />
+                                                            Delete
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -162,6 +230,31 @@ export default function AgendaPage({ agendaData }) {
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
+
+                    {/* // DI LUAR LOOP (sekali saja) */}
+                    <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Apakah Anda yakin ingin menghapus data struktur {selectedAgenda?.name}?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel onClick={() => setDeleteModalOpen(false)}>Batal</AlertDialogCancel>
+                                <AlertDialogAction
+                                    className="bg-red-600 hover:bg-red-700"
+                                    onClick={() => {
+                                        confirmDelete(selectedAgenda?.id);
+                                    }}
+                                >
+                                    {isSubmitting ? 'Menghapus' : 'Hapus'}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
+                    {updateModalOpen && <AgendaUpdateModal Open={updateModalOpen} selectedAgenda={selectedAgenda} />}
                 </div>
             </div>
         </AppLayout>

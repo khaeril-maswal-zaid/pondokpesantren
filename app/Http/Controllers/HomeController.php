@@ -65,7 +65,7 @@ class HomeController extends Controller
                 ],
             ],
 
-            'figures' => Struktur::select(['name', 'role', 'image'])->latest()->take(4)->get(),
+            'figures' => Struktur::select(['name', 'role', 'image'])->where('main', '1')->latest()->take(4)->get(),
 
             'programs' => [
                 [

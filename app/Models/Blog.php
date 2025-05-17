@@ -22,6 +22,7 @@ class Blog extends Model
         'picture2',
         'picture3',
         'tags',
+        'category',
         'visit'
     ];
 

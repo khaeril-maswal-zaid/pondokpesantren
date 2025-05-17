@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
@@ -19,14 +20,15 @@ import { CropIcon, Loader2, PlusCircle, Upload, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 
-// Define validation schema
+// Definisikan skema validasi
 const blogPostSchema = z.object({
-    title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title must be less than 100 characters'),
-    description: z.string().min(10, 'Description must be at least 10 characters').max(500, 'Description must be less than 500 characters'),
-    body1: z.string().min(20, 'Main content must be at least 20 characters'),
+    title: z.string().min(5, 'Judul harus terdiri dari minimal 5 karakter').max(100, 'Judul tidak boleh lebih dari 100 karakter'),
+    description: z.string().min(10, 'Deskripsi harus terdiri dari minimal 10 karakter').max(500, 'Deskripsi tidak boleh lebih dari 500 karakter'),
+    body1: z.string().min(20, 'Konten utama harus terdiri dari minimal 20 karakter'),
     body2: z.string().optional(),
-    tags: z.array(z.string()).min(1, 'At least one tag is required').max(5, 'Maximum 5 tags allowed'),
-    // mainImage: z.any().refine((file) => file instanceof File, { message: 'Main image is required' }),
+    category: z.string().nonempty('Kategori wajib dipilih'),
+    tags: z.array(z.string()).min(1, 'Minimal 1 tag harus dipilih').max(5, 'Maksimal 5 tag yang diperbolehkan'),
+    // Jika ingin menjadikan mainImage wajib diunggah, gunakan kode ini:// mainImage: z.any().refine((file) => file instanceof File, {//     message: 'Gambar utama wajib diunggah',// }),
     mainImage: z.any().optional(),
     subImage1: z.any().optional(),
     subImage2: z.any().optional(),
@@ -44,6 +46,7 @@ export default function BlogPostModal() {
     const [description, setDescription] = useState('');
     const [body1, setBody1] = useState('');
     const [body2, setBody2] = useState('');
+    const [category, setCategory] = useState('');
 
     // Image states
     const [mainImage, setMainImage] = useState('');
@@ -167,6 +170,9 @@ export default function BlogPostModal() {
         if (errors.tags && tags.length >= 1) {
             setErrors((prev) => ({ ...prev, tags: undefined }));
         }
+        if (errors.category && category.length >= 1) {
+            setErrors((prev) => ({ ...prev, category: undefined }));
+        }
     }, [title, description, body1, mainImage, tags, errors]);
 
     // Handle pulse effect
@@ -236,6 +242,7 @@ export default function BlogPostModal() {
                 description,
                 body1,
                 body2,
+                category,
                 tags,
                 mainImage,
                 subImage1,
@@ -295,6 +302,7 @@ export default function BlogPostModal() {
                 subImage1,
                 subImage2,
                 tags,
+                category,
             },
             {
                 onError: (e) => {
@@ -319,6 +327,7 @@ export default function BlogPostModal() {
         setDescription('');
         setBody1('');
         setBody2('');
+        setCategory('');
         setMainImage('');
         setSubImage1('');
         setSubImage2('');
@@ -346,7 +355,7 @@ export default function BlogPostModal() {
                 Create Post
             </Button>
 
-            <Dialog open={open} onOpenChange={handleOpenChange}>
+            <Dialog open={open} onOpenChange={handleOpenChange} modal={false}>
                 <DialogContent
                     className={'overflow-hidden p-0 transition-all duration-300 sm:max-w-[1000px]'}
                     ref={dialogRef}
@@ -379,6 +388,17 @@ export default function BlogPostModal() {
                     </DialogHeader>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        {/* Menampilkan list error */}
+                        {Object.keys(errorsServer).length > 0 && (
+                            <div className="mb-4 rounded bg-red-100 p-4 text-red-700">
+                                <ul className="list-inside list-disc">
+                                    {Object.values(errorsServer).map((error, index) => (
+                                        <li key={index}>{error}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
                         <div className="px-6">
                             <TabsList className="grid w-full grid-cols-2">
                                 <TabsTrigger value="media">Step 1</TabsTrigger>
@@ -435,7 +455,7 @@ export default function BlogPostModal() {
                                                 </div>
                                             </div>
 
-                                            {/* Right column - Images */}
+                                            {/*  Right column - Images */}
                                             <div className="space-y-6">
                                                 <div className="space-y-2">
                                                     <Label className="text-sm font-medium">Images (4:3 landscape ratio)</Label>
@@ -561,8 +581,7 @@ export default function BlogPostModal() {
                                                                                         className="h-6 w-6"
                                                                                         onClick={(e) => {
                                                                                             e.stopPropagation();
-                                                                                            setSubImage1(null);
-                                                                                            setSubImage1Preview(null);
+                                                                                            setSubImage1('');
                                                                                         }}
                                                                                     >
                                                                                         <X className="h-3 w-3" />
@@ -667,8 +686,32 @@ export default function BlogPostModal() {
                                             {/* Left sidebar - Tags */}
                                             <div className="col-span-12 space-y-6 md:col-span-3">
                                                 <div className="space-y-2">
+                                                    <Label htmlFor="category7" className="text-sm font-medium">
+                                                        Kategori Artikel <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <Select value={category} onValueChange={setCategory}>
+                                                        <SelectTrigger id="category7" className={cn(errors.category && 'border-destructive')}>
+                                                            <SelectValue placeholder="Pilih kategori" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem className="hover:bg-muted transition-none" value="News">
+                                                                News
+                                                            </SelectItem>
+                                                            <SelectItem className="hover:bg-muted transition-none" value="Dakwah">
+                                                                Dakwah
+                                                            </SelectItem>
+                                                            <SelectItem className="hover:bg-muted transition-none" value="The Story">
+                                                                The Story
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    {errors.category && <p className="text-destructive text-xs">{errors.category}</p>}
+                                                </div>
+
+                                                <div className="space-y-2">
                                                     <Label htmlFor="tags" className={cn('text-sm font-medium', errors.tags && 'text-destructive')}>
-                                                        Tags <span className="text-red-500">*</span> (max 5, type and press ; to add)
+                                                        Tags <span className="text-red-500">*</span> (Maksimal 5, ketik lalu tekan ; untuk
+                                                        menambahkan)
                                                     </Label>
                                                     <div className="flex flex-col space-y-2">
                                                         <Input

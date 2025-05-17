@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidBase64Image;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAgendaRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateAgendaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,13 @@ class UpdateAgendaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nama_agenda' => 'required|string|max:255',
+            'date' => 'required|date',
+            'time1' => 'nullable|string',
+            'time2' => 'nullable|string',
+            'lokasi' => 'required|string|max:20',
+            'lokasi' => 'required|string|max:20',
+            'foto' => ['required', 'string', new ValidBase64Image],
         ];
     }
 }

@@ -18,7 +18,7 @@ class StrukturController extends Controller
     public function index()
     {
         $data = [
-            'figures' => Struktur::select(['id', 'name', 'no_hp', 'role', 'image', 'keterangan'])->latest()->get(),
+            'figures' => Struktur::select(['id', 'name', 'no_hp', 'role', 'image', 'main', 'keterangan'])->latest()->get(),
         ];
 
         return Inertia::render('dashboard/struktur/page', $data);
@@ -87,11 +87,15 @@ class StrukturController extends Controller
             [, $extension] = explode('/', $type); // jpeg, png
             [, $base64Data] = explode(',', $data);
 
-            $filename = uniqid() . '-' . Str::slug($request->nama) . '.' . $extension;
+            $filename =  Str::slug($request->nama) . '-' . uniqid() . '.' . $extension;
 
             Storage::disk('public')->put("image/structure/{$filename}", base64_decode($base64Data));
 
             $imagePath = "image/structure/{$filename}";
+
+            if ($struktur->image && Storage::disk('public')->exists($struktur->image)) {
+                Storage::disk('public')->delete($struktur->image);
+            }
         } else {
             // bukan Base64 → kemungkinan path lama yang tidak diubah
             $imagePath = $fotoInput;
@@ -116,7 +120,7 @@ class StrukturController extends Controller
             Storage::disk('public')->delete($struktur->image);
         }
 
-        // $struktur->delete();
+        $struktur->delete();
     }
 
     public function cards()
@@ -125,5 +129,26 @@ class StrukturController extends Controller
             'strukturData' => Struktur::select('name', 'role', 'keterangan', 'image')->paginate(9)
         ];
         return Inertia::render('ponpes/struktur/page', $data);
+    }
+
+    public function main(Struktur $struktur, Request $request)
+    {
+        $item = Struktur::findOrFail($struktur->id);
+
+        // Jika request ingin set 'main' menjadi true (1)
+        if ($request->main == 1 && $item->main != 1) {
+            // Hitung jumlah item yang sudah main = 1 (kecuali item yang sedang diupdate)
+            $count = Struktur::where('main', 1)
+                ->where('id', '!=', $struktur->id)
+                ->count();
+
+            if ($count >= 4) {
+                return back()->withErrors(['main' => 'Batas maksimum struktur dengan status utama telah tercapai (4). Silakan nonaktifkan status utama dari struktur lain sebelum melanjutkan.']);
+            }
+        }
+
+        $struktur->update([
+            "main" => $request->main
+        ]);
     }
 }

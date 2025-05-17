@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBlogRequest;
+use App\Http\Requests\UpdateBlogRequest;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +17,7 @@ class BlogController extends Controller
     public function index(): Response
     {
         $data = [
-            'blogs' => Blog::select(['title', 'slug', 'user_id', 'visit', 'created_at'])->with('author')->latest()->paginate(10),
+            'blogs' => Blog::select(['title', 'slug', 'user_id', 'visit', 'category', 'created_at'])->with('author')->latest()->paginate(10),
         ];
 
         return Inertia::render('dashboard/blog/page', $data);
@@ -74,9 +75,10 @@ class BlogController extends Controller
             'body1' => $request->body1,
             'body2' => $request->body2,
             'picture1' => $imagePath,
-            'picture2' => $request->subImage1,
-            'picture3' => $request->subImage2,
+            'picture2' => '',
+            'picture3' => '',
             'tags' => $request->tags,
+            'category' => $request->category,
             'visit' => 50
         ]);
     }
@@ -87,12 +89,74 @@ class BlogController extends Controller
         // return Inertia::render('ponpes/agenda/page', $data);
     }
 
-    public function edit(): Response
+    public function edit(Blog $blog): Response
     {
         $data = [
-            'blogs' => Blog::select(['title', 'slug', 'user_id', 'visit', 'created_at'])->with('author')->latest()->paginate(10),
+            'blogs' => $blog,
         ];
 
         return Inertia::render('dashboard/blog/edit', $data);
+    }
+
+    public function update(UpdateBlogRequest $request, Blog $blog)
+    {
+        $fotoInput = $request->input('mainImage');
+
+        // Cek apakah $fotoInput ini Base64 (diawali "data:image/…;base64,")
+        if (preg_match('/^data:image\/(\w+);base64,/', $fotoInput, $matches)) {
+            $base64Image = $request->mainImage;
+            [$type, $data] = explode(';', $base64Image);
+            [, $extension] = explode('/', $type); // jpeg, png
+            [, $base64Data] = explode(',', $data);
+
+            $filename =  Str::slug($request->title) . '-' . uniqid() . '.' . $extension;
+
+            Storage::disk('public')->put("image/blog/{$filename}", base64_decode($base64Data));
+
+            $imagePath = "image/blog/{$filename}";
+
+            // Hapus file gambar sebelumnnya jika ada
+            if ($blog->picture1 && Storage::disk('public')->exists($blog->picture1)) {
+                Storage::disk('public')->delete($blog->picture1);
+            }
+        } else {
+            // bukan Base64 → kemungkinan path lama yang tidak diubah
+            $imagePath = $fotoInput;
+        }
+
+        $blog->update([
+            'title' => $request->title,
+            'excerpt' => $request->description,
+            'body1' => $request->body1,
+            'body2' => $request->body2,
+            'picture1' => $imagePath,
+            'picture2' => '',
+            'picture3' => '',
+            'tags' => $request->tags,
+            'visit' => 50
+        ]);
+
+        return to_route('blog.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Blog $blog)
+    {
+        // Hapus file gambar jika ada
+        if ($blog->picture1 && Storage::disk('public')->exists($blog->picture1)) {
+            Storage::disk('public')->delete($blog->picture1);
+        }
+
+        if ($blog->picture2 && Storage::disk('public')->exists($blog->picture2)) {
+            Storage::disk('public')->delete($blog->picture2);
+        }
+
+        if ($blog->picture3 && Storage::disk('public')->exists($blog->picture3)) {
+            Storage::disk('public')->delete($blog->picture3);
+        }
+
+        $blog->delete();
     }
 }

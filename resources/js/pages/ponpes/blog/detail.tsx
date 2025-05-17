@@ -70,13 +70,12 @@ export default function BlogDetail({ article, relatedPosts, kategory, countKateg
                         <div
                             className="absolute inset-0 bg-cover bg-center"
                             style={{
-                                backgroundImage: "url('/placeholder.svg?height=800&width=1920')",
+                                backgroundImage: "url('/storage/image/assets/hero-3b.jpg')",
                                 transform: `translateY(${scrollY * 0.1}px)`,
                             }}
                         ></div>
-                        <div className="bg-primary/70 absolute inset-0"></div>
+                        <div className="absolute inset-0 bg-black/57"></div>
                         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
-                            <div className="text-primary mb-4 inline-block rounded bg-white px-3 py-1 text-sm font-semibold">Blog Pesantren</div>
                             <h1 className="mb-4 text-center text-4xl font-bold text-white md:text-5xl">Artikel & Berita</h1>
                             <p className="max-w-3xl text-center text-xl text-white/90">
                                 "Menuntut ilmu adalah kewajiban bagi setiap muslim dan muslimah"
@@ -284,7 +283,7 @@ export default function BlogDetail({ article, relatedPosts, kategory, countKateg
                                                                 <img
                                                                     src={`/storage/${post.picture1}` || '/placeholder.svg'}
                                                                     alt={post.title}
-                                                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                                 />
                                                             </div>
                                                             <div className="flex-1">

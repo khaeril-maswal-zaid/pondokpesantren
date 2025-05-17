@@ -2,30 +2,12 @@
 
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/ponpes-layout';
-import { Head } from '@inertiajs/react';
-import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Clock, Link, MapPin } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Clock, MapPin } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-// Data struktur untuk slider
-const strukturSlides = [
-    {
-        image: '/placeholder.svg?height=600&width=800',
-        title: 'Struktur Pimpinan',
-        description: 'KH. Ahmad Zaid sebagai pendiri dan pengasuh utama Pondok Pesantren Al-Zaid',
-    },
-    {
-        image: '/placeholder.svg?height=600&width=800',
-        title: 'Struktur Madrasah',
-        description: 'Sistem pendidikan formal di bawah kepemimpinan Ustadz Dr. Mahmud Hasan',
-    },
-    {
-        image: '/placeholder.svg?height=600&width=800',
-        title: 'Struktur Kesantrian',
-        description: 'Pengelolaan asrama dan kesejahteraan santri oleh tim kesantrian',
-    },
-];
-
 export default function AgendaPage({ allAgendaData, strukturSlides }) {
+    const { name } = usePage().props;
     const [scrollY, setScrollY] = useState(0);
     const [activeYear, setActiveYear] = useState(new Date().getFullYear().toString());
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -156,7 +138,7 @@ export default function AgendaPage({ allAgendaData, strukturSlides }) {
                                     <h3 className="p-6 pb-4 text-xl font-bold">Struktur Pesantren</h3>
 
                                     {/* Struktur Slider */}
-                                    <div className="relative h-[400px] overflow-hidden">
+                                    <div className="relative h-[500px] overflow-hidden">
                                         {strukturSlides.map((slide, index) => (
                                             <div
                                                 key={index}
@@ -208,10 +190,10 @@ export default function AgendaPage({ allAgendaData, strukturSlides }) {
 
                                     <div className="p-6 pt-4">
                                         <p className="mb-4 text-sm text-gray-600">
-                                            Pondok Pesantren Al-Zaid dikelola oleh para pengasuh dan ustadz/ustadzah yang berpengalaman dan memiliki
+                                            Pondok Pesantren {name} dikelola oleh para pengasuh dan ustadz/ustadzah yang berpengalaman dan memiliki
                                             kompetensi di bidangnya masing-masing.
                                         </p>
-                                        <Link href="/struktur">
+                                        <Link href={route('struktur.cards')}>
                                             <Button className="bg-primary hover:bg-primary/90 w-full">Lihat Struktur Lengkap</Button>
                                         </Link>
                                     </div>

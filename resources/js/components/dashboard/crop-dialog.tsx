@@ -54,10 +54,8 @@ export function CropDialog({
                 </DialogHeader>
 
                 <div className="rounded-lg border bg-gray-50 p-4">
-                    <p className="mb-2 text-sm text-gray-500">Sesuaikan area foto dengan rasio 3:4</p>
                     <p className="mb-4 text-sm text-gray-500">
-                        <strong>Panduan posisi wajah:</strong> Pastikan wajah berada di tengah frame dan menempati sekitar 70-80% dari tinggi foto.
-                        Mata sebaiknya berada pada 1/3 bagian atas foto.
+                        Tentukan posisi terbaik untuk foto — sesuaikan area potong agar hasil terlihat optimal.
                     </p>
                     <div className="relative mx-auto">
                         <ReactCrop

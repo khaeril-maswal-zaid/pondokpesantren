@@ -14,10 +14,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Eye, MoreVertical, Pencil, Phone, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -36,6 +37,8 @@ export default function StrukturPage({ figures }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStruktur, setSelectedStruktur] = useState<any>(null);
     const [editModalOpen, setEditModalOpen] = useState(false);
+
+    const { errors } = usePage().props;
 
     // Filter struktur berdasarkan nama
     const filteredStruktur = figures.filter((struktur) => struktur.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -69,12 +72,41 @@ export default function StrukturPage({ figures }) {
         setDeleteModalOpen(true);
     };
 
+    const handleToggle = (id: number, value: number, name: string) => {
+        router.put(
+            route('struktur.main', id),
+            {
+                main: value,
+            },
+            {
+                onError: (e) => {
+                    if (errors.main) {
+                        toast({
+                            title: 'Gagal memperbarui!',
+                            //Tidak jadi ambil error dari server karena kadang tidak tampil
+                            description:
+                                'Batas maksimum struktur dengan status utama telah tercapai (4). Silakan nonaktifkan status utama dari struktur lain sebelum melanjutkan.',
+                        });
+                    }
+                },
+                preserveScroll: true, // Ini penting
+                onSuccess: () => {
+                    // Tampilkan toast setelah update sukses
+                    toast({
+                        title: `Pilihan uatama diperbarui`,
+                        description: `${name} diubah sebagai salah satu dari empat pilihan utama.`,
+                    });
+                },
+            },
+        );
+    };
+
     const confirmDelete = (id: string) => {
         router.delete(route('struktur.destroy', id), {
             onSuccess: () => {
                 toast({
                     title: 'Berhasil!',
-                    description: 'Data pengurus berhasil diedit',
+                    description: 'Data pengurus berhasil dihapus',
                 });
                 // setOpen(false);
                 setIsSubmitting(false);
@@ -114,7 +146,8 @@ export default function StrukturPage({ figures }) {
                                     <TableHead>Posisi</TableHead>
                                     <TableHead>Keterangan</TableHead>
                                     <TableHead>Nomor HP</TableHead>
-                                    <TableHead>Nomor HP</TableHead>
+                                    <TableHead>Main</TableHead>
+                                    <TableHead>Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -136,6 +169,12 @@ export default function StrukturPage({ figures }) {
                                                     {formatPhoneNumber(struktur.no_hp)}
                                                 </a>
                                             </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Switch
+                                                checked={struktur.main === 1}
+                                                onCheckedChange={(val) => handleToggle(struktur.id, val ? 1 : 0, struktur.name)}
+                                            />
                                         </TableCell>
                                         <TableCell>
                                             <DropdownMenu>

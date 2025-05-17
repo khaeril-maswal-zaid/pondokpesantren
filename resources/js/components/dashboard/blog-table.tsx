@@ -1,5 +1,4 @@
 'use client';
-
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,17 +12,32 @@ import {
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from '@/hooks/use-toast';
 import { router } from '@inertiajs/react';
 import { Eye, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
-    const [posts, setPosts] = useState(dataBlog);
-    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [dataDelete, setDataDelete] = useState({ title: '', slug: '' });
 
-    const handleDelete = (id: string) => {
-        setPosts(posts.filter((post) => post.id !== id));
-        setDeleteId(null);
+    const setDeleteModal = (title: any, slug: any) => {
+        if (!slug) return;
+        setDeleteModalOpen(true);
+        setDataDelete({ title, slug });
+    };
+
+    const confirmDelete = (slug: string) => {
+        router.delete(route('blog.destroy', slug), {
+            onSuccess: () => {
+                toast({
+                    title: 'Berhasil!',
+                    description: 'Data pengurus berhasil diedit',
+                });
+                setIsSubmitting(false);
+            },
+        });
     };
 
     return (
@@ -42,9 +56,9 @@ export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
                     </TableHeader>
                     <TableBody>
                         {dataBlog.data?.map((post) => (
-                            <TableRow key={post.id}>
+                            <TableRow key={post.slug}>
                                 <TableCell className="font-medium">{post.title}</TableCell>
-                                <TableCell>News</TableCell>
+                                <TableCell>{post.category}</TableCell>
                                 <TableCell>{post.created_at}</TableCell>
                                 <TableCell>{post.author.name}</TableCell>
                                 <TableCell>{post.visit}</TableCell>
@@ -67,14 +81,21 @@ export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 onClick={() => {
-                                                    // router.get(route('blog.edit'));
+                                                    router.get(route('blog.edit', post.slug));
                                                 }}
                                             >
                                                 <Pencil className="mr-2 h-4 w-4" />
                                                 Edit
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-red-600" onClick={() => setDeleteId(post.id)}>
+                                            <DropdownMenuItem
+                                                className="text-red-600"
+                                                onClick={() => {
+                                                    setTimeout(() => {
+                                                        setDeleteModal(post.title, post.slug);
+                                                    }, 0);
+                                                }}
+                                            >
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 Delete
                                             </DropdownMenuItem>
@@ -87,16 +108,22 @@ export default function BlogTable({ dataBlog }: { dataBlog: any[] }) {
                 </Table>
             </div>
 
-            <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+            {/* // DI LUAR LOOP (sekali saja) */}
+            <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>This action cannot be undone. This will permanently delete the blog post.</AlertDialogDescription>
+                        <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                        <AlertDialogDescription>Apakah Anda yakin ingin menghapus data struktur {dataDelete?.title}?</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => deleteId && handleDelete(deleteId)}>
-                            Delete
+                        <AlertDialogCancel onClick={() => setDeleteModalOpen(false)}>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={() => {
+                                confirmDelete(dataDelete?.slug);
+                            }}
+                        >
+                            {isSubmitting ? 'Menghapus' : 'Hapus'}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
