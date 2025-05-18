@@ -53,6 +53,7 @@ class StrukturController extends Controller
             "role" => $request->role,
             "keterangan" => $request->keterangan,
             "no_hp" => $request->no_hp,
+            "main" => '0',
             "image" => $imagePath,
         ]);
     }
