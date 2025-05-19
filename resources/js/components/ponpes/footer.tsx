@@ -37,17 +37,12 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#tentang" className="transition-colors hover:text-blue-300">
-                                    Tentang Kami
+                                <Link href={route('agenda.cards')} className="transition-colors hover:text-blue-300">
+                                    Struktur
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#program" className="transition-colors hover:text-blue-300">
-                                    Program
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#tokoh" className="transition-colors hover:text-blue-300">
+                                <Link href={route('struktur.cards')} className="transition-colors hover:text-blue-300">
                                     Struktur
                                 </Link>
                             </li>
