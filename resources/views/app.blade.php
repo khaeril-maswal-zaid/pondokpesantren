@@ -44,7 +44,7 @@
             }
         </style>
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <title inertia>{{ config('app.name', 'Ubay Bin Kaab') }}</title>
 
         {{-- <link rel="icon" href="/favicon.ico" sizes="any"> --}}
         <link rel="icon" href="/storage/image/assets/logo.png?v={{ time() }}" type="image">
