@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { router } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -63,12 +64,20 @@ export function SyaratForm({ isOpen, onClose, onSave, initialData }: SyaratFormP
     }, [initialData, form]);
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        onSave({
-            id: values.id || '',
+        console.log(values);
+
+        router.put(route('contentpendaftaran.update', values.id), {
             point: values.point,
             subcategory: values.subcategory,
-            order: initialData?.order || 0,
+            order: initialData?.order,
         });
+
+        // onSave({
+        //     id: values.id || '',
+        //     point: values.point,
+        //     subcategory: values.subcategory,
+        //     order: initialData?.order || 0,
+        // });
     }
 
     return (

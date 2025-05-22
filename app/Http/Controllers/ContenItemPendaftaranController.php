@@ -41,4 +41,9 @@ class ContenItemPendaftaranController extends Controller
 
         return Inertia::render('dashboard/informasipendaftaran/page', $data);
     }
+
+    public function update(Request $request)
+    {
+        dd($request->all());
+    }
 }

@@ -126,12 +126,20 @@ class AgendaController extends Controller
 
     public function cards()
     {
+        $ogTags = [
+            'title' => 'Agenda Pondok Pesantren ' . config('app.name') . ' Bulukumba',
+            'description' => 'Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah, berlandaskan Al-qur`an dan hadist yang sahih.',
+            'image' => asset('/storage/image/assets/logo.png'),
+            'url' => config('app.url'),
+        ];
+
+        request()->attributes->set('og', $ogTags);
+
         // $query = Agenda::select('title', 'date', 'time', 'location', 'image')->paginate(6);
         $query = Agenda::all();
 
         // Group by year
         $byYear = $query->groupBy(function ($agenda) {
-            // $agenda->created_at sudah instance Carbon
             return $agenda->created_at->format('Y');
         });
 

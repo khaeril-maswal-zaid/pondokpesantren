@@ -18,7 +18,7 @@ class StrukturController extends Controller
     public function index()
     {
         $data = [
-            'figures' => Struktur::select(['id', 'name', 'no_hp', 'role', 'image', 'main', 'keterangan', 'gender'])->latest()->get(),
+            'figures' => Struktur::select(['id', 'name', 'no_hp', 'role', 'image', 'main', 'keterangan', 'gender'])->get(),
         ];
 
         return Inertia::render('dashboard/struktur/page', $data);
@@ -128,6 +128,15 @@ class StrukturController extends Controller
 
     public function cards()
     {
+        $ogTags = [
+            'title' => 'Struktur Pondok Pesantren ' . config('app.name') . ' Bulukumba',
+            'description' => 'Pondok Pesantren Ubay Bin Ka’ab Bulukumba berdiri di atas prinsip menjalankan amal ibadah sesuai dengan tuntunan Ahlus Sunnah wal Jamaah, berlandaskan Al-qur`an dan hadist yang sahih.',
+            'image' => asset('/storage/image/assets/logo.png'),
+            'url' => config('app.url'),
+        ];
+
+        request()->attributes->set('og', $ogTags);
+
         $data = [
             'strukturData' => Struktur::select('name', 'role', 'keterangan', 'image', 'gender')->paginate(9)
         ];

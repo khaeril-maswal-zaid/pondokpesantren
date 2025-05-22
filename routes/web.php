@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/dashboard/kontak/update/{kontak:label}', [KontakController::class, 'update'])->name('kontak.update');
 
     Route::get('/dashboard/informasi-pendaftaran', [ContenItemPendaftaranController::class, 'index'])->name('pendaftaran.index');
+    Route::put('/dashboard/informasi-pendaftaran', [ContenItemPendaftaranController::class, 'update'])->name('contentpendaftaran.update');
 });
 
 
