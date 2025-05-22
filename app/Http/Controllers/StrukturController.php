@@ -18,7 +18,7 @@ class StrukturController extends Controller
     public function index()
     {
         $data = [
-            'figures' => Struktur::select(['id', 'name', 'no_hp', 'role', 'image', 'main', 'keterangan'])->latest()->get(),
+            'figures' => Struktur::select(['id', 'name', 'no_hp', 'role', 'image', 'main', 'keterangan', 'gender'])->latest()->get(),
         ];
 
         return Inertia::render('dashboard/struktur/page', $data);
@@ -127,7 +127,7 @@ class StrukturController extends Controller
     public function cards()
     {
         $data = [
-            'strukturData' => Struktur::select('name', 'role', 'keterangan', 'image')->paginate(9)
+            'strukturData' => Struktur::select('name', 'role', 'keterangan', 'image', 'gender')->paginate(9)
         ];
         return Inertia::render('ponpes/struktur/page', $data);
     }

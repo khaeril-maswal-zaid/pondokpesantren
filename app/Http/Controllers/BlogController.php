@@ -36,6 +36,10 @@ class BlogController extends Controller
         ];
         request()->attributes->set('og', $ogTags);
 
+        $blog->update([
+            'visit' => $blog->visit + 1
+        ]);
+
         $kategory = ['News', 'Dakwah', 'Opini', 'The Story'];
 
         $countKategory = [];

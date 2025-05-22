@@ -4,57 +4,52 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { CalendarDays, FileText, HandCoins, Image, Info, LayoutDashboard, Phone, UserPlus, Users2 } from 'lucide-react';
+import { CalendarDays, FileSearch, FileText, HandCoins, LayoutDashboard, Mail, User2, UserPlus } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
-        icon: LayoutDashboard, // Ikon khas untuk dashboard
+        icon: LayoutDashboard,
     },
     {
         title: 'Calon Santri Baru',
         href: route('santri-baru.index'),
-        icon: UserPlus, // Dapil = daerah pemilihan = lokasi
+        icon: UserPlus,
     },
     {
         title: 'Blog',
         href: route('blog.index'),
-        icon: FileText, // Blog = tulisan = dokumen
+        icon: FileText,
     },
     {
         title: 'Agenda',
         href: route('agenda.index'),
-        icon: CalendarDays, // Agenda = kalender / jadwal
+        icon: CalendarDays,
     },
     {
         title: 'Struktur',
         href: route('struktur.index'),
-        icon: Users2, // Struktur organisasi = orang-orang
+        icon: User2,
     },
     {
         title: 'Kontak UBK',
         href: route('kontak.index'),
-        icon: Phone, // Kontak = telepon
+        icon: Mail,
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Tentang Ubay Bin Kaab',
-        href: 'dashboard/tentang',
-        icon: Info, // Tentang = informasi
+        title: 'Informasi Pendaftaran',
+        href: route('pendaftaran.index'),
+        icon: FileSearch,
     },
     {
-        title: 'Donasi Ponpes UBK',
+        title: 'Databases',
         href: 'dashboard/donasi',
-        icon: HandCoins, // Donasi = uang / amal
-    },
-    {
-        title: 'Carousel Web',
-        href: 'dashboard/carousel',
-        icon: Image, // Carousel = gambar berganti
+        icon: HandCoins,
     },
 ];
 

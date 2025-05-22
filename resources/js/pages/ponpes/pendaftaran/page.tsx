@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/ponpes-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowRight, Calendar, CheckCircle, FileText, HelpCircle } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-export default function PendaftaranPage() {
+export default function PendaftaranPage({ persyaratanUmum, steps, persyaratanKhusus, dokumenWajib, dokumenTambahan, faq, jadwal, jadwalMasuk }) {
     const sectionRefs = {
         syarat: useRef<HTMLElement>(null),
         dokumen: useRef<HTMLElement>(null),
@@ -80,78 +80,28 @@ export default function PendaftaranPage() {
                                     <div>
                                         <h3 className="mb-4 text-xl font-bold">Persyaratan Umum</h3>
                                         <ul className="space-y-3">
-                                            <li className="flex items-start">
-                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    1
-                                                </span>
-                                                <span>Beragama Islam</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    2
-                                                </span>
-                                                <span>Lulus SD/MI untuk jenjang MTs atau lulus SMP/MTs untuk jenjang MA</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    3
-                                                </span>
-                                                <span>Berusia maksimal 13 tahun untuk jenjang MTs atau 16 tahun untuk jenjang MA</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    4
-                                                </span>
-                                                <span>Sehat jasmani dan rohani</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    5
-                                                </span>
-                                                <span>Mendapat izin dari orang tua/wali</span>
-                                            </li>
+                                            {persyaratanUmum.map((value, index) => (
+                                                <li className="flex items-start" key={index}>
+                                                    <span className="bg-primary me-3 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
+                                                        {index + 1}
+                                                    </span>
+                                                    <span>{value.point}</span>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
 
                                     <div>
                                         <h3 className="mb-4 text-xl font-bold">Persyaratan Khusus</h3>
                                         <ul className="space-y-3">
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    1
-                                                </span>
-                                                <span>Mampu membaca Al-Qur'an</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    2
-                                                </span>
-                                                <span>Memiliki hafalan minimal 1 juz Al-Qur'an (untuk program tahfidz)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    3
-                                                </span>
-                                                <span>Lulus tes seleksi masuk yang meliputi tes tulis, tes baca Al-Qur'an, dan wawancara</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    4
-                                                </span>
-                                                <span>Bersedia mematuhi seluruh peraturan pesantren</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    5
-                                                </span>
-                                                <span>Bersedia tinggal di asrama pesantren</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    6
-                                                </span>
-                                                <span>Bersedia untuk tidak pindah sekolah selama minimal 3 tahun</span>
-                                            </li>
+                                            {persyaratanKhusus.map((value, index) => (
+                                                <li className="flex items-start" key={index}>
+                                                    <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
+                                                        {index + 1}
+                                                    </span>
+                                                    <span>{value.point}</span>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
                                 </div>
@@ -172,54 +122,28 @@ export default function PendaftaranPage() {
                                     <div>
                                         <h3 className="mb-4 text-xl font-bold">Dokumen Wajib</h3>
                                         <ul className="space-y-3">
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    1
-                                                </span>
-                                                <span>Fotokopi ijazah dan SKHUN terakhir yang dilegalisir (3 lembar)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    2
-                                                </span>
-                                                <span>Fotokopi rapor 2 semester terakhir yang dilegalisir (2 lembar)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    3
-                                                </span>
-                                                <span>Fotokopi akta kelahiran (3 lembar)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    4
-                                                </span>
-                                                <span>Fotokopi Kartu Keluarga (3 lembar)</span>
-                                            </li>
+                                            {dokumenWajib.map((value, index) => (
+                                                <li className="flex items-start">
+                                                    <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
+                                                        {index + 1}
+                                                    </span>
+                                                    <span>{value.point}</span>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
 
                                     <div>
                                         <h3 className="mb-4 text-xl font-bold">Dokumen Tambahan</h3>
                                         <ul className="space-y-3">
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    1
-                                                </span>
-                                                <span>Surat pernyataan kesanggupan mematuhi peraturan (bermaterai)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    2
-                                                </span>
-                                                <span>Fotokopi piagam prestasi (jika ada)</span>
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
-                                                    3
-                                                </span>
-                                                <span>Surat rekomendasi dari sekolah/madrasah asal (jika ada)</span>
-                                            </li>
+                                            {dokumenTambahan.map((value, index) => (
+                                                <li className="flex items-start" key={index}>
+                                                    <span className="bg-primary mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full px-2 text-sm font-bold text-white">
+                                                        {index + 1}
+                                                    </span>
+                                                    <span>{value.point}</span>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
                                 </div>
@@ -240,182 +164,56 @@ export default function PendaftaranPage() {
                                     {/* Desktop Timeline */}
                                     <div className="hidden md:block">
                                         <div className="bg-primary absolute left-1/2 -ml-0.5 h-full w-1"></div>
-                                        <div className="grid grid-cols-2 gap-8">
-                                            {/* Step 1 */}
-                                            <div className="relative">
-                                                <div className="flex justify-end">
-                                                    <div className="w-5/6 pr-8">
-                                                        <h3 className="mb-2 text-right text-xl font-bold">Pendaftaran Online</h3>
-                                                        <p className="text-right text-gray-600">
-                                                            Calon santri melakukan pendaftaran online melalui website resmi Pondok Pesantren {name}
-                                                            dan mengisi formulir dengan lengkap.
-                                                        </p>
+                                        <div className="grid grid-cols-2 gap-5">
+                                            {steps.map((step, idx) => {
+                                                const isRight = idx % 2 === 0;
+                                                const content = (
+                                                    <div className={`mx-2 w-5/6 ${isRight ? 'pr-8 text-right' : 'pl-8 text-left'}`} key={idx}>
+                                                        <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
+                                                        <p className="text-gray-600">{step.description.replace('{name}', name)}</p>
                                                     </div>
-                                                </div>
-                                                <div className="bg-primary absolute top-0 right-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                    1
-                                                </div>
-                                            </div>
-                                            <div className=""></div>
+                                                );
 
-                                            {/* Step 2 */}
-                                            <div className=""></div>
-                                            <div className="relative">
-                                                <div className="flex">
-                                                    <div className="w-5/6 pl-8">
-                                                        <h3 className="mb-2 text-xl font-bold">Pembayaran Biaya Pendaftaran</h3>
-                                                        <p className="text-gray-600">
-                                                            Melakukan pembayaran biaya pendaftaran sebesar Rp 300.000 melalui transfer bank ke
-                                                            rekening resmi pesantren.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                    2
-                                                </div>
-                                            </div>
-
-                                            {/* Step 3 */}
-                                            <div className="relative">
-                                                <div className="flex justify-end">
-                                                    <div className="w-5/6 pr-8">
-                                                        <h3 className="mb-2 text-right text-xl font-bold">Verifikasi Dokumen</h3>
-                                                        <p className="text-right text-gray-600">
-                                                            Menyerahkan berkas pendaftaran lengkap ke panitia untuk diverifikasi. Dokumen dapat
-                                                            dikirim secara online atau diserahkan langsung.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="bg-primary absolute top-0 right-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                    3
-                                                </div>
-                                            </div>
-                                            <div className=""></div>
-
-                                            {/* Step 4 */}
-                                            <div className=""></div>
-                                            <div className="relative">
-                                                <div className="flex">
-                                                    <div className="w-5/6 pl-8">
-                                                        <h3 className="mb-2 text-xl font-bold">Tes Seleksi</h3>
-                                                        <p className="text-gray-600">
-                                                            Mengikuti tes seleksi yang meliputi tes tulis (pengetahuan umum dan agama), tes baca
-                                                            Al-Qur'an, dan wawancara.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                    4
-                                                </div>
-                                            </div>
-
-                                            {/* Step 5 */}
-                                            <div className="relative">
-                                                <div className="flex justify-end">
-                                                    <div className="w-5/6 pr-8">
-                                                        <h3 className="mb-2 text-right text-xl font-bold">Pengumuman Hasil Seleksi</h3>
-                                                        <p className="text-right text-gray-600">
-                                                            Pengumuman hasil seleksi akan disampaikan melalui website dan SMS/WhatsApp ke nomor orang
-                                                            tua/wali.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="bg-primary absolute top-0 right-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                    5
-                                                </div>
-                                            </div>
-                                            <div className=""></div>
-
-                                            {/* Step 6 */}
-                                            <div className=""></div>
-                                            <div className="relative">
-                                                <div className="flex">
-                                                    <div className="w-5/6 pl-8">
-                                                        <h3 className="mb-2 text-xl font-bold">Registrasi Ulang & Masuk Pesantren</h3>
-                                                        <p className="text-gray-600">
-                                                            Bagi yang diterima, melakukan registrasi ulang dengan melunasi biaya pendidikan dan masuk
-                                                            pesantren sesuai jadwal yang ditentukan.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                    6
-                                                </div>
-                                            </div>
+                                                return (
+                                                    <React.Fragment key={step.id}>
+                                                        {isRight ? (
+                                                            <>
+                                                                <div className="relative flex justify-end">
+                                                                    {content}
+                                                                    <div className="bg-primary absolute top-0 right-0 ms-4 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
+                                                                        {idx + 1}
+                                                                    </div>
+                                                                </div>
+                                                                <div />
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <div />
+                                                                <div className="relative flex">
+                                                                    {content}
+                                                                    <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
+                                                                        {idx + 1}
+                                                                    </div>
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    </React.Fragment>
+                                                );
+                                            })}
                                         </div>
                                     </div>
 
                                     {/* Mobile Timeline */}
                                     <div className="space-y-8 md:hidden">
-                                        {/* Step 1 */}
-                                        <div className="relative pl-10">
-                                            <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                1
+                                        {steps.map((value, index) => (
+                                            <div className="relative pl-10">
+                                                <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
+                                                    {index + 1}
+                                                </div>
+                                                <h3 className="mb-2 text-xl font-bold">{value.title}</h3>
+                                                <p className="text-gray-600">{value.description}</p>
                                             </div>
-                                            <h3 className="mb-2 text-xl font-bold">Pendaftaran Online</h3>
-                                            <p className="text-gray-600">
-                                                Calon santri melakukan pendaftaran online melalui website resmi Pondok Pesantren {name} dan mengisi
-                                                formulir dengan lengkap.
-                                            </p>
-                                        </div>
-
-                                        {/* Step 2 */}
-                                        <div className="relative pl-10">
-                                            <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                2
-                                            </div>
-                                            <h3 className="mb-2 text-xl font-bold">Pembayaran Biaya Pendaftaran</h3>
-                                            <p className="text-gray-600">
-                                                Pendaftaran Gratis. Tidak ada biaya apapun yang dikenakan untuk proses pendaftaran santri baru.
-                                            </p>
-                                        </div>
-
-                                        {/* Step 3 */}
-                                        <div className="relative pl-10">
-                                            <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                3
-                                            </div>
-                                            <h3 className="mb-2 text-xl font-bold">Verifikasi Dokumen</h3>
-                                            <p className="text-gray-600">
-                                                Menyerahkan berkas pendaftaran lengkap ke panitia untuk diverifikasi. Dokumen dapat dikirim secara
-                                                online atau diserahkan langsung.
-                                            </p>
-                                        </div>
-
-                                        {/* Step 4 */}
-                                        <div className="relative pl-10">
-                                            <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                4
-                                            </div>
-                                            <h3 className="mb-2 text-xl font-bold">Tes Seleksi</h3>
-                                            <p className="text-gray-600">
-                                                Mengikuti tes seleksi yang meliputi tes tulis (pengetahuan umum dan agama), tes baca Al-Qur'an, dan
-                                                wawancara.
-                                            </p>
-                                        </div>
-
-                                        {/* Step 5 */}
-                                        <div className="relative pl-10">
-                                            <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                5
-                                            </div>
-                                            <h3 className="mb-2 text-xl font-bold">Pengumuman Hasil Seleksi</h3>
-                                            <p className="text-gray-600">
-                                                Pengumuman hasil seleksi akan disampaikan melalui website dan SMS/WhatsApp ke nomor orang tua/wali.
-                                            </p>
-                                        </div>
-
-                                        {/* Step 6 */}
-                                        <div className="relative pl-10">
-                                            <div className="bg-primary absolute top-0 left-0 flex h-8 w-8 items-center justify-center rounded-full font-bold text-white">
-                                                6
-                                            </div>
-                                            <h3 className="mb-2 text-xl font-bold">Registrasi Ulang & Masuk Pesantren</h3>
-                                            <p className="text-gray-600">
-                                                Bagi yang diterima, melakukan registrasi ulang dengan melunasi biaya pendidikan (Biaya daftar ulang)
-                                                dan masuk pesantren sesuai jadwal yang ditentukan.
-                                            </p>
-                                        </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -441,35 +239,17 @@ export default function PendaftaranPage() {
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {jadwal.map((value, index) => (
+                                                <tr key={index}>
+                                                    <td className="border p-3 font-medium">{value.activity_name}</td>
+                                                    <td className="border p-3">{value.gel1}</td>
+                                                    <td className="border p-3">{value.gel2}</td>
+                                                </tr>
+                                            ))}
                                             <tr>
-                                                <td className="border p-3 font-medium">Pendaftaran Online</td>
-                                                <td className="border p-3">1 Februari - 30 April 2025</td>
-                                                <td className="border p-3">1 Juni - 31 Juli 2025</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border p-3 font-medium">Verifikasi Berkas</td>
-                                                <td className="border p-3">1 - 5 Mei 2025</td>
-                                                <td className="border p-3">1 - 5 Agustus 2025</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border p-3 font-medium">Tes Seleksi</td>
-                                                <td className="border p-3">10 - 11 Mei 2025</td>
-                                                <td className="border p-3">10 - 11 Agustus 2025</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border p-3 font-medium">Pengumuman Hasil</td>
-                                                <td className="border p-3">15 Mei 2025</td>
-                                                <td className="border p-3">15 Agustus 2025</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border p-3 font-medium">Registrasi Ulang</td>
-                                                <td className="border p-3">16 - 25 Mei 2025</td>
-                                                <td className="border p-3">16 - 25 Agustus 2025</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border p-3 font-medium">Masuk Pesantren</td>
+                                                <td className="border p-3 font-medium"> {jadwalMasuk.activity_name}</td>
                                                 <td className="border p-3" colSpan={2}>
-                                                    Juli 2025
+                                                    {jadwalMasuk.gel1}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -501,114 +281,14 @@ export default function PendaftaranPage() {
                                 </div>
 
                                 <Accordion type="single" collapsible className="w-full">
-                                    <AccordionItem value="item-1">
-                                        <AccordionTrigger>Berapa biaya pendidikan di Pondok Pesantren {name}?</AccordionTrigger>
-                                        <AccordionContent>
-                                            <p>Biaya pendidikan di Pondok Pesantren {name} terdiri dari beberapa komponen:</p>
-
-                                            <ol className="mt-2 list-decimal space-y-1 pl-5">
-                                                <li>Biaya pendaftaran: Gratis</li>
-                                                <li>
-                                                    Biaya daftar ulang: Rp 3.000.000
-                                                    <ol className="mt-1 list-disc space-y-1 pl-6">
-                                                        <li>Biaya bulanan (Juli 2025) : Rp.600.000 *</li>
-                                                        <li>Biaya Semester (Genap 2025) : Rp.500.000 **</li>
-                                                        <li>Pemeliharaan sarana & prasarana (Tahun 2025) : Rp.600.000 ***</li>
-                                                        <li>Uang pangkal: Rp. 1.000.000 ****</li>
-                                                        <li>Raport, Papan Nama & ID Card: Rp.300.000 ****</li>
-                                                    </ol>
-                                                </li>
-                                            </ol>
-
-                                            <div className="mt-2 space-y-1 text-sm">
-                                                <p>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dibayar per bulan</p>
-                                                <p>**&nbsp;&nbsp;&nbsp; : Dibayar per semester</p>
-                                                <p>***&nbsp;&nbsp;&nbsp; : Dibayar per tahun</p>
-                                                <p>****&nbsp; : Dibayar sekali</p>
-                                            </div>
-
-                                            <p className="mt-2">
-                                                Pondok Pesantren {name} juga menyediakan beasiswa bagi santri berprestasi dan santri dari keluarga
-                                                kurang mampu.
-                                            </p>
-                                        </AccordionContent>
-                                    </AccordionItem>
-
-                                    <AccordionItem value="item-2">
-                                        <AccordionTrigger>Apakah ada program beasiswa yang tersedia?</AccordionTrigger>
-                                        <AccordionContent>
-                                            Ya, Pondok Pesantren {name} menyediakan beberapa program beasiswa:
-                                            <ul className="mt-2 list-disc space-y-1 pl-5">
-                                                <li>Beasiswa Tahfidz bagi penghafal Al-Qur'an minimal 5 juz</li>
-                                                <li>Beasiswa Prestasi bagi siswa berprestasi akademik dan non-akademik</li>
-                                                <li>Beasiswa Dhuafa bagi santri dari keluarga kurang mampu</li>
-                                                <li>Beasiswa Yatim/Piatu bagi santri yatim atau piatu</li>
-                                            </ul>
-                                            Untuk informasi lebih lanjut tentang persyaratan dan proses seleksi beasiswa, silakan hubungi bagian
-                                            administrasi pesantren.
-                                        </AccordionContent>
-                                    </AccordionItem>
-
-                                    <AccordionItem value="item-3">
-                                        <AccordionTrigger>Apa saja fasilitas yang tersedia di pesantren?</AccordionTrigger>
-                                        <AccordionContent>
-                                            Pondok Pesantren {name} dilengkapi dengan berbagai fasilitas untuk menunjang kegiatan belajar dan
-                                            kehidupan santri, antara lain:
-                                            <ul className="mt-2 list-disc space-y-1 pl-5">
-                                                <li>Asrama putra dan putri terpisah</li>
-                                                <li>Masjid</li>
-                                                <li>Ruang kelas dengan fasilitas modern</li>
-                                                <li>Perpustakaan</li>
-                                                <li>Laboratorium komputer, IPA, dan bahasa</li>
-                                                <li>Lapangan olahraga (futsal, basket, voli)</li>
-                                                <li>Kantin dan dapur</li>
-                                                <li>Klinik kesehatan</li>
-                                                <li>Area WiFi terbatas</li>
-                                                <li>Koperasi pesantren</li>
-                                            </ul>
-                                        </AccordionContent>
-                                    </AccordionItem>
-
-                                    <AccordionItem value="item-4">
-                                        <AccordionTrigger>Bagaimana jadwal kegiatan santri sehari-hari?</AccordionTrigger>
-                                        <AccordionContent>
-                                            Jadwal kegiatan santri di Pondok Pesantren {name} dirancang untuk menyeimbangkan pendidikan formal,
-                                            pendidikan agama, dan pengembangan diri. Secara umum, jadwal harian santri adalah sebagai berikut:
-                                            <ul className="mt-2 list-disc space-y-1 pl-5">
-                                                <li>03.30 - 04.30: Bangun tidur, shalat tahajud</li>
-                                                <li>04.30 - 05.30: Shalat Subuh berjamaah dan tadarus Al-Qur'an</li>
-                                                <li>05.30 - 06.30: Mandi dan sarapan</li>
-                                                <li>07.00 - 12.30: Kegiatan belajar mengajar formal</li>
-                                                <li>12.30 - 13.30: Shalat Dzuhur berjamaah dan makan siang</li>
-                                                <li>13.30 - 15.00: Istirahat</li>
-                                                <li>15.00 - 16.00: Shalat Ashar berjamaah dan tadarus Al-Qur'an</li>
-                                                <li>16.00 - 17.30: Kegiatan ekstrakurikuler</li>
-                                                <li>17.30 - 18.30: Mandi dan persiapan Maghrib</li>
-                                                <li>18.30 - 19.30: Shalat Maghrib berjamaah dan tadarus Al-Qur'an</li>
-                                                <li>19.30 - 20.00: Makan malam</li>
-                                                <li>20.00 - 21.00: Shalat Isya berjamaah</li>
-                                                <li>21.00 - 22.00: Belajar mandiri/tutorial</li>
-                                                <li>22.00: Istirahat malam</li>
-                                            </ul>
-                                            Jadwal dapat berbeda pada hari Jumat dan hari libur.
-                                        </AccordionContent>
-                                    </AccordionItem>
-
-                                    <AccordionItem value="item-5">
-                                        <AccordionTrigger>Apakah santri diperbolehkan membawa gadget?</AccordionTrigger>
-                                        <AccordionContent>
-                                            Santri tidak diperbolehkan membawa dan menggunakan gadget seperti smartphone, tablet, atau laptop pribadi
-                                            selama berada di pesantren. Hal ini untuk menjaga fokus belajar dan menciptakan lingkungan yang kondusif.
-                                            <p className="mt-2">
-                                                Untuk komunikasi dengan keluarga, santri dapat menggunakan telepon pesantren pada jadwal yang telah
-                                                ditentukan. Orang tua juga dapat menghubungi pesantren untuk menyampaikan pesan penting kepada santri.
-                                            </p>
-                                            <p className="mt-2">
-                                                Untuk keperluan pembelajaran, pesantren menyediakan laboratorium komputer dengan akses internet
-                                                terbatas yang dapat digunakan santri pada jam-jam tertentu di bawah pengawasan ustadz/ustadzah.
-                                            </p>
-                                        </AccordionContent>
-                                    </AccordionItem>
+                                    {faq.map((Value, index) => (
+                                        <AccordionItem value={`item-x${index}`} key={index}>
+                                            <AccordionTrigger>{Value.title}</AccordionTrigger>
+                                            <AccordionContent>
+                                                <div dangerouslySetInnerHTML={{ __html: Value.description }} />
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
                                 </Accordion>
                             </div>
                         </section>

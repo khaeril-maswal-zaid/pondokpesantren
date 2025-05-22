@@ -85,7 +85,7 @@ export default function Navbar() {
                         Blog
                     </Link>
                     <Link
-                        href="/#kontak"
+                        href={route('kontak.cards')}
                         className={cn(
                             'font-medium transition-colors',
                             isScrolled ? 'hover:text-primary text-gray-800' : 'text-gray-50 hover:text-white',

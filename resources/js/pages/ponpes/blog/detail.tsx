@@ -105,11 +105,22 @@ export default function BlogDetail({ article, relatedPosts, kategory, countKateg
                                     <div className="mb-6 flex flex-wrap items-center gap-6 text-sm text-gray-500">
                                         <div className="flex items-center">
                                             <Calendar className="text-primary mr-2 h-4 w-4" />
-                                            <span>{article.created_at}</span>
+                                            <span>
+                                                {article.created_at
+                                                    ? new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }).format(
+                                                          new Date(article.created_at),
+                                                      )
+                                                    : '–'}
+                                            </span>
                                         </div>
                                         <div className="flex items-center">
                                             <User className="text-primary mr-2 h-4 w-4" />
                                             <span>{article.author.name}</span>
+                                        </div>
+
+                                        <div className="flex items-center">
+                                            <Tag className="text-primary mr-1 h-4 w-4" />
+                                            <span>{article.category || 'News'}</span>
                                         </div>
 
                                         <div className="flex items-center">

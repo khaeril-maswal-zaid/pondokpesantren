@@ -430,6 +430,9 @@ export default function EditBlogPage({ blogs }) {
                                                         News
                                                     </SelectItem>
                                                     <SelectItem className="hover:bg-muted transition-none" value="Dakwah">
+                                                        Opini
+                                                    </SelectItem>
+                                                    <SelectItem className="hover:bg-muted transition-none" value="Dakwah">
                                                         Dakwah
                                                     </SelectItem>
                                                     <SelectItem className="hover:bg-muted transition-none" value="The Story">

@@ -18,7 +18,11 @@ return new class extends Migration
             $table->string('value'); // nama pengguna atau deskripsi
             $table->string('link')->nullable(); // url ke platform tersebut
             $table->string('icon')->nullable(); // nama ikon dari lucide
+            $table->string('bgColor')->nullable(); // nama ikon dari lucide
+            $table->string('color')->nullable(); // nama ikon dari lucide
+
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+
             $table->timestamps();
         });
     }

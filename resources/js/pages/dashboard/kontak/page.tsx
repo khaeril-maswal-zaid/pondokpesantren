@@ -7,9 +7,16 @@ import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Edit, ExternalLink, Facebook, Globe, Instagram, Linkedin, Mail, Phone, Search, Send, Twitter, Youtube } from 'lucide-react';
+import * as Icons from 'lucide-react';
+import { Edit, ExternalLink, Search } from 'lucide-react';
 import { useState } from 'react';
+
+function getIconComponent(name, color) {
+    const LucideIcon = Icons[name];
+    return LucideIcon ? <LucideIcon className="h-6 w-6" style={{ color: color }} /> : null;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -71,41 +78,6 @@ export default function KontakPage({ kontaksData }) {
         );
     };
 
-    // Render icon berdasarkan nama icon
-    const renderIcon = (iconName: string) => {
-        switch (iconName) {
-            case 'facebook':
-                return <Facebook className="h-4 w-4" />;
-            case 'instagram':
-                return <Instagram className="h-4 w-4" />;
-            case 'twitter':
-                return <Twitter className="h-4 w-4" />;
-            case 'youtube':
-                return <Youtube className="h-4 w-4" />;
-            case 'phone':
-                return <Phone className="h-4 w-4" />;
-            case 'mail':
-                return <Mail className="h-4 w-4" />;
-            case 'globe':
-                return <Globe className="h-4 w-4" />;
-            case 'linkedin':
-                return <Linkedin className="h-4 w-4" />;
-            case 'tiktok':
-                return (
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M19.321 5.562a5.124 5.124 0 0 1-5.121-5.121h-3.585v16.242a3.024 3.024 0 0 1-3.023 3.023 3.023 3.023 0 0 1-3.023-3.023 3.024 3.024 0 0 1 3.023-3.023c.335 0 .661.057.965.162V9.999a7.026 7.026 0 0 0-.965-.068C3.437 9.931 0 13.369 0 17.524S3.437 25.12 7.592 25.12c4.155 0 7.592-3.438 7.592-7.593V9.407a8.685 8.685 0 0 0 4.137 1.055v-4.9Z"
-                            fill="currentColor"
-                        />
-                    </svg>
-                );
-            case 'send':
-                return <Send className="h-4 w-4" />;
-            default:
-                return <Globe className="h-4 w-4" />;
-        }
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -145,7 +117,7 @@ export default function KontakPage({ kontaksData }) {
                                 {filteredKontaks.map((kontak) => (
                                     <TableRow key={kontak.label}>
                                         <TableCell>
-                                            <div className="flex items-center justify-center">{renderIcon(kontak.icon)}</div>
+                                            <div className="flex items-center justify-center">{getIconComponent(kontak.icon, kontak.color)}</div>
                                         </TableCell>
                                         <TableCell className="font-medium">{kontak.name}</TableCell>
                                         <TableCell>{kontak.value}</TableCell>

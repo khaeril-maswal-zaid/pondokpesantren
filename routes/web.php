@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContenItemPendaftaranController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\SantriBaruController;
@@ -18,6 +19,7 @@ Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.sho
 Route::get('/blog-pesantren', [BlogController::class, 'cards'])->name('blog.cards');
 Route::get('/agenda-pesantren', [AgendaController::class, 'cards'])->name('agenda.cards');
 Route::get('/struktur-pesantren', [StrukturController::class, 'cards'])->name('struktur.cards');
+Route::get('/kontak-dan-media-sosial', [KontakController::class, 'cards'])->name('kontak.cards');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
@@ -45,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/kontak', [KontakController::class, 'index'])->name('kontak.index');
     Route::put('/dashboard/kontak/status/{kontak:label}', [KontakController::class, 'status'])->name('kontak.status');
     Route::put('/dashboard/kontak/update/{kontak:label}', [KontakController::class, 'update'])->name('kontak.update');
+
+    Route::get('/dashboard/informasi-pendaftaran', [ContenItemPendaftaranController::class, 'index'])->name('pendaftaran.index');
 });
 
 

@@ -106,7 +106,7 @@ export default function LocationSection() {
                         <div className="mt-6">
                             <Button
                                 className="bg-primary hover:bg-primary/90 w-full"
-                                onClick={() => window.open('https://maps.google.com', '_blank')}
+                                onClick={() => window.open('https://maps.app.goo.gl/UMWtAHWVHXUEfJWv8', '_blank')}
                             >
                                 Lihat di Google Maps
                             </Button>

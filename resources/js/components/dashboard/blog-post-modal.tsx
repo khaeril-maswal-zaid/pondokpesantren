@@ -23,7 +23,7 @@ import { z } from 'zod';
 // Definisikan skema validasi
 const blogPostSchema = z.object({
     title: z.string().min(5, 'Judul harus terdiri dari minimal 5 karakter').max(100, 'Judul tidak boleh lebih dari 100 karakter'),
-    description: z.string().min(10, 'Deskripsi harus terdiri dari minimal 10 karakter').max(500, 'Deskripsi tidak boleh lebih dari 500 karakter'),
+    description: z.string().min(10, 'Deskripsi harus terdiri dari minimal 10 karakter').max(255, 'Deskripsi tidak boleh lebih dari 500 karakter'),
     body1: z.string().min(20, 'Konten utama harus terdiri dari minimal 20 karakter'),
     body2: z.string().optional(),
     category: z.string().nonempty('Kategori wajib dipilih'),
@@ -699,6 +699,9 @@ export default function BlogPostModal() {
                                                             </SelectItem>
                                                             <SelectItem className="hover:bg-muted transition-none" value="Dakwah">
                                                                 Dakwah
+                                                            </SelectItem>
+                                                            <SelectItem className="hover:bg-muted transition-none" value="Opini">
+                                                                Opini
                                                             </SelectItem>
                                                             <SelectItem className="hover:bg-muted transition-none" value="The Story">
                                                                 The Story

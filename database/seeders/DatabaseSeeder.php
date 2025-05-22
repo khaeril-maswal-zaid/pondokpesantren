@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call(BlogSeeder::class);
         // $this->call(SantriBaruSeeder::class);
+        $this->call(ContenItemPendaftaranSeeder::class);
+        $this->call(WorkflowStepPendaftaranSeeder::class);
+        $this->call(JadwalPendaftaranSeeder::class);
         $this->call(AgendaSeeder::class);
         $this->call(StrukturSeeder::class);
         $this->call(KontakSeeder::class);

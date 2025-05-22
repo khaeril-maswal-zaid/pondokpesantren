@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\SantriBaru;
 use App\Http\Requests\StoreSantriBaruRequest;
 use App\Http\Requests\UpdateSantriBaruRequest;
+use App\Models\ContenItemPendaftaran;
+use App\Models\JadwalPendaftaran;
+use App\Models\WorkflowStepPendaftaran;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\Request;
@@ -37,9 +40,58 @@ class SantriBaruController extends Controller
 
     public function informasi(): Response
     {
+
+        $persyaratanUmum = ContenItemPendaftaran::select('point')->where('module', 'persyaratan')
+            ->where('subcategory', 'umum')
+            ->orderBy('id')
+            ->get();
+
+        $persyaratanKhusus = ContenItemPendaftaran::select('point')->where('module', 'persyaratan')
+            ->where('subcategory', 'khusus')
+            ->orderBy('id')
+            ->get();
+
+        $dokumenWajib = ContenItemPendaftaran::select('point')->where('module', 'dokumen')
+            ->where('subcategory', 'wajib')
+            ->orderBy('id')
+            ->get();
+
+        $dokumenTambahan = ContenItemPendaftaran::select('point')->where('module', 'dokumen')
+            ->where('subcategory', 'tambahan')
+            ->orderBy('id')
+            ->get();
+
+
+        $faq = WorkflowStepPendaftaran::select('title', 'description')
+            ->where('module', 'faq')
+            ->orderBy('id')
+            ->get();
+
+        $jadwal = JadwalPendaftaran::select('activity_name', 'gel1', 'gel2')
+            ->whereNot('activity_name', 'Masuk Pesantren')
+            ->orderBy('id')
+            ->get();
+
+        $jadwalMasuk = JadwalPendaftaran::select('activity_name', 'gel1')
+            ->where('activity_name', 'Masuk Pesantren')
+            ->first();
+
+        $steps = WorkflowStepPendaftaran::where('module', 'alur')
+            ->orderBy('id')
+            ->get(['id', 'title', 'description']);
+
         request()->attributes->set('og', $this->ogTags);
 
-        return Inertia::render('ponpes/pendaftaran/page');
+        return Inertia::render('ponpes/pendaftaran/page', compact(
+            'persyaratanUmum',
+            'persyaratanKhusus',
+            'dokumenWajib',
+            'dokumenTambahan',
+            'faq',
+            'jadwal',
+            'jadwalMasuk',
+            'steps'
+        ));
     }
 
     /**

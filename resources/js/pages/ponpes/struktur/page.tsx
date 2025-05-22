@@ -1,110 +1,35 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/layouts/ponpes-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, UserIcon as Female, UserIcon as Male } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-// Data struktur pesantren (tanpa kategori)
-const strukturData = [
-    {
-        name: 'KH. Ahmad Zaid',
-        role: 'Pendiri & Pengasuh',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Pendiri Pondok Pesantren Al-Zaid pada tahun 1985. Beliau adalah lulusan Universitas Al-Azhar Kairo dan telah mengabdikan hidupnya untuk pendidikan Islam selama lebih dari 40 tahun.',
-    },
-    {
-        name: 'KH. Muhammad Hasan',
-        role: 'Pimpinan Pesantren',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: "Putra sulung KH. Ahmad Zaid yang meneruskan kepemimpinan pesantren sejak tahun 2015. Beliau adalah hafidz Al-Qur'an 30 juz dan lulusan Universitas Islam Madinah.",
-    },
-    {
-        name: 'Nyai Hj. Fatimah Zaid',
-        role: 'Pengasuh Pondok Putri',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Istri dari KH. Ahmad Zaid yang berperan penting dalam pengembangan pondok pesantren putri. Beliau adalah lulusan Pondok Pesantren Darussalam Gontor Putri.',
-    },
-    {
-        name: 'Ustadz Dr. Mahmud Hasan',
-        role: 'Kepala Madrasah Aliyah',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S3 Pendidikan Islam UIN Syarif Hidayatullah Jakarta. Telah mengajar di Pesantren Al-Zaid selama 15 tahun dan menjabat sebagai Kepala Madrasah Aliyah sejak 2018.',
-    },
-    {
-        name: 'Ustadz H. Abdul Karim, M.Pd.I',
-        role: 'Kepala Madrasah Tsanawiyah',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S2 Pendidikan Islam UIN Sunan Kalijaga Yogyakarta. Beliau adalah alumni Pesantren Al-Zaid angkatan pertama yang kembali mengabdi sejak tahun 2005.',
-    },
-    {
-        name: 'Ustadzah Aisyah Rahmah, M.Pd',
-        role: 'Kepala Madrasah Ibtidaiyah',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S2 Pendidikan Dasar Universitas Negeri Jakarta. Memiliki pengalaman mengajar selama 12 tahun dan fokus pada pengembangan metode pembelajaran inovatif untuk anak.',
-    },
-    {
-        name: 'Ustadz H. Zainuddin, Lc',
-        role: 'Kepala Bidang Tahfidz',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: "Hafidz Al-Qur'an 30 juz dan lulusan Universitas Al-Azhar Kairo jurusan Tafsir. Beliau telah melahirkan puluhan hafidz Al-Qur'an dari Pesantren Al-Zaid.",
-    },
-    {
-        name: 'Ustadz Ahmad Fauzi, M.Pd',
-        role: 'Kepala Bidang Kurikulum',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S2 Manajemen Pendidikan Universitas Indonesia. Bertanggung jawab atas pengembangan kurikulum yang mengintegrasikan pendidikan agama dan umum.',
-    },
-    {
-        name: 'Ustadzah Khadijah, M.Hum',
-        role: 'Kepala Bidang Bahasa',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S2 Linguistik Universitas Gadjah Mada. Mengembangkan program bahasa Arab dan Inggris intensif di Pesantren Al-Zaid.',
-    },
-    {
-        name: 'Ustadz Ridwan, M.Sos',
-        role: 'Kepala Bidang Kesantrian',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S2 Sosiologi Universitas Indonesia. Bertanggung jawab atas pembinaan karakter dan kedisiplinan santri serta pengembangan bakat dan minat.',
-    },
-    {
-        name: 'Ustadz Hamid Hakim',
-        role: 'Kepala Asrama Putra',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Alumni Pesantren Al-Zaid dan lulusan S1 Pendidikan Agama Islam UIN Syarif Hidayatullah Jakarta. Bertanggung jawab atas kesejahteraan dan kedisiplinan santri putra.',
-    },
-    {
-        name: 'Ustadzah Fatimah Azzahra',
-        role: 'Kepala Asrama Putri',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Alumni Pesantren Al-Zaid dan lulusan S1 Psikologi Universitas Indonesia. Bertanggung jawab atas kesejahteraan dan kedisiplinan santri putri.',
-    },
-    {
-        name: 'Ustadz Zainal Abidin',
-        role: 'Kepala Asrama Tahfidz',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: "Hafidz Al-Qur'an 30 juz dan lulusan Pesantren Darussalam Gontor. Bertanggung jawab atas program khusus santri penghafal Al-Qur'an.",
-    },
-    {
-        name: 'H. Anwar Sanusi, S.E.',
-        role: 'Kepala Tata Usaha',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S1 Ekonomi Universitas Indonesia. Bertanggung jawab atas administrasi dan keuangan pesantren sejak tahun 2010.',
-    },
-    {
-        name: 'Hj. Siti Aminah, S.Kom.',
-        role: 'Kepala Bagian Pendaftaran',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S1 Ilmu Komputer Universitas Gunadarma. Mengelola sistem pendaftaran dan database santri Pesantren Al-Zaid.',
-    },
-    {
-        name: 'Ahmad Syafii, S.E.',
-        role: 'Kepala Bagian Keuangan',
-        image: '/placeholder.svg?height=400&width=400',
-        bio: 'Lulusan S1 Akuntansi Universitas Indonesia. Bertanggung jawab atas pengelolaan keuangan dan pelaporan keuangan pesantren.',
-    },
-];
+interface StrukturMember {
+    name: string;
+    role: string;
+    image?: string;
+    bio: string;
+    gender: string;
+}
+
+// Member card component to avoid repetition
+function MemberCard({ member, key }: { member: StrukturMember }) {
+    return (
+        <div key={key} className="overflow-hidden rounded-lg bg-white shadow shadow-blue-300 transition-transform duration-300 hover:-translate-y-2">
+            <div className="relative w-full">
+                <img src={`/storage/${member.image}` || '/storage/image/assets/custom-struktur.jpg'} alt={member.name} className="object-cover" />
+            </div>
+            <div className="p-4">
+                <h3 className="mb-1 line-clamp-1 text-center font-bold">{member.name}</h3>
+                <p className="text-primary mb-3 text-center text-sm font-medium">{member.role}</p>
+                <p className="line-clamp-3 text-center text-sm text-gray-600">{member.bio}</p>
+            </div>
+        </div>
+    );
+}
 
 export default function StrukturPage({ strukturData }) {
     const { name } = usePage().props;
@@ -127,6 +52,8 @@ export default function StrukturPage({ strukturData }) {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const [activeTab, setActiveTab] = useState('Laki-Laki');
 
     return (
         <>
@@ -174,27 +101,39 @@ export default function StrukturPage({ strukturData }) {
                         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                             {/* Main Content - Struktur Cards */}
                             <div className="lg:col-span-2">
-                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                    {strukturData.data.map((member, index) => (
-                                        <div
-                                            key={index}
-                                            className="overflow-hidden rounded-lg bg-white shadow shadow-blue-300 transition-transform duration-300 hover:-translate-y-2"
-                                        >
-                                            <div className="relative w-full">
-                                                <img
-                                                    src={`/storage/${member.image}` || '/storage/image/assets/custom-struktur.jpg'}
-                                                    alt={member.name}
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                            <div className="p-4">
-                                                <h3 className="mb-1 line-clamp-1 text-center font-bold">{member.name}</h3>
-                                                <p className="text-primary mb-3 text-center text-sm font-medium">{member.role}</p>
-                                                <p className="line-clamp-3 text-center text-sm text-gray-600">{member.bio}</p>
-                                            </div>
+                                {/* Navigation Tabs */}
+                                <Tabs defaultValue="Laki-laki" className="mb-8" onValueChange={setActiveTab}>
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="Laki-laki" className="flex items-center justify-center gap-2">
+                                            <Male className="h-4 w-4" />
+                                            <span>Laki-laki</span>
+                                        </TabsTrigger>
+                                        <TabsTrigger value="Perempuan" className="flex items-center justify-center gap-2">
+                                            <Female className="h-4 w-4" />
+                                            <span>Perempuan</span>
+                                        </TabsTrigger>
+                                    </TabsList>
+
+                                    <TabsContent value="Laki-laki" className="mt-6">
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                            {strukturData.data
+                                                .filter((member) => member.gender === 'Laki-laki')
+                                                .map((member, index) => (
+                                                    <MemberCard key={index} member={member} />
+                                                ))}
                                         </div>
-                                    ))}
-                                </div>
+                                    </TabsContent>
+
+                                    <TabsContent value="Perempuan" className="mt-6">
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                            {strukturData.data
+                                                .filter((member) => member.gender === 'Perempuan')
+                                                .map((member, index) => (
+                                                    <MemberCard key={index} member={member} />
+                                                ))}
+                                        </div>
+                                    </TabsContent>
+                                </Tabs>
                             </div>
 
                             {/* Sidebar - Bagan Struktur */}

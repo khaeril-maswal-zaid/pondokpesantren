@@ -13,13 +13,15 @@ class KontakSeeder extends Seeder
      */
     public function run(): void
     {
-        $kontaks = [
+        $contactChannels = [
             [
                 'label' => 'fb',
                 'name' => 'Facebook',
                 'value' => 'Ubay Bin Kaab',
                 'link' => 'https://facebook.com/ubay',
-                'icon' => 'facebook',
+                'icon' => 'Facebook',
+                'color' => '#1877F2',
+                'bgColor' => '#E7F0FF',
                 'status' => 'aktif',
             ],
             [
@@ -27,7 +29,9 @@ class KontakSeeder extends Seeder
                 'name' => 'Instagram',
                 'value' => '@ubaykaab',
                 'link' => 'https://instagram.com/ubaykaab',
-                'icon' => 'instagram',
+                'icon' => 'Instagram',
+                'color' => '#E4405F',
+                'bgColor' => '#FDEEF1',
                 'status' => 'aktif',
             ],
             [
@@ -35,7 +39,9 @@ class KontakSeeder extends Seeder
                 'name' => 'Twitter',
                 'value' => '@ubaykaab',
                 'link' => 'https://twitter.com/ubaykaab',
-                'icon' => 'twitter',
+                'icon' => 'Twitter',
+                'color' => '#1DA1F2',
+                'bgColor' => '#E9F5FD',
                 'status' => 'aktif',
             ],
             [
@@ -43,7 +49,9 @@ class KontakSeeder extends Seeder
                 'name' => 'YouTube',
                 'value' => 'Ubay Official',
                 'link' => 'https://youtube.com/@ubaykaab',
-                'icon' => 'youtube',
+                'icon' => 'Youtube',
+                'color' => '#FF0000',
+                'bgColor' => '#FFEBEB',
                 'status' => 'aktif',
             ],
             [
@@ -51,15 +59,19 @@ class KontakSeeder extends Seeder
                 'name' => 'WhatsApp',
                 'value' => '+62 813-8125-0081',
                 'link' => 'https://wa.me/6281381250081',
-                'icon' => 'Phone',
+                'icon' => 'MessageSquare',
+                'color' => '#25D366',
+                'bgColor' => '#EAFAF1',
                 'status' => 'aktif',
             ],
             [
                 'label' => 'email',
                 'name' => 'Email',
-                'value' => 'official1@ubaybinkaab.ponpes.id',
-                'link' => 'official1@ubaybinkaab.ponpes.id',
+                'value' => 'official1@ubayinkaab.ponpes.id',
+                'link' => 'mailto:official1@ubayinkaab.ponpes.id',
                 'icon' => 'Mail',
+                'color' => '#D44638',
+                'bgColor' => '#FEEFED',
                 'status' => 'aktif',
             ],
             [
@@ -67,7 +79,9 @@ class KontakSeeder extends Seeder
                 'name' => 'Website',
                 'value' => 'ubaykaab.or.id',
                 'link' => 'https://ubaykaab.or.id',
-                'icon' => 'globe',
+                'icon' => 'Globe',
+                'color' => '#0078D7',
+                'bgColor' => '#E5F1FB',
                 'status' => 'aktif',
             ],
             [
@@ -75,7 +89,9 @@ class KontakSeeder extends Seeder
                 'name' => 'LinkedIn',
                 'value' => 'Ubay Kaab Institute',
                 'link' => 'https://linkedin.com/in/ubaykaab',
-                'icon' => 'linkedin',
+                'icon' => 'Linkedin',
+                'color' => '#0077B5',
+                'bgColor' => '#E5F1F9',
                 'status' => 'aktif',
             ],
             [
@@ -83,7 +99,9 @@ class KontakSeeder extends Seeder
                 'name' => 'TikTok',
                 'value' => '@ubaykaab',
                 'link' => 'https://tiktok.com/@ubaykaab',
-                'icon' => 'tiktok',
+                'icon' => 'SendIcon', // Placeholder
+                'color' => '#000000',
+                'bgColor' => '#F0F0F0',
                 'status' => 'aktif',
             ],
             [
@@ -91,18 +109,24 @@ class KontakSeeder extends Seeder
                 'name' => 'Telegram',
                 'value' => '@ubaychannel',
                 'link' => 'https://t.me/ubaychannel',
-                'icon' => 'send',
+                'icon' => 'Send',
+                'color' => '#0088CC',
+                'bgColor' => '#E5F7FD',
                 'status' => 'aktif',
             ],
         ];
 
-        foreach ($kontaks as $key => $kontak) {
+
+
+        foreach ($contactChannels as $key => $kontak) {
             Kontak::create([
                 'label' => $kontak['label'],
                 'name' => $kontak['name'],
                 'value' => $kontak['value'],
                 'link' => $kontak['link'],
                 'icon' => $kontak['icon'],
+                'bgColor' => $kontak['bgColor'],
+                'color' => $kontak['color'],
                 'status' => $kontak['status'],
             ]);
         }
