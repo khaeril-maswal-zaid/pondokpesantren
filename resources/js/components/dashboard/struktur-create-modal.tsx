@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { Loader2, Phone, PlusCircle, Upload, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
@@ -21,6 +23,7 @@ const strukturSchema = z.object({
     keterangan: z.string().min(3, 'Keterangan harus minimal 3 karakter'),
     no_hp: z.string().min(10, 'Nomor HP harus minimal 10 karakter').max(15, 'Nomor HP maksimal 15 karakter'),
     foto: z.any().optional(),
+    gender: z.string().nonempty('Kategori wajib dipilih'),
 });
 
 type ValidationErrors = {
@@ -36,6 +39,7 @@ export default function StrukturCreateModal() {
     const [keterangan, setKeterangan] = useState('');
     const [no_hp, setNoHp] = useState('');
     const [foto, setFoto] = useState('');
+    const [gender, setGender] = useState('');
 
     // Cropping states
     const [src, setSrc] = useState<string | null>(null);
@@ -135,7 +139,7 @@ export default function StrukturCreateModal() {
 
     const validateForm = () => {
         try {
-            strukturSchema.parse({ nama, role, keterangan, no_hp, foto });
+            strukturSchema.parse({ nama, role, keterangan, no_hp, foto, gender });
             return true;
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -181,6 +185,7 @@ export default function StrukturCreateModal() {
                 role: role,
                 keterangan: keterangan,
                 no_hp: no_hp,
+                gender: gender,
                 foto: foto,
             },
             {
@@ -242,6 +247,7 @@ export default function StrukturCreateModal() {
                         if (!newOpen) resetForm();
                     }
                 }}
+                modal={false}
             >
                 <DialogContent className="h-[90vh] max-w-md overflow-y-auto sm:max-w-[500px]">
                     <DialogHeader>
@@ -285,21 +291,43 @@ export default function StrukturCreateModal() {
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="nama" className={`text-sm font-medium ${errors.nama ? 'text-destructive' : ''}`}>
-                                Nama <span className="text-red-500">*</span>
-                            </Label>
-                            <Input
-                                id="nama"
-                                value={nama}
-                                onChange={(e) => {
-                                    setNama(e.target.value);
-                                    clearError('nama');
-                                }}
-                                placeholder="Masukkan nama lengkap"
-                                className={errors.nama ? 'border-destructive' : ''}
-                            />
-                            {errors.nama && <p className="text-destructive text-xs">{errors.nama}</p>}
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="nama" className={`text-sm font-medium ${errors.nama ? 'text-destructive' : ''}`}>
+                                    Nama <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    id="nama"
+                                    value={nama}
+                                    onChange={(e) => {
+                                        setNama(e.target.value);
+                                        clearError('nama');
+                                    }}
+                                    placeholder="Masukkan nama lengkap"
+                                    className={errors.nama ? 'border-destructive' : ''}
+                                />
+                                {errors.nama && <p className="text-destructive text-xs">{errors.nama}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="gender7" className="text-sm font-medium">
+                                    Kategori Artikel <span className="text-red-500">*</span>
+                                </Label>
+                                <Select value={gender} onValueChange={setGender}>
+                                    <SelectTrigger id="gender7" className={cn(errors.gender && 'border-destructive')}>
+                                        <SelectValue placeholder="Pilih kategori" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem className="hover:bg-muted transition-none" value="Laki-laki">
+                                            Laki-laki
+                                        </SelectItem>
+                                        <SelectItem className="hover:bg-muted transition-none" value="Perempuan">
+                                            Perempuan
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {errors.gender && <p className="text-destructive text-xs">{errors.gender}</p>}
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

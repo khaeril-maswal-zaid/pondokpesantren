@@ -12,6 +12,7 @@ class Struktur extends Model
         'role',
         'keterangan',
         'main',
+        'gender',
         'image',
     ];
 }

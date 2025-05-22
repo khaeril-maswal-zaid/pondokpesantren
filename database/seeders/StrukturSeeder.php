@@ -20,6 +20,7 @@ class StrukturSeeder extends Seeder
                 'role' => "Pimpinan Pesantren",
                 'keterangan' => 'Pimpinan',
                 'main' => 1,
+                'gender' => 'Laki-laki',
                 'image' => 'image/structure/abdurrauf-abdullah-pawaly.png',
             ],
             [
@@ -28,6 +29,7 @@ class StrukturSeeder extends Seeder
                 'role' => "Dewan Pakar",
                 'keterangan' => "Pemegang sanad qira'at sab'ah dari syekh Musa jibou as-sudani",
                 'main' => 1,
+                'gender' => 'Laki-laki',
                 'image' => 'image/structure/ahmad-jazee.png',
             ],
             [
@@ -36,6 +38,7 @@ class StrukturSeeder extends Seeder
                 'role' => 'Trainer dan Pembina',
                 'keterangan' => 'Berlisensi dan Bersanad',
                 'main' => 1,
+                'gender' => 'Laki-laki',
                 'image' => 'image/structure/fathi-ararya-dihyan.png',
             ],
             [
@@ -44,14 +47,25 @@ class StrukturSeeder extends Seeder
                 'role' => 'Trainer dan Pembina',
                 'keterangan' => 'Berlisensi dan Bersanad',
                 'main' => 1,
+                'gender' => 'Laki-laki',
                 'image' => 'image/structure/m-zainal-hasani.png',
             ],
             [
+                'name' => 'Al-Hafidz Adryan Syahwan',
+                'no_hp' => '1234567890',
+                'role' => 'Trainer dan Pembina',
+                'keterangan' => 'Berlisensi dan Bersanad',
+                'main' => 0,
+                'gender' => 'Laki-laki',
+                'image' => 'image/structure/682de132dfc73-al-hafidz-adryan-syahwan.png',
+            ],
+            [
                 'name' => 'Fulanah',
                 'no_hp' => '1234567890',
                 'role' => 'Official',
                 'keterangan' => 'Training',
                 'main' => 0,
+                'gender' => 'Laki-laki',
                 'image' => 'image/structure/custom-struktur.jpg',
             ],
             [
@@ -60,6 +74,7 @@ class StrukturSeeder extends Seeder
                 'role' => 'Official',
                 'keterangan' => 'Training',
                 'main' => 0,
+                'gender' => 'Laki-laki',
                 'image' => 'image/structure/custom-struktur.jpg',
             ],
             [
@@ -68,6 +83,7 @@ class StrukturSeeder extends Seeder
                 'role' => 'Official',
                 'keterangan' => 'Training',
                 'main' => 0,
+                'gender' => 'Laki-laki',
                 'image' => 'image/structure/custom-struktur.jpg',
             ],
         ];
@@ -79,6 +95,7 @@ class StrukturSeeder extends Seeder
                 'role' => $struktur['role'],
                 'keterangan' => $struktur['keterangan'],
                 'main' => $struktur['main'],
+                'gender' => $struktur['gender'],
                 'image' => $struktur['image'],
             ]);
         }

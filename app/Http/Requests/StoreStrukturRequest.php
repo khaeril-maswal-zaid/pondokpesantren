@@ -25,8 +25,9 @@ class StoreStrukturRequest extends FormRequest
         return [
             'nama' => 'required|string|max:255',
             'role' => 'required|string|max:100',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'nullable|string|max:255',
             'no_hp' => 'required|string|max:20',
+            'gender' => 'required|in:Laki-laki,Perempuan',
             'foto' => ['required', 'string', new ValidBase64Image],
         ];
     }

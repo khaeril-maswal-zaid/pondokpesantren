@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('role');
             $table->string('keterangan');
             $table->boolean('main')->default(false);
+            $table->enum('gender', ['Laki-laki', 'Perempuan'])->default('Laki-laki',);
             $table->string('image')->default('image/structure/custom-struktur.jpg');
             $table->timestamps();
         });

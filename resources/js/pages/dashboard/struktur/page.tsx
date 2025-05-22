@@ -125,11 +125,11 @@ export default function StrukturPage({ figures }) {
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="Laki-laki" className="flex items-center justify-center gap-2">
                             <Male className="h-4 w-4" />
-                            <span>Laki-laki</span>
+                            <span>Putra</span>
                         </TabsTrigger>
                         <TabsTrigger value="Perempuan" className="flex items-center justify-center gap-2">
                             <Female className="h-4 w-4" />
-                            <span>Perempuan</span>
+                            <span>Putri</span>
                         </TabsTrigger>
                     </TabsList>
 
@@ -169,8 +169,8 @@ export default function StrukturPage({ figures }) {
                                     <TableBody>
                                         {filteredStruktur
                                             .filter((member) => member.gender === 'Laki-laki')
-                                            .map((struktur) => (
-                                                <TableRow key={struktur.name}>
+                                            .map((struktur, index) => (
+                                                <TableRow key={struktur.name + index}>
                                                     <TableCell>
                                                         <Avatar className="h-14 w-14">
                                                             <AvatarImage

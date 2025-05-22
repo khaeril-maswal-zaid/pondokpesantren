@@ -106,11 +106,11 @@ export default function StrukturPage({ strukturData }) {
                                     <TabsList className="grid w-full grid-cols-2">
                                         <TabsTrigger value="Laki-laki" className="flex items-center justify-center gap-2">
                                             <Male className="h-4 w-4" />
-                                            <span>Laki-laki</span>
+                                            <span>Putra</span>
                                         </TabsTrigger>
                                         <TabsTrigger value="Perempuan" className="flex items-center justify-center gap-2">
                                             <Female className="h-4 w-4" />
-                                            <span>Perempuan</span>
+                                            <span>Putri</span>
                                         </TabsTrigger>
                                     </TabsList>
 

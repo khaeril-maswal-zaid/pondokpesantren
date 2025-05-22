@@ -54,6 +54,7 @@ class StrukturController extends Controller
             "keterangan" => $request->keterangan,
             "no_hp" => $request->no_hp,
             "main" => '0',
+            "gender" => $request->gender,
             "image" => $imagePath,
         ]);
     }
@@ -107,6 +108,7 @@ class StrukturController extends Controller
             "role" => $request->role,
             "keterangan" => $request->keterangan,
             "no_hp" => $request->no_hp,
+            "gender" => $request->gender,
             "image" => $imagePath,
         ]);
     }
