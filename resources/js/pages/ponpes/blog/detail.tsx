@@ -62,7 +62,7 @@ export default function BlogDetail({ article, relatedPosts, kategory, countKateg
 
     return (
         <>
-            <Head title="Pendaftaran Santri Baru" />
+            <Head title={article.title} />
             <Layout>
                 <main className="pb-16">
                     {/* Hero Section - Tetap sama seperti sebelumnya */}

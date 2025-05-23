@@ -2,7 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, Image, Link, Search } from 'lucide-react';
+import Layout from '@/layouts/ponpes-layout';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { ArrowRight, Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const blogPosts = [
@@ -59,14 +61,14 @@ const blogPosts = [
 
 const categories = [
     { name: 'Semua', slug: 'semua' },
-    { name: 'Kegiatan', slug: 'kegiatan' },
-    { name: 'Artikel', slug: 'artikel' },
-    { name: 'Prestasi', slug: 'prestasi' },
-    { name: 'Pengumuman', slug: 'pengumuman' },
-    { name: 'Kesehatan', slug: 'kesehatan' },
+    { name: 'News', slug: 'news' },
+    { name: 'Dakwah', slug: 'dakwah' },
+    { name: 'Opini', slug: 'opini' },
+    { name: 'The Story', slug: 'The Story' },
 ];
 
-export default function BlogPage() {
+export default function BlogPage({ blogPosts }) {
+    const { name } = usePage().props;
     const [scrollY, setScrollY] = useState(0);
     const [activeCategory, setActiveCategory] = useState('semua');
     const [searchQuery, setSearchQuery] = useState('');
@@ -81,7 +83,7 @@ export default function BlogPage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const filteredPosts = blogPosts.filter((post) => {
+    const filteredPosts = blogPosts.data.filter((post) => {
         const matchesCategory = activeCategory === 'semua' || post.category.toLowerCase() === activeCategory;
         const matchesSearch =
             post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -89,106 +91,114 @@ export default function BlogPage() {
     });
 
     return (
-        <main className="pb-16">
-            {/* Hero Section */}
-            <div ref={headerRef} className="relative h-[400px] overflow-hidden">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                        backgroundImage: "url('/placeholder.svg?height=800&width=1920')",
-                        transform: `translateY(${scrollY * 0.1}px)`,
-                    }}
-                ></div>
-                <div className="bg-primary/70 absolute inset-0"></div>
-                <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
-                    <div className="text-primary mb-4 inline-block rounded bg-white px-3 py-1 text-sm font-semibold">Artikel</div>
-                    <h1 className="mb-4 text-center text-4xl font-bold text-white md:text-5xl">Blog Pesantren</h1>
-                    <p className="mb-8 max-w-3xl text-center text-xl text-white/90">
-                        Berita, artikel, dan informasi terkini seputar kegiatan dan perkembangan di Pondok Pesantren Al-Zaid
-                    </p>
-                    <div className="relative w-full max-w-md">
-                        <Input
-                            type="text"
-                            placeholder="Cari artikel..."
-                            className="rounded-full py-2 pr-4 pl-10"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
-                    </div>
-                </div>
-            </div>
+        <>
+            <Head title="Blog" />
+            <Layout>
+                <main className="pb-16">
+                    {/* Hero Section */}
+                    <div ref={headerRef} className="relative h-[400px] overflow-hidden">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{
+                                backgroundImage: "url('/storage/image/assets/hero-3b.jpg')",
+                                transform: `translateY(${scrollY * 0.1}px)`,
+                            }}
+                        ></div>
+                        <div className="absolute inset-0 bg-black/57"></div>
 
-            <div className="container mx-auto mt-8 px-8">
-                {/* Categories */}
-                <div className="mb-12">
-                    <div className="flex flex-wrap justify-center gap-2">
-                        {categories.map((category) => (
-                            <Button
-                                key={category.slug}
-                                variant={activeCategory === category.slug ? 'default' : 'outline'}
-                                className={activeCategory === category.slug ? 'bg-primary' : ''}
-                                onClick={() => setActiveCategory(category.slug)}
-                            >
-                                {category.name}
-                            </Button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Blog Posts */}
-                {filteredPosts.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        {filteredPosts.map((post, index) => (
-                            <div
-                                key={index}
-                                className="overflow-hidden rounded-lg bg-white shadow-md transition-transform duration-300 hover:-translate-y-2"
-                            >
-                                <div className="relative">
-                                    <Image
-                                        src={post.image || '/placeholder.svg'}
-                                        alt={post.title}
-                                        width={600}
-                                        height={400}
-                                        className="h-48 w-full object-cover"
-                                    />
-                                    <div className="bg-primary absolute top-2 left-2 rounded px-2 py-1 text-xs font-semibold text-white">
-                                        {post.category}
-                                    </div>
-                                </div>
-                                <div className="p-4">
-                                    <div className="mb-2 text-sm text-gray-500">{post.date}</div>
-                                    <h3 className="mb-2 text-xl font-bold">{post.title}</h3>
-                                    <p className="mb-4 line-clamp-3 text-sm text-gray-600">{post.excerpt}</p>
-                                    <Link href={`/blog/${post.slug}`} className="text-primary flex items-center text-sm font-medium hover:underline">
-                                        Baca selengkapnya <ArrowRight className="ml-1 h-4 w-4" />
-                                    </Link>
-                                </div>
+                        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
+                            <h1 className="mb-4 text-center text-4xl font-bold text-white md:text-5xl">Blog Pesantren</h1>
+                            <p className="mb-8 max-w-3xl text-center text-xl text-white/90">
+                                Berita, artikel, Dakwah, Opini dan informasi terkini seputar kegiatan dan perkembangan di Pondok Pesantren {name}
+                            </p>
+                            <div className="relative w-full max-w-md">
+                                <Input
+                                    type="text"
+                                    placeholder="Cari artikel..."
+                                    className="rounded-full py-2 pr-4 pl-10 text-amber-50 placeholder:text-amber-50"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                             </div>
-                        ))}
+                        </div>
                     </div>
-                ) : (
-                    <div className="py-12 text-center">
-                        <h3 className="mb-2 text-xl font-bold">Tidak ada artikel yang ditemukan</h3>
-                        <p className="text-gray-600">Coba gunakan kata kunci pencarian yang berbeda atau pilih kategori lain</p>
-                    </div>
-                )}
 
-                {/* Pagination */}
-                <div className="mt-12 flex justify-center">
-                    <div className="flex space-x-2">
-                        <Button variant="outline" disabled>
-                            Sebelumnya
-                        </Button>
-                        <Button variant="default" className="bg-primary">
-                            1
-                        </Button>
-                        <Button variant="outline">2</Button>
-                        <Button variant="outline">3</Button>
-                        <Button variant="outline">Selanjutnya</Button>
+                    <div className="container mx-auto mt-8 px-8">
+                        {/* Categories */}
+                        <div className="mb-12">
+                            <div className="flex flex-wrap justify-center gap-2">
+                                {categories.map((category) => (
+                                    <Button
+                                        key={category.slug}
+                                        variant={activeCategory === category.slug ? 'default' : 'outline'}
+                                        className={activeCategory === category.slug ? 'bg-primary' : ''}
+                                        onClick={() => setActiveCategory(category.slug)}
+                                    >
+                                        {category.name}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Blog Posts */}
+                        {filteredPosts.length > 0 ? (
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+                                {filteredPosts.map((post, index) => (
+                                    <div
+                                        key={index}
+                                        className="overflow-hidden rounded-lg bg-white shadow-md transition-transform duration-300 hover:-translate-y-2"
+                                    >
+                                        <div className="relative">
+                                            <img
+                                                src={`/storage/${post.picture1}` || '/placeholder.svg'}
+                                                alt={post.title}
+                                                width={600}
+                                                height={400}
+                                                className="h-48 w-full object-cover"
+                                            />
+                                            <div className="bg-primary absolute top-2 left-2 rounded px-2 py-1 text-xs font-semibold text-white">
+                                                {post.category}
+                                            </div>
+                                        </div>
+                                        <div className="p-4">
+                                            <div className="mb-2 text-sm text-gray-500">{post.created_at}</div>
+                                            <h3 className="mb-2 text-xl font-bold">{post.title}</h3>
+                                            <p className="mb-4 line-clamp-3 text-sm text-gray-600">{post.excerpt}</p>
+                                            <Link
+                                                href={`/blog/${post.slug}`}
+                                                className="text-primary flex items-center text-sm font-medium hover:underline"
+                                            >
+                                                Baca selengkapnya <ArrowRight className="ml-1 h-4 w-4" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-12 text-center">
+                                <h3 className="mb-2 text-xl font-bold">Tidak ada artikel yang ditemukan</h3>
+                                <p className="text-gray-600">Coba gunakan kata kunci pencarian yang berbeda atau pilih kategori lain</p>
+                            </div>
+                        )}
+
+                        {/* Pagination */}
+                        <div className="mt-12 flex justify-center">
+                            <div className="flex space-x-2">
+                                <Button variant="outline" disabled>
+                                    Sebelumnya
+                                </Button>
+                                <Button variant="default" className="bg-primary">
+                                    1
+                                </Button>
+                                <Button variant="outline">2</Button>
+                                <Button variant="outline">3</Button>
+                                <Button variant="outline">Selanjutnya</Button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </main>
+                </main>
+            </Layout>
+        </>
     );
 }

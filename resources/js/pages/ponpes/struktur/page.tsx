@@ -57,7 +57,7 @@ export default function StrukturPage({ strukturData }) {
 
     return (
         <>
-            <Head title="Pendaftaran Santri Baru" />
+            <Head title="Struktur" />
             <Layout>
                 <main className="pb-16">
                     {/* Hero Section */}

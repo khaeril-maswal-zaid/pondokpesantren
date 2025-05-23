@@ -70,7 +70,7 @@ export default function KontakPage({ strukturSlides, contactChannels }) {
 
     return (
         <>
-            <Head title="Pendaftaran Santri Baru" />
+            <Head title="Kontak" />
             <Layout>
                 <main className="pb-16">
                     {/* Hero Section */}

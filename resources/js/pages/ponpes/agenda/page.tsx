@@ -38,7 +38,7 @@ export default function AgendaPage({ allAgendaData, strukturSlides }) {
 
     return (
         <>
-            <Head title="Pendaftaran Santri Baru" />
+            <Head title="Agenda" />
             <Layout>
                 <main className="pb-16">
                     {/* Hero Section */}

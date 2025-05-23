@@ -87,10 +87,12 @@ class BlogController extends Controller
         ]);
     }
 
-    public function cards()
+    public function cards(): Response
     {
-        $data = [];
-        // return Inertia::render('ponpes/agenda/page', $data);
+        $data = [
+            'blogPosts' =>   Blog::select(['excerpt', 'title', 'category', 'picture1', 'created_at', 'slug'])->paginate(8)
+        ];
+        return Inertia::render('ponpes/blog/page', $data);
     }
 
     public function edit(Blog $blog): Response
