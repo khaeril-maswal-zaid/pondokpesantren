@@ -5,6 +5,7 @@ import FiguresSection from '@/components/ponpes/figures-section';
 import HeroCarousel from '@/components/ponpes/hero-carousel';
 import LocationSection from '@/components/ponpes/location-section';
 import ProgramsSection from '@/components/ponpes/programs-section';
+import ScrollProgress from '@/components/ponpes/scroll-progress';
 import StatsOverlay from '@/components/ponpes/stats-overlay';
 import Layout from '@/layouts/ponpes-layout';
 import { Head } from '@inertiajs/react';
@@ -12,7 +13,8 @@ import { Head } from '@inertiajs/react';
 export default function Home({ heros, stats, about, figures, programs, agenda, blogs }) {
     return (
         <>
-            <Head title="Home" />
+            <ScrollProgress />
+            <Head title="" />
             <Layout>
                 <main className="flex min-h-screen flex-col items-center justify-between">
                     <div className="relative w-full">

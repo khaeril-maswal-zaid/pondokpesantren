@@ -1,15 +1,22 @@
 'use client';
 
 import { motion, useScroll } from 'framer-motion';
+import { useEffect } from 'react';
 
 export default function ScrollProgress() {
     const { scrollYProgress } = useScroll();
 
+    useEffect(() => {
+        scrollYProgress.onChange((v) => {
+            console.log('ScrollYProgress:', v);
+        });
+    }, [scrollYProgress]);
+
     return (
         <motion.div
-            // className="fixed top-0 left-0 right-0 h-1 bg-[#F47C20] z-50 origin-left"
-            className="fixed top-0 right-0 left-0 z-50 h-1 origin-left bg-[#be0000]"
+            className="fixed top-0 right-0 left-0 z-50 h-0.5 origin-left bg-[#190399]"
             style={{ scaleX: scrollYProgress }}
+            transition={{ ease: 'easeOut', duration: 0.2 }}
         />
     );
 }

@@ -13,8 +13,8 @@ import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'Informasi Pendaftaran',
+        href: '/informasi-pendaftaran',
     },
 ];
 
@@ -23,7 +23,7 @@ export default function InformasiPendaftaranPage({ persyaratan, dokumen, faq, ja
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title="Dashboard Informasi Pendaftaran" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                     <div className="border-b">
