@@ -7,9 +7,7 @@ export default function ScrollProgress() {
     const { scrollYProgress } = useScroll();
 
     useEffect(() => {
-        scrollYProgress.onChange((v) => {
-            console.log('ScrollYProgress:', v);
-        });
+        scrollYProgress.onChange((v) => {});
     }, [scrollYProgress]);
 
     return (

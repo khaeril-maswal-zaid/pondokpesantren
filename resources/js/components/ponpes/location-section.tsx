@@ -96,8 +96,8 @@ export default function LocationSection() {
                                 <div className="mt-1 mb-4">{getIconComponent('MapPin')}</div>
                                 <p>Jln. Poros Manyampa - Palangisan Kalikia, Desa Manyampa Kec. Ujung Loe Kab. Bulukumba</p>
                             </div>
-                            {contact.map((item) => (
-                                <div className="flex items-center">
+                            {contact.map((item, index) => (
+                                <div className="flex items-center" key={index}>
                                     <div className="">{getIconComponent(item.icon)}</div>
                                     <p>{item.value}</p>
                                 </div>

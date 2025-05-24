@@ -61,8 +61,8 @@ export default function Footer() {
                     <div>
                         <h3 className="mb-4 text-xl font-bold">Program</h3>
                         <ul className="space-y-2">
-                            {programUtams.map((program) => (
-                                <li key={program.id}>
+                            {programUtams.map((program, index) => (
+                                <li key={program.id || index}>
                                     <Link href="#" className="transition-colors hover:text-blue-300">
                                         {program.name}
                                     </Link>
@@ -74,8 +74,8 @@ export default function Footer() {
                         <h3 className="mb-4 text-xl font-bold">Kontak</h3>
                         <address className="not-italic">
                             <p className="mb-2">{alamat}</p>
-                            {contact.map((item) => (
-                                <div className="flex items-center">
+                            {contact.map((item, index) => (
+                                <div className="flex items-center" key={index}>
                                     <p className="mb-2">
                                         {item.name}: {item.value}
                                     </p>

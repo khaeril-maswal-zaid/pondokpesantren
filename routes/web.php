@@ -23,6 +23,7 @@ Route::get('/kontak-dan-media-sosial', [KontakController::class, 'cards'])->name
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+    Route::put('dashboard/settings/{settings}', [HomeController::class, 'update'])->name('student.update');
 
     Route::get('/dashboard/penerimaan-santri-baru', [SantriBaruController::class, 'index'])->name('santri-baru.index');
     Route::put('/dashboard/penerimaan-santri-baru/{santriBaru:no_registrasi}', [SantriBaruController::class, 'approved'])->name('santri-baru.approved');

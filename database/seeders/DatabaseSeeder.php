@@ -30,5 +30,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AgendaSeeder::class);
         $this->call(StrukturSeeder::class);
         $this->call(KontakSeeder::class);
+        $this->call(SettingsSeeder::class);
     }
 }

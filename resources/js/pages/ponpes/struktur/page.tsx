@@ -119,7 +119,7 @@ export default function StrukturPage({ strukturData }) {
                                             {strukturData.data
                                                 .filter((member) => member.gender === 'Laki-laki')
                                                 .map((member, index) => (
-                                                    <MemberCard key={index} member={member} />
+                                                    <MemberCard key={member.id + member.name} member={member} />
                                                 ))}
                                         </div>
                                     </TabsContent>

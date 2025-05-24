@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Agenda;
 use App\Models\Blog;
+use App\Models\SantriBaru;
+use App\Models\Settings;
 use App\Models\Struktur;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -50,17 +52,17 @@ class HomeController extends Controller
             'stats' => [
                 [
                     'icon' => 'GraduationCap',
-                    'value' => '000+',
+                    'value' => Settings::where('title', 'Alumni')->first()['value'],
                     'label' => 'Alumni',
                 ],
                 [
                     'icon' => 'Users',
-                    'value' => '000+',
+                    'value' => Settings::where('title', 'Santri Aktif')->first()['value'],
                     'label' => 'Santri',
                 ],
                 [
-                    'icon' => 'BookOpen',
-                    'value' => '000+',
+                    'icon' => 'Users',
+                    'value' => Settings::where('title', 'Santriwati Aktif')->first()['value'],
                     'label' => 'Santriwati',
                 ],
             ],
@@ -109,6 +111,16 @@ class HomeController extends Controller
 
         request()->attributes->set('og', $ogTags);
 
-        return Inertia::render('dashboard/home');
+        return Inertia::render('dashboard/home', [
+            'student' => Settings::where('label', 'students')->get(),
+            'santribaru' => SantriBaru::count()
+        ]);
+    }
+
+    public function update(Settings $settings, Request $request)
+    {
+        $settings->update([
+            'value' =>  $request->value
+        ]);
     }
 }
